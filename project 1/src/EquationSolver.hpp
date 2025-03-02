@@ -37,16 +37,18 @@ private:
                     }
                 }
             }
-           /* for(int i=0; i<(N-1)*(N-1); ++i){
+
+            return A;
+        }
+        if(BC==BoundaryCondition::Neumann){
+            vector<vector<double>> A((N+1)*(N+1), vector<double>((N+1)*(N+1), 0.0));
+
+            /*for(int i=0; i<(N-1)*(N-1); ++i){
                 for(int j=0; j<(N-1)*(N-1)-1; ++j){
                     cout<<A[i][j]<<" ";
                 }
                 cout<<A[i][(N-1)*(N-1)-1]<<endl;
             }*/
-            return A;
-        }
-        if(BC==BoundaryCondition::Neumann){
-            vector<vector<double>> A((N+1)*(N+1), vector<double>((N+1)*(N+1), 0.0));
             return A;
         }
     }
@@ -65,9 +67,10 @@ private:
     void solve(const Function &g){
         vector<double> matrix=convert();
         if(BC==BoundaryCondition::Dirichlet){
+            int n=(N-1)*(N-1);
             values[0]=values[0]+g(h, 0.0)+g(0.0, h);
             values[N-2]=values[N-2]+g(1.0,h)+g(1-h, 0.0);
-            values[(N-1)*(N-1)-1]=values[(N-1)*(N-1)-1]+g(1.0, 1-h)+g(1-h,1.0);
+            values[n-1]=values[n-1]+g(1.0, 1-h)+g(1-h,1.0);
             values[(N-2)*(N-1)]=values[(N-2)*(N-1)]+g(0.0,1-h)+g(h,1.0);
             for(int i=1; i<N-2; ++i){
                 values[i]+=g((i+1)*h, 0.0);
@@ -75,12 +78,15 @@ private:
                 values[(N-1)*(i+1)-1]+=g(1.0, (i+1)*h);
                 values[(N-1)*(N-2)+i]+=g((i+1)*h, 1.0);
             }
-            for(int i=0; i<(N-1)*(N-1);++i){
+            vector<int> ipiv(n);
+            int info = LAPACKE_dgesv(LAPACK_COL_MAJOR, n, 1, matrix.data(), n, ipiv.data(), values.data(), n);
+        }
+        else if(BC==BoundaryCondition::Neumann){
+            //-----------------------------------------------------------------
+            
+            for(int i=0; i<n;++i){
                 cout<<values[i]<<"  ";
             }
-            //---------------------------------------------
-            vector<int> ipiv(N-1);
-            int info = LAPACKE_dgesv(LAPACK_COL_MAJOR, N-1, 1, matrix.data(), N-1, ipiv.data(), values.data(), N-1);
         }
 
 
