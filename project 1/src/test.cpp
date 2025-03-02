@@ -1,0 +1,48 @@
+#include<iostream>
+#include"EquationSolver.hpp"
+#include<cmath>
+using namespace std;
+
+const double a=sin(1.0);
+class f:public Function{
+    double operator()(double x, double y) const{
+        return (-1.0+sin(x)-pow(cos(x), 2))*exp(y+sin(x));
+    }
+};
+
+class boundaryFunction:public Function{
+    double operator()(double x, double y) const{
+        if(x==0.0){
+            return exp(y); 
+        }
+        else if(x==1.0){
+            return exp(y+a);
+        }
+        else if(y==0.0){
+            return exp(sin(x));
+        }
+        else if(y==1.0){
+            return exp(1.0+sin(x));
+        }
+        else{
+            cerr<<"not defined"<<endl;
+            return -1;
+        }
+    }
+};
+
+class primitive:public Function{
+    double operator()(double x, double y) const{
+        return exp(y+sin(x));
+    }
+};
+
+int main(){
+    f f1;
+    boundaryFunction g;
+    primitive f0;
+    EquationSolver<Domain::regular, BoundaryCondition::Dirichlet> solver1(4, f1);
+    solver1.solveEquation(g);
+    solver1.print("test.json", f0);
+    return 0;
+}
