@@ -42,7 +42,24 @@ private:
         }
         if(BC==BoundaryCondition::Neumann){
             vector<vector<double>> A((N+1)*(N+1), vector<double>((N+1)*(N+1), 0.0));
-
+            for(int k=0; k<N+1; ++k){
+                int m=k*(N+1);
+                for(int i=0; i<N+1; ++i){
+                    A[i+m][i+m]=4.0;
+                    if(i!=N-2){
+                        A[i+m][i+m+1]=-1.0;
+                        A[i+m+1][i+m]=-1.0; 
+                    }
+                    if(k!=N-2){
+                        A[m+i][m+i+N-1]=-2.0;
+                        A[m+i+N-1][m+i]=-2.0;
+                    }
+                }
+            }
+            A[0][0]=2.0;
+            A[N][N]=2.0;
+            //------------------------------------------------------------------------------------------
+            // to be completed
             /*for(int i=0; i<(N-1)*(N-1); ++i){
                 for(int j=0; j<(N-1)*(N-1)-1; ++j){
                     cout<<A[i][j]<<" ";
@@ -78,17 +95,17 @@ private:
                 values[(N-1)*(i+1)-1]+=g(1.0, (i+1)*h);
                 values[(N-1)*(N-2)+i]+=g((i+1)*h, 1.0);
             }
-            vector<int> ipiv(n);
-            int info = LAPACKE_dgesv(LAPACK_COL_MAJOR, n, 1, matrix.data(), n, ipiv.data(), values.data(), n);
         }
         else if(BC==BoundaryCondition::Neumann){
+            int n=(N+1)*(N+1);
             //-----------------------------------------------------------------
             
             for(int i=0; i<n;++i){
                 cout<<values[i]<<"  ";
             }
         }
-
+        vector<int> ipiv(n);
+        int info = LAPACKE_dgesv(LAPACK_COL_MAJOR, n, 1, matrix.data(), n, ipiv.data(), values.data(), n);
 
     }
 public:
