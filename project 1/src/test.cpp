@@ -4,13 +4,13 @@
 using namespace std;
 
 const double a=sin(1.0);
-class f:public Function{
+class Laplacian:public Function{
     double operator()(double x, double y) const{
         return (-1.0+sin(x)-pow(cos(x), 2))*exp(y+sin(x));
     }
 };
 
-class boundaryFunction:public Function{
+class DirichletF:public Function{
     double operator()(double x, double y) const{
         if(x==0.0){
             return exp(y); 
@@ -31,6 +31,13 @@ class boundaryFunction:public Function{
     }
 };
 
+class NeumannF:public Function{
+    double operator()(double x, double y) const{
+        return 0.0;
+        //???????????????????如何对正方形区域定义外法向量？？？？？？？？？？？？？？？？？？
+    }
+};
+
 class primitive:public Function{
     double operator()(double x, double y) const{
         return exp(y+sin(x));
@@ -38,11 +45,15 @@ class primitive:public Function{
 };
 
 int main(){
-    f f1;
-    boundaryFunction g;
+    Laplacian f1;
+    DirichletF g;
     primitive f0;
     EquationSolver<Domain::regular, BoundaryCondition::Dirichlet> solver1(4, f1);
     solver1.solveEquation(g);
+    solver1.norm_error(f0);
     solver1.print("test.json", f0);
+
+    //EquationSolver<Domain::regular, BoundaryCondition::Neumann> solver2(4,f1);
+    //solver2.solveEquation(g);
     return 0;
 }
