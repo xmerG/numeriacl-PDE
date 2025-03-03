@@ -90,14 +90,13 @@ private:
                     }
                 }
             }
-            //------------------------------------------------------------------------------------------
             // to be completed
-            for(int i=0; i<(N+1)*(N+1); ++i){
+            /*for(int i=0; i<(N+1)*(N+1); ++i){
                 for(int j=0; j<(N+1)*(N+1); ++j){
                     cout<<A[i][j]<<" ";
                 }
                 cout<<endl;
-            }
+            }*/
             return A;
         }
     }
@@ -113,8 +112,8 @@ private:
         return a;
     }
 
-    void solve(const Function &g){
-        vector<double> matrix=convert();
+
+    void getcolumn(const Function &g){
         int n=0;
         if(BC==BoundaryCondition::Dirichlet){
             n=(N-1)*(N-1);
@@ -131,12 +130,24 @@ private:
         }
         else if(BC==BoundaryCondition::Neumann){
             n=(N+1)*(N+1);
+            
             //-----------------------------------------------------------------
             
             for(int i=0; i<n;++i){
                 cout<<values[i]<<"  ";
             }
         }
+    }
+    void solve(const Function &g){
+        vector<double> matrix=convert();
+        int n=0;
+        if(BC==BoundaryCondition::Dirichlet){
+            n=(N-1)*(N-1);
+        }
+        else if(BC==BoundaryCondition::Neumann){
+            n=(N+1)*(N+1);
+        }
+        getcolumn(g);
         vector<int> ipiv(n);
         int info = LAPACKE_dgesv(LAPACK_COL_MAJOR, n, 1, matrix.data(), n, ipiv.data(), values.data(), n);
 
@@ -180,9 +191,28 @@ public:
         for(int i=0; i<n; ++i){
             double x=grids[i][0];
             double y=grids[i][1];
-            e[i]=values[i]-f(x,y);
+            e[i]=abs(values[i]-f(x,y));
         }
         return e;
+
+    }
+
+    void norm_error(const Function &f){
+        vector<double> error=this->errors(f);
+        double l1_norm=0.0;
+        double l2_norm=0.0;
+        double infinity_norm=0.0;
+        for(int i=0; i<error.size(); ++i){
+            l1_norm+=h*error[i];
+            l2_norm+=h*pow(error[i], 2);
+            if(error[i]>infinity_norm){
+                infinity_norm=error[i];
+            }
+        }
+        cout<<"------------------------------------------- errors -----------------------------------------"<<endl;
+        cout<<"l_1 norm is "<<l1_norm<<endl;
+        cout<<"l_2 norm is "<<sqrt(l2_norm)<<endl;
+        cout<<"l_infty norm is"<<infinity_norm<<endl;
 
     }
 
