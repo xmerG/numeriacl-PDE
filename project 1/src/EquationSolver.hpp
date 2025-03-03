@@ -40,32 +40,64 @@ private:
 
             return A;
         }
-        if(BC==BoundaryCondition::Neumann){
+        else if(BC==BoundaryCondition::Neumann){
             vector<vector<double>> A((N+1)*(N+1), vector<double>((N+1)*(N+1), 0.0));
             for(int k=0; k<N+1; ++k){
                 int m=k*(N+1);
-                for(int i=0; i<N+1; ++i){
-                    A[i+m][i+m]=4.0;
-                    if(i!=N-2){
-                        A[i+m][i+m+1]=-1.0;
-                        A[i+m+1][i+m]=-1.0; 
+                if(k==0){
+                    A[m][m]=2.0;
+                    A[N+m][N+m]=2.0;
+                    A[m][m+1]=-1.0;
+                    A[m+N][m+N-1]=-1.0;
+                    A[m][m+N+1]=-1.0;
+                    A[m+N][m+2*N+1]=-1.0;
+                    for(int i=1; i<N; ++i){
+                        A[m+i][m+i]=4.0;
+                        A[m+i][m+i-1]=-1.0;
+                        A[m+i][m+i+1]=-1.0;
+                        A[m+i][m+i+N+1]=-2.0;
                     }
-                    if(k!=N-2){
-                        A[m+i][m+i+N-1]=-2.0;
-                        A[m+i+N-1][m+i]=-2.0;
+                }
+                else if(k==N){
+                    A[m][m]=2.0;
+                    A[N+m][N+m]=2.0;
+                    A[m][m+1]=-1.0;
+                    A[m+N][m+N-1]=-1.0;
+                    A[m][m-N-1]=-1.0;
+                    A[m+N][m-1]=-1.0;
+                    for(int i=0; i<N; ++i){
+                        A[m+i][m+i]=4.0;
+                        A[m+i][m+i-1]=-1.0;
+                        A[m+i][m+i+1]=-1.0;
+                        A[m+i][m+i-N-1]=-2.0;
+                    }
+                }
+                else{
+                    for(int j=0; j<N+1; ++j){
+                        A[m+j][m+j]=4.0;
+                        A[m+j][m+j+N+1]=-1.0;
+                        A[m+j][m+j-N-1]=-1.0;
+                        if(j!=N && j!=0){
+                            A[m+j][m+j+1]=-1.0;
+                            A[m+j][m+j-1]=-1.0;
+                        }
+                        else if(j==0){
+                            A[m][m+1]=-2.0;
+                        }
+                        else{
+                            A[m+N][m+N-1]=-2.0;
+                        }
                     }
                 }
             }
-            A[0][0]=2.0;
-            A[N][N]=2.0;
             //------------------------------------------------------------------------------------------
             // to be completed
-            /*for(int i=0; i<(N-1)*(N-1); ++i){
-                for(int j=0; j<(N-1)*(N-1)-1; ++j){
+            for(int i=0; i<(N+1)*(N+1); ++i){
+                for(int j=0; j<(N+1)*(N+1); ++j){
                     cout<<A[i][j]<<" ";
                 }
-                cout<<A[i][(N-1)*(N-1)-1]<<endl;
-            }*/
+                cout<<endl;
+            }
             return A;
         }
     }
@@ -83,8 +115,9 @@ private:
 
     void solve(const Function &g){
         vector<double> matrix=convert();
+        int n=0;
         if(BC==BoundaryCondition::Dirichlet){
-            int n=(N-1)*(N-1);
+            n=(N-1)*(N-1);
             values[0]=values[0]+g(h, 0.0)+g(0.0, h);
             values[N-2]=values[N-2]+g(1.0,h)+g(1-h, 0.0);
             values[n-1]=values[n-1]+g(1.0, 1-h)+g(1-h,1.0);
@@ -97,7 +130,7 @@ private:
             }
         }
         else if(BC==BoundaryCondition::Neumann){
-            int n=(N+1)*(N+1);
+            n=(N+1)*(N+1);
             //-----------------------------------------------------------------
             
             for(int i=0; i<n;++i){
