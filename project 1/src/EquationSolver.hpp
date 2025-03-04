@@ -21,8 +21,8 @@ private:
     double h=0.0;
 
     vector<vector<double>> coeffMatrix(){
+        vector<vector<double>> A((N-1)*(N-1),vector<double>((N-1)*(N-1),0.0));
         if(BC==BoundaryCondition::Dirichlet){
-            vector<vector<double>> A((N-1)*(N-1),vector<double>((N-1)*(N-1),0.0));
             for(int k=0; k<N-1; ++k){
                 int m=k*(N-1);
                 for(int i=0; i<N-1; ++i){
@@ -37,12 +37,10 @@ private:
                     }
                 }
             }
-
-            return A;
         }
         else if(BC==BoundaryCondition::Neumann){
-            vector<vector<double>> A((N+1)*(N+1), vector<double>((N+1)*(N+1), 0.0));
-            for(int k=0; k<N+1; ++k){
+            //vector<vector<double>> A((N+1)*(N+1), vector<double>((N+1)*(N+1), 0.0));
+            /*for(int k=0; k<N+1; ++k){
                 int m=k*(N+1);
                 if(k==0){
                     A[m][m]=2.0;
@@ -89,16 +87,69 @@ private:
                         }
                     }
                 }
+            }*/
+            for(int k=0; k<N-1; ++k){
+                int m=k*(N-1);
+                if(k==0){
+                    A[m][m]=1.0;
+                    A[N-2+m][N-2+m]=4.0;
+                    A[m+N-2][m+N-3]=-2.0;
+                    A[m+N-2][m+2*N-3]=-2.0;
+                    for(int i=1; i<N-2; ++i){
+                        A[m+i][m+i]=8.0;
+                        A[m+i][m+i-1]=-3.0;
+                        A[m+i][m+i+1]=-3.0;
+                        A[m+i][m+i+N-1]=-2.0;
+                    }
+                }
+                else if(k==N-2){
+                    A[m][m]=4.0;
+                    A[N-2+m][N-2+m]=4.0;
+                    A[m][m+1]=-2.0;
+                    A[m+N-2][m+N-3]=-2.0;
+                    A[m][m-N+1]=-2.0;
+                    A[m+N-2][m-1]=-2.0;
+                    for(int i=1
+                        ; i<N-2; ++i){
+                        A[m+i][m+i]=8.0;
+                        A[m+i][m+i-1]=-3.0;
+                        A[m+i][m+i+1]=-3.0;
+                        A[m+i][m+i-N+1]=-2.0;
+                    }
+                }
+                else{
+                    for(int j=0; j<N-1; ++j){
+                        if(j!=N-2 && j!=0){
+                            A[m+j][m+j]=4.0;
+                            A[m+j][m+j+1]=-1.0;
+                            A[m+j][m+j-1]=-1.0;
+                            A[m+j][m+j+N-1]=-1.0;
+                            A[m+j][m+j-N+1]=-1.0;
+                        }
+                        else if(j==0){
+                            A[m][m]=8.0;
+                            A[m][m+1]=-2.0;
+                            A[m][m+N-1]=-3.0;
+                            A[m][m-N+1]=-3.0;
+                        }
+                        else{
+                            A[m+N-2][m+N-2]=8.0;
+                            A[m+N-2][m+N-3]=-2.0;
+                            A[m+N-2][m+2*N-3]=-3.0;
+                            A[m+N-2][m-1]=-3.0;
+                        }
+                    }
+                }
             }
             // to be completed
-            /*for(int i=0; i<(N+1)*(N+1); ++i){
-                for(int j=0; j<(N+1)*(N+1); ++j){
+            for(int i=0; i<(N-1)*(N-1); ++i){
+                for(int j=0; j<(N-1)*(N-1); ++j){
                     cout<<A[i][j]<<" ";
                 }
                 cout<<endl;
-            }*/
-            return A;
+            }
         }
+        return A;
     }
 
     vector<double> convert(){
@@ -114,9 +165,8 @@ private:
 
 
     void getcolumn(const Function &g){
-        int n=0;
+        int n=(N-1)*(N-1);
         if(BC==BoundaryCondition::Dirichlet){
-            n=(N-1)*(N-1);
             values[0]=values[0]+g(h, 0.0)+g(0.0, h);
             values[N-2]=values[N-2]+g(1.0,h)+g(1-h, 0.0);
             values[n-1]=values[n-1]+g(1.0, 1-h)+g(1-h,1.0);
@@ -129,24 +179,39 @@ private:
             }
         }
         else if(BC==BoundaryCondition::Neumann){
-            n=(N+1)*(N+1);
-            
+            double m=2*h;
+            values[0]=0.0;
+            values[n-1]=3*values[n-1]+m*g(1-h, 1.0)+m*g(1.0,1-h);
+            values[N-2]=3*values[N-2]+m*g(1-h,0.0)+m*g(1.0, h);
+            values[(N-2)*(N-1)]=3*values[(N-2)*(N-1)]+m*g(h,1.0)+m*g(0.0,1-h);
+            for(int i=0; i<N-1; ++i){
+                int k=(N-1)*i;
+                    if(i==0){
+                        for(int j=1; j<N-2; ++j){
+                            values[j]=3*values[j]+m*g((j+1)*h, 0.0);
+                        }
+                    }
+                    else if(i==N-2){
+                        for(int j=1; j<N-2; ++j){
+                            values[k+j]=3*values[k+j]+m*g((j+1)*h, 1.0);
+                        }
+                    }
+                    else{
+                        values[k]=3*values[k]+m*g(0.0, (i+1)*h);
+                        values[k+N-2]=3*values[k+N-2]+m*g(1.0, (i+1)*h);
+                    }
+            }
             //-----------------------------------------------------------------
             
             for(int i=0; i<n;++i){
                 cout<<values[i]<<"  ";
             }
+            cout<<endl;
         }
     }
     void solve(const Function &g){
         vector<double> matrix=convert();
-        int n=0;
-        if(BC==BoundaryCondition::Dirichlet){
-            n=(N-1)*(N-1);
-        }
-        else if(BC==BoundaryCondition::Neumann){
-            n=(N+1)*(N+1);
-        }
+        int n=(N-1)*(N-1);
         getcolumn(g);
         vector<int> ipiv(n);
         int info = LAPACKE_dgesv(LAPACK_COL_MAJOR, n, 1, matrix.data(), n, ipiv.data(), values.data(), n);
@@ -159,20 +224,10 @@ public:
     EquationSolver(const int &_N, const Function &f){  
         N=_N;
         h=1.0/N;
-        if(BC==BoundaryCondition::Dirichlet){
-            for(int j=1; j<N; ++j){
-                for(int i=1; i<N; ++i){
-                    values.push_back(f(i*h, j*h)*h*h);
-                    grids.push_back(vector{i*h,j*h});
-                }
-            }
-        }
-        else if(BC==BoundaryCondition::Neumann){
-            for(int j=0; j<=N; ++j){
-                for(int i=0; i<=N; ++i){
-                    values.push_back(f(i*h, j*h)*h*h);
-                    grids.push_back(vector{i*h, j*h});
-                }
+        for(int j=1; j<N; ++j){
+            for(int i=1; i<N; ++i){
+                values.push_back(f(i*h, j*h)*h*h);
+                grids.push_back(vector{i*h,j*h});
             }
         }
     }
