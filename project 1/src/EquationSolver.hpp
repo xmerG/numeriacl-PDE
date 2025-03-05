@@ -9,6 +9,7 @@
 #include <nlohmann/json.hpp>
 #include"Function.hpp"
 #include"BoundaryCondition.hpp"
+#include"Circle.hpp"
 #include"Domain.hpp"
 using namespace std;
 
@@ -19,6 +20,8 @@ private:
     vector<double> values; 
     int N=0;  //the number of grids in 1 dimension
     double h=0.0;
+    Circle c;
+    vector<bool> incircle;
 
     vector<vector<double>> coeffMatrix(){
         vector<vector<double>> A((N-1)*(N-1),vector<double>((N-1)*(N-1),0.0));
@@ -34,6 +37,24 @@ private:
                     if(k!=N-2){
                         A[m+i][m+i+N-1]=-1.0;
                         A[m+i+N-1][m+i]=-1.0;
+                    }
+                }
+            }
+            if(D==Domain::irregular){
+                for(int i=0; i<(N-1)*(N-1); ++i){
+                    if(incircle[i]==true){
+                        A[i][i]=1.0;
+                        A[i][i-1]=0.0;
+                        A[i][i+1]=0.0;
+                        if(i+N-1<N-1 && i+N-1>=0){
+                            A[i][i+N-1]=0.0;
+                        }
+                        if(i-N+1<N-1 && i-N+1>=0){
+                            A[i][i-N+1]=0.0;
+                        }
+                    }
+                    else{
+    //-------------------------------------------to be completed-----------------------------------------
                     }
                 }
             }
@@ -224,10 +245,31 @@ public:
     EquationSolver(const int &_N, const Function &f){  
         N=_N;
         h=1.0/N;
-        for(int j=1; j<N; ++j){
-            for(int i=1; i<N; ++i){
-                values.push_back(f(i*h, j*h)*h*h);
-                grids.push_back(vector{i*h,j*h});
+        if(D==Domain::regular){
+            for(int j=1; j<N; ++j){
+                for(int i=1; i<N; ++i){
+                    values.push_back(f(i*h, j*h)*h*h);
+                    grids.push_back(vector{i*h,j*h});
+                }
+            }
+        }
+        else{
+            cerr<<"not regular domain"<<endl;
+            return;
+        }
+    }
+
+    EquationSolver(const int &_N, const Function &f, const Circle &_c):N(_N), c(_c){  
+        h=1.0/N;
+        values.resize((N-1)*(N-1), 0.0);
+        incircle.resize((N-1)*(N-1), true);
+        for(int i=0; i<N-1; ++i){
+            int m=i*(N-1);
+            for(int j=0; j<N-1; ++j){
+                if(!c.inCircle(i*h, j*h)){
+                    values[i+j]=f(i*h, j*h);
+                    incircle[i+j]=false;
+                }
             }
         }
     }
@@ -304,6 +346,20 @@ public:
     }
     
 };
+
+/*template<BoundaryCondition BC>
+class EquationSolver<Domain::irregular, BC>:public EquationSolver<Domain::regular, BC>{
+private:
+    vector<vector<double>> grids;  // denote the 2 dimension grids
+    vector<double> values; 
+    int N=0;  //the number of grids in 1 dimension
+    double h=0.0;
+    Circle c;
+    vector<bool> incircle;
+public:
+
+    
+};*/
 
 
 #endif
