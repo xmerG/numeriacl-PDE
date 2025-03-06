@@ -40,24 +40,6 @@ private:
                     }
                 }
             }
-            if(D==Domain::irregular){
-                for(int i=0; i<(N-1)*(N-1); ++i){
-                    if(incircle[i]==true){
-                        A[i][i]=1.0;
-                        A[i][i-1]=0.0;
-                        A[i][i+1]=0.0;
-                        if(i+N-1<N-1 && i+N-1>=0){
-                            A[i][i+N-1]=0.0;
-                        }
-                        if(i-N+1<N-1 && i-N+1>=0){
-                            A[i][i-N+1]=0.0;
-                        }
-                    }
-                    else{
-    //-------------------------------------------to be completed-----------------------------------------
-                    }
-                }
-            }
         }
         else if(BC==BoundaryCondition::Neumann){
             //vector<vector<double>> A((N+1)*(N+1), vector<double>((N+1)*(N+1), 0.0));
@@ -173,7 +155,81 @@ private:
         return A;
     }
 
-    vector<double> convert(){
+    vector<vector<double>> coeffMatrix(const Function &g){
+        if(BC==BoundaryCondition::Neumann){
+            vector<vector<double>> A=this->coeffMatrix();
+            for(int k=0; k<N-1; ++k){
+                int m=k*(N-1);
+                for(int i=0; i<N-1; ++i){
+                    int index=i+m;
+                    double current_x=grids[index][0];
+                    double current_y=grids[index][1];
+                    if(incircle[index]==true){
+                        A.resize((N-1)*(N-1), 0.0);
+                        A[index]=1.0;
+                    }
+                    else{
+                        double r=c.get_radius();
+                        double x_inf=c.getX()-r;
+                        double x_sup=c.getX()+r;
+                        double y_inf=c.getY()-r;
+                        double y_sup=c.getY()+r;
+                        if(current_x<r && current_x>x_inf && current_y<r &&current_y>y_inf){
+                            double dx=c.x_distance_to_circle(current_x, current_y);
+                            double dy=c.x_distance_to_circle(current_x, current_y);
+                            double theta=dx/h;
+                            double alpha=dy/h;
+                            if(theta<1 && alpha<1){
+                                A[index][index]=2.0/alpha+2.0/theta;
+                                values[index]+=2.0*g((k+1)*h+dx, (i+1)*h)/(theta*(1+theta))+2.0*g((k+1)*h, (i+1)*h+dy)/(alpha(1+alpha));
+                                if(k!=0 && i!=0){
+                                    A[index][index-1]=-2.0/(1+theta);
+                                    A[index][index-N+1]=-2.0/(1+alpha);
+                                }
+                                else if(k!=0 && i==0){
+                                    A[index][index-N+1]=-2.0/(1+alpha);
+                                    values+=2.0*g(0.0, (k+1)*h)/(1+theta);
+                                }
+                                else if(k==0; i!=0){
+                                    A[index][index-1]=-2.0/(1+theta);
+                                    values+=2.0*g((i+1)*h, 0.0)/(1+alpha);
+                                }
+                            }
+                            else if(theta<1 && alpha>1){
+                                A[index][index]=2.0/theta+2.0;
+                                values[index]+=2.0*g((k+1)*h+dx, (i+1)*h)/(theta*(1+theta));
+                                if(k!=0 && i!=0){
+                                    A[index][index-1]=-2.0/(1+theta);
+                                    A[index][index-N+1]=-1.0;
+                                }
+                                else if(k!=0 && i==0){
+                                    A[index][index-N+1]=-1.0;
+                                    values+=2.0*g(0.0, (k+1)*h)/(1+theta);
+                                }
+                                else if(k==0; i!=0){
+                                    A[index][index-1]=-2.0/(1+theta);
+                                    values+=g((i+1)*h, 0.0);
+                                }
+                            }
+                            //----------------------------------------------to be completed----------------------
+                        }
+                        else if(current_x<r && current_x>x_inf && current_y>r &&current_y<y_sup){
+
+                        }
+                        else if(current_x>r && current_x<x_sup && current_y<r &&current_y>y_inf){
+
+                        }
+                        else if(current_x>r && current_x<x_sup && current_y>r &&current_y<y_sup){
+
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    vector<double> convert(const Function &g){
         vector<vector<double>> A=coeffMatrix();
         vector<double> a;
         for(int i=0; i<A.size(); ++i){
@@ -231,9 +287,11 @@ private:
         }
     }
     void solve(const Function &g){
-        vector<double> matrix=convert();
+        vector<double> matrix=convert(g);
         int n=(N-1)*(N-1);
-        getcolumn(g);
+        if(D==Domain::regular){
+            getcolumn(g);
+        }
         vector<int> ipiv(n);
         int info = LAPACKE_dgesv(LAPACK_COL_MAJOR, n, 1, matrix.data(), n, ipiv.data(), values.data(), n);
 
@@ -263,6 +321,7 @@ public:
         h=1.0/N;
         values.resize((N-1)*(N-1), 0.0);
         incircle.resize((N-1)*(N-1), true);
+        int count=0;
         for(int i=0; i<N-1; ++i){
             int m=i*(N-1);
             for(int j=0; j<N-1; ++j){
@@ -270,7 +329,14 @@ public:
                     values[i+j]=f(i*h, j*h);
                     incircle[i+j]=false;
                 }
+                else{
+                    count++;
+                }
             }
+        }
+        if(count<4){
+            cerr<<"invalid imput!"<<endl;
+            return;
         }
     }
 
@@ -360,6 +426,10 @@ public:
 
     
 };*/
+
+
+
+
 
 
 #endif

@@ -13,7 +13,17 @@ public:
     Circle(double x, double y);
     bool inCircle(double x, double y) const;
 
+    double get_radius() const;
+
+    double getX() const;
+
+    double getY()const;
+
     double distance(double x, double y) const;
+
+    double x_distance_to_circle(double x, double y) const;
+
+    double y_distance_to_circle(double x, double y) const;
 };
 
 

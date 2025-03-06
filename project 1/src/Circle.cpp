@@ -5,6 +5,18 @@ Circle::Circle(){}
 
 Circle::Circle(double x, double y):x0(x), y0(y){}
 
+double Circle::get_radius() const{
+    return radius;
+}
+
+double Circle::getX() const{
+    return x0;
+}
+
+double Circle::getY() const{
+    return y0;
+}
+
 bool Circle::inCircle(double x, double y) const{
     if(this->distance(x, y) > r){
         return false;
