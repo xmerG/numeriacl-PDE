@@ -1,6 +1,7 @@
 #include<iostream>
 #include"EquationSolver.hpp"
 #include<cmath>
+#include"Circle.hpp"
 using namespace std;
 
 const double b=cos(1.0);
@@ -61,16 +62,22 @@ class primitive:public Function{
 
 int main(){
     Laplacian f1;
-    //DirichletF g;
+    DirichletF g;
     primitive f0;
-    //EquationSolver<Domain::regular, BoundaryCondition::Dirichlet> solver1(4, f1);
-    //solver1.solveEquation(g);
-    //solver1.norm_error(f0);
-    //solver1.print("test.json", f0);
+    /*EquationSolver<Domain::regular, BoundaryCondition::Dirichlet> solver1(4, f1);
+    solver1.solveEquation(g);
+    solver1.norm_error(f0);
+    solver1.print("test.json", f0);
 
     NeumannF g1;
     EquationSolver<Domain::regular, BoundaryCondition::Neumann> solver2(4,f1);
     solver2.solveEquation(g1);
-    solver2.print("test.json", f0);
+    solver2.print("test.json", f0);*/
+
+    Circle *c = new Circle(0.5, 0.5, 0.2);
+    EquationSolver<Domain::irregular,BoundaryCondition::Dirichlet> solver3(5,f1,c);
+    solver3.solveEquation(f0);
+    solver3.print("test.json", f0);
+    delete c;
     return 0;
 }
