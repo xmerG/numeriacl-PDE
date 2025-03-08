@@ -20,7 +20,7 @@ private:
     vector<double> values; 
     int N=0;  //the number of grids in 1 dimension
     double h=0.0;
-    Circle c;
+    Circle *c=nullptr;
     vector<bool> incircle;
 
     vector<vector<double>> coeffMatrix(){
@@ -156,8 +156,8 @@ private:
     }
 
     vector<vector<double>> coeffMatrix(const Function &g){
-        if(BC==BoundaryCondition::Neumann){
-            vector<vector<double>> A=this->coeffMatrix();
+        vector<vector<double>> A=this->coeffMatrix();
+        if(BC==BoundaryCondition::Dirichlet){
             for(int k=0; k<N-1; ++k){
                 int m=k*(N-1);
                 for(int i=0; i<N-1; ++i){
@@ -165,72 +165,63 @@ private:
                     double current_x=grids[index][0];
                     double current_y=grids[index][1];
                     if(incircle[index]==true){
-                        A.resize((N-1)*(N-1), 0.0);
-                        A[index]=1.0;
+                        A[index].resize((N-1)*(N-1), 0.0);
+                        A[index][index]=1.0;
                     }
                     else{
-                        double r=c.get_radius();
-                        double x_inf=c.getX()-r;
-                        double x_sup=c.getX()+r;
-                        double y_inf=c.getY()-r;
-                        double y_sup=c.getY()+r;
-                        if(current_x<r && current_x>x_inf && current_y<r &&current_y>y_inf){
-                            double dx=c.x_distance_to_circle(current_x, current_y);
-                            double dy=c.x_distance_to_circle(current_x, current_y);
-                            double theta=dx/h;
-                            double alpha=dy/h;
-                            if(theta<1 && alpha<1){
-                                A[index][index]=2.0/alpha+2.0/theta;
-                                values[index]+=2.0*g((k+1)*h+dx, (i+1)*h)/(theta*(1+theta))+2.0*g((k+1)*h, (i+1)*h+dy)/(alpha(1+alpha));
-                                if(k!=0 && i!=0){
-                                    A[index][index-1]=-2.0/(1+theta);
-                                    A[index][index-N+1]=-2.0/(1+alpha);
-                                }
-                                else if(k!=0 && i==0){
-                                    A[index][index-N+1]=-2.0/(1+alpha);
-                                    values+=2.0*g(0.0, (k+1)*h)/(1+theta);
-                                }
-                                else if(k==0; i!=0){
-                                    A[index][index-1]=-2.0/(1+theta);
-                                    values+=2.0*g((i+1)*h, 0.0)/(1+alpha);
-                                }
+                        double dx=c->x_distance_to_circle(current_x, current_y);
+                        double dy=c->y_distance_to_circle(current_x, current_y);
+                        double alpha=1.0;
+                        double theta=1.0;
+                        int direction=1;
+                        if(abs(dx)<=h){
+                            if(dx<0){
+                                direction=-1;
                             }
-                            else if(theta<1 && alpha>1){
-                                A[index][index]=2.0/theta+2.0;
-                                values[index]+=2.0*g((k+1)*h+dx, (i+1)*h)/(theta*(1+theta));
-                                if(k!=0 && i!=0){
-                                    A[index][index-1]=-2.0/(1+theta);
-                                    A[index][index-N+1]=-1.0;
-                                }
-                                else if(k!=0 && i==0){
-                                    A[index][index-N+1]=-1.0;
-                                    values+=2.0*g(0.0, (k+1)*h)/(1+theta);
-                                }
-                                else if(k==0; i!=0){
-                                    A[index][index-1]=-2.0/(1+theta);
-                                    values+=g((i+1)*h, 0.0);
-                                }
+                            theta=abs(dx)/h;
+                            values[index]+=2.0*g((i+1)*h+dx, (k+1)*h)/(theta*(1+theta));
+                            if(i!=0 && i!=N-2){//左右两边都不是正方形边界
+                                A[index][index-direction]=-2.0/(1+theta);
                             }
-                            //----------------------------------------------to be completed----------------------
+                            else if(i==0){ //左边是正方形边界
+                                values[index]+=g(0.0, (k+1)*h);
+                            }
+                            else{
+                                values[index]+=g(1.0,(k+1)*h);
+                            }
                         }
-                        else if(current_x<r && current_x>x_inf && current_y>r &&current_y<y_sup){
-
+                        if(abs(dy)<=h){
+                            if(dy<0){
+                                direction=-1;
+                            }
+                            alpha=abs(dy)/h;
+                            values[index]+=2.0*g((i+1)*h, (k+1)*h+dy)/(alpha*(1+alpha));
+                            if(k!=0 && k!=N-2){
+                                A[index][index-(N-1)*direction]=-2.0/(1+alpha);
+                            }
+                            else if(k==0){//下面是正方形边界
+                                values[index]+=g((i+1)*h, 0.0);
+                            }
+                            else{
+                                values[index]+=g((i+1)*h, 1.0);
+                            }
                         }
-                        else if(current_x>r && current_x<x_sup && current_y<r &&current_y>y_inf){
-
-                        }
-                        else if(current_x>r && current_x<x_sup && current_y>r &&current_y<y_sup){
-
-                        }
+                        A[index][index]=2.0/alpha+2.0/theta;
                     }
                 }
             }
-
+            return A;
         }
     }
 
     vector<double> convert(const Function &g){
-        vector<vector<double>> A=coeffMatrix();
+        vector<vector<double>> A;
+        if(D==Domain::regular){
+            A=coeffMatrix();
+        }
+        else{
+            A=coeffMatrix(g);
+        }
         vector<double> a;
         for(int i=0; i<A.size(); ++i){
             for(int j=0; j<A.size(); ++j){
@@ -317,20 +308,19 @@ public:
         }
     }
 
-    EquationSolver(const int &_N, const Function &f, const Circle &_c):N(_N), c(_c){  
+    EquationSolver(const int &_N, const Function &f, Circle *_c):N(_N), c(_c){  
         h=1.0/N;
-        values.resize((N-1)*(N-1), 0.0);
-        incircle.resize((N-1)*(N-1), true);
         int count=0;
-        for(int i=0; i<N-1; ++i){
-            int m=i*(N-1);
-            for(int j=0; j<N-1; ++j){
-                if(!c.inCircle(i*h, j*h)){
-                    values[i+j]=f(i*h, j*h);
-                    incircle[i+j]=false;
+        for(int j=1; j<N; ++j){
+            for(int i=1; i<N; ++i){
+                grids.push_back(vector{i*h,j*h});
+                if(c->inCircle(i*h, j*h)){
+                    values.push_back(0.0);
+                    incircle.push_back(true);
                 }
                 else{
-                    count++;
+                    values.push_back(f(i*h, j*h)*h*h);
+                    incircle.push_back(false);
                 }
             }
         }
@@ -412,20 +402,6 @@ public:
     }
     
 };
-
-/*template<BoundaryCondition BC>
-class EquationSolver<Domain::irregular, BC>:public EquationSolver<Domain::regular, BC>{
-private:
-    vector<vector<double>> grids;  // denote the 2 dimension grids
-    vector<double> values; 
-    int N=0;  //the number of grids in 1 dimension
-    double h=0.0;
-    Circle c;
-    vector<bool> incircle;
-public:
-
-    
-};*/
 
 
 
