@@ -7,10 +7,10 @@ class Circle{
 private:
     double x0=0.0;
     double y0=0.0;
-    double radius-0.0;
+    double radius=0.0;
 public:
     Circle();
-    Circle(double x, double y);
+    Circle(double x, double y, double r);
     bool inCircle(double x, double y) const;
 
     double get_radius() const;
@@ -21,9 +21,9 @@ public:
 
     double distance(double x, double y) const;
 
-    double x_distance_to_circle(double x, double y) const;
+    double x_distance_to_circle(double x, double y) const;  //有向距离
 
-    double y_distance_to_circle(double x, double y) const;
+    double y_distance_to_circle(double x, double y) const; //有向距离
 };
 
 
