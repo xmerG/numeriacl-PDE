@@ -36,7 +36,7 @@ double Circle::x_distance_to_circle(double x, double y) const{
         return -1;
     }
     else if(y>=y0-radius && y<=y0+radius){
-        if(x<radius){
+        if(x<x0){
             return x0-x-sqrt(pow(radius,2)-pow(y-y0, 2));
         }
         else{
@@ -54,7 +54,7 @@ double Circle::y_distance_to_circle(double x, double y) const{
         return -1;
     }
     else if(x>=x0-radius && x<=x0+radius){
-        if(y<radius){
+        if(y<y0){
             return y0-y-sqrt(pow(radius, 2)-pow(x-x0, 2));
         }
         else{
