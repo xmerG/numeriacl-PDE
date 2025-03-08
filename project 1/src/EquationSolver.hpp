@@ -165,7 +165,7 @@ private:
                     double current_x=grids[index][0];
                     double current_y=grids[index][1];
                     if(incircle[index]==true){
-                        A[index].resize((N-1)*(N-1), 0.0);
+                        A[index]=vector<double>((N-1)*(N-1), 0.0);
                         A[index][index]=1.0;
                     }
                     else{
@@ -180,14 +180,23 @@ private:
                             }
                             theta=abs(dx)/h;
                             values[index]+=2.0*g((i+1)*h+dx, (k+1)*h)/(theta*(1+theta));
+                            A[index][index+direction]=0.0;
                             if(i!=0 && i!=N-2){//左右两边都不是正方形边界
                                 A[index][index-direction]=-2.0/(1+theta);
                             }
                             else if(i==0){ //左边是正方形边界
-                                values[index]+=g(0.0, (k+1)*h);
+                                values[index]+=2.0*g(0.0, (k+1)*h)/(1+theta);
                             }
                             else{
-                                values[index]+=g(1.0,(k+1)*h);
+                                values[index]+=2.0*g(1.0,(k+1)*h)/(1+theta);
+                            }
+                        }
+                        else{
+                            if(i==0){
+                                values[index]+=g(0.0, (k+1)*h);
+                            }
+                            else if(i==N-2){
+                                values[index]+=g(1.0, (k+1)*h);
                             }
                         }
                         if(abs(dy)<=h){
@@ -196,13 +205,22 @@ private:
                             }
                             alpha=abs(dy)/h;
                             values[index]+=2.0*g((i+1)*h, (k+1)*h+dy)/(alpha*(1+alpha));
+                            A[index][index+(N-1)*direction]=0.0;
                             if(k!=0 && k!=N-2){
                                 A[index][index-(N-1)*direction]=-2.0/(1+alpha);
                             }
                             else if(k==0){//下面是正方形边界
-                                values[index]+=g((i+1)*h, 0.0);
+                                values[index]+=2.0*g((i+1)*h, 0.0)/(1+alpha);
                             }
                             else{
+                                values[index]+=2.0*g((i+1)*h, 1.0)/(1+alpha);
+                            }
+                        }
+                        else{
+                            if(k==0){
+                                values[index]+=g((i+1)*h, 0.0);
+                            }
+                            else if(k==N-2){
                                 values[index]+=g((i+1)*h, 1.0);
                             }
                         }
@@ -317,6 +335,7 @@ public:
                 if(c->inCircle(i*h, j*h)){
                     values.push_back(0.0);
                     incircle.push_back(true);
+                    count++;
                 }
                 else{
                     values.push_back(f(i*h, j*h)*h*h);
