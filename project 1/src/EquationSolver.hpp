@@ -157,23 +157,23 @@ private:
 
     vector<vector<double>> coeffMatrix(const Function &g){
         vector<vector<double>> A=this->coeffMatrix();
-        if(BC==BoundaryCondition::Dirichlet){
-            for(int k=0; k<N-1; ++k){
-                int m=k*(N-1);
-                for(int i=0; i<N-1; ++i){
-                    int index=i+m;
-                    double current_x=grids[index][0];
-                    double current_y=grids[index][1];
-                    if(incircle[index]==true){
-                        A[index]=vector<double>((N-1)*(N-1), 0.0);
-                        A[index][index]=1.0;
-                    }
-                    else{
-                        double dx=c->x_distance_to_circle(current_x, current_y);
-                        double dy=c->y_distance_to_circle(current_x, current_y);
-                        double alpha=1.0;
-                        double theta=1.0;
-                        int direction=1;
+        for(int k=0; k<N-1; ++k){
+            int m=k*(N-1);
+            for(int i=0; i<N-1; ++i){
+                int index=i+m;
+                double current_x=grids[index][0];
+                double current_y=grids[index][1];
+                if(incircle[index]==true){
+                    A[index]=vector<double>((N-1)*(N-1), 0.0);
+                    A[index][index]=1.0;
+                }
+                else{
+                    double dx=c->x_distance_to_circle(current_x, current_y);
+                    double dy=c->y_distance_to_circle(current_x, current_y);
+                    double alpha=1.0;
+                    double theta=1.0;
+                    int direction=1;
+                    if(BC==BoundaryCondition::Dirichlet){
                         if(abs(dx)<=h){
                             if(dx<0){
                                 direction=-1;
@@ -226,10 +226,14 @@ private:
                         }
                         A[index][index]=2.0/alpha+2.0/theta;
                     }
+
+                    else if(BC==BoundaryCondition::Neumann){
+                        //------------------------------------------------------------------
+                    }
                 }
             }
-            return A;
         }
+        return A;
     }
 
     vector<double> convert(const Function &g){

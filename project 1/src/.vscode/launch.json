@@ -1,31 +1,31 @@
 {
+    "version": "0.2.0",
     "configurations": [
         {
-            "name": "C/C++: g++ build and debug active file",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "name": "Debug test.cpp", // 调试配置名称
+            "type": "cppdbg", // 调试器类型
+            "request": "launch", // 启动调试
+            "program": "${workspaceFolder}/test", // 可执行文件路径
+            "args": [], // 命令行参数
+            "stopAtEntry": false, // 是否在入口处停止
+            "cwd": "${workspaceFolder}", // 工作目录
             "environment": [],
             "externalConsole": false,
-            "MIMode": "gdb",
+            "MIMode": "gdb", // 使用 GDB 调试器
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
-                },
-                {
-                    "description": "Set Disassembly Flavor to Intel",
-                    "text": "-gdb-set disassembly-flavor intel",
-                    "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "C/C++: g++ build active file",
-            "miDebuggerPath": "/usr/bin/gdb"
+            "preLaunchTask": "Build test.cpp with Circle.cpp", // 调试前执行的任务
+            "miDebuggerPath": "/usr/bin/gdb", // GDB 路径
+            "logging": {
+                "trace": true,
+                "traceResponse": true,
+                "engineLogging": true
+            }
         }
-    ],
-    "version": "2.0.0"
+    ]
 }

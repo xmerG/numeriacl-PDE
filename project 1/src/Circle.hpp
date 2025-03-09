@@ -24,6 +24,10 @@ public:
     double x_distance_to_circle(double x, double y) const;  //有向距离
 
     double y_distance_to_circle(double x, double y) const; //有向距离
+
+    double angle_x_direction(double x) const; 
+
+    double angle_y_direction(double y) const;
 };
 
 

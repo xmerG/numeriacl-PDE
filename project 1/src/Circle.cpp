@@ -65,3 +65,11 @@ double Circle::y_distance_to_circle(double x, double y) const{
         return 2.0;
     }
 }
+
+double Circle::angle_x_direction(double x) const{
+    return abs(x-x0)/radius;
+}
+
+double Circle::angle_y_direction(double y) const{
+    return abs(y-y0)/radius;
+}
