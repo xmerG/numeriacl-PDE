@@ -42,55 +42,6 @@ private:
             }
         }
         else if(BC==BoundaryCondition::Neumann){
-            //vector<vector<double>> A((N+1)*(N+1), vector<double>((N+1)*(N+1), 0.0));
-            /*for(int k=0; k<N+1; ++k){
-                int m=k*(N+1);
-                if(k==0){
-                    A[m][m]=2.0;
-                    A[N+m][N+m]=2.0;
-                    A[m][m+1]=-1.0;
-                    A[m+N][m+N-1]=-1.0;
-                    A[m][m+N+1]=-1.0;
-                    A[m+N][m+2*N+1]=-1.0;
-                    for(int i=1; i<N; ++i){
-                        A[m+i][m+i]=4.0;
-                        A[m+i][m+i-1]=-1.0;
-                        A[m+i][m+i+1]=-1.0;
-                        A[m+i][m+i+N+1]=-2.0;
-                    }
-                }
-                else if(k==N){
-                    A[m][m]=2.0;
-                    A[N+m][N+m]=2.0;
-                    A[m][m+1]=-1.0;
-                    A[m+N][m+N-1]=-1.0;
-                    A[m][m-N-1]=-1.0;
-                    A[m+N][m-1]=-1.0;
-                    for(int i=0; i<N; ++i){
-                        A[m+i][m+i]=4.0;
-                        A[m+i][m+i-1]=-1.0;
-                        A[m+i][m+i+1]=-1.0;
-                        A[m+i][m+i-N-1]=-2.0;
-                    }
-                }
-                else{
-                    for(int j=0; j<N+1; ++j){
-                        A[m+j][m+j]=4.0;
-                        A[m+j][m+j+N+1]=-1.0;
-                        A[m+j][m+j-N-1]=-1.0;
-                        if(j!=N && j!=0){
-                            A[m+j][m+j+1]=-1.0;
-                            A[m+j][m+j-1]=-1.0;
-                        }
-                        else if(j==0){
-                            A[m][m+1]=-2.0;
-                        }
-                        else{
-                            A[m+N][m+N-1]=-2.0;
-                        }
-                    }
-                }
-            }*/
             for(int k=0; k<N-1; ++k){
                 int m=k*(N-1);
                 if(k==0){
@@ -172,9 +123,9 @@ private:
                     double dy=c->y_distance_to_circle(current_x, current_y);
                     double alpha=1.0;
                     double theta=1.0;
-                    int direction=1;
                     if(BC==BoundaryCondition::Dirichlet){
                         if(abs(dx)<=h){
+                            int direction=1;
                             if(dx<0){
                                 direction=-1;
                             }
@@ -200,6 +151,7 @@ private:
                             }
                         }
                         if(abs(dy)<=h){
+                            int direction=1;
                             if(dy<0){
                                 direction=-1;
                             }
@@ -226,23 +178,130 @@ private:
                         }
                         A[index][index]=2.0/alpha+2.0/theta;
                     }
-
-                    else if(BC==BoundaryCondition::Neumann){
-                        //------------------------------------------------------------------
-                    }
                 }
             }
         }
         return A;
     }
 
-    vector<double> convert(const Function &g){
+    vector<vector<double>> coeff_Matrix(const Function &g, const vector<double> &Diri){
+        vector<vector<double>> A((N+1)*(N+1),vector<double>((N+1)*(N+1),0.0));
+        for(int k=0; k<N+1; ++k){
+            int m=k*(N+1);
+            for(int i=0; i<=N; ++i){
+                int index=m+i;
+                if(incircle[index]){
+                    A[index][index]=1.0;
+                    values[index]=0.0;
+                }
+                else{
+                    if(k==0){
+                        if(i!=0 && i!=N){
+                            A[index][index+N+1]=-2.0;
+                            A[index][index-1]=-1.0;
+                            A[index][index+1]=-1.0;
+                            values[index]+=2*h*g(i*h, 0.0);
+                            A[index][index]=4.0;
+                        }
+                        else{
+                            A[index][index]=1.0;
+                        }
+
+                    }
+                    else if(k==N){
+                        if(i!=0 &&i!=N){
+                            A[index][index-1]=-1.0;
+                            A[index][index+1]=-1.0;
+                            A[index][index-N-1]=-2.0;
+                            values[index]+=2*h*g(i*h, 1.0);
+                            A[index][index]=4.0;
+                        }
+                        else{
+                            A[index][index]=1.0;
+                        }
+                    }
+                    else{
+                        if(i==0){
+                            A[index][index+1]=-2.0;
+                            A[index][index]=4.0;
+                            A[index][index+N+1]=-1.0;
+                            A[index][index-N-1]=-1.0;
+                            values[index]+=2*h*g(0.0,k*h);
+                        }
+                        else if(i==N){
+                            A[index][index-1]=-2.0;
+                            A[index][index]=4.0;
+                            A[index][index+N+1]=-1.0;
+                            A[index][index-N-1]=-1.0;
+                            values[index]+=2*h*g(1.0, k*h);
+                        }
+                        else{
+                            double current_x=grids[index][0];
+                            double current_y=grids[index][1];
+                            double dx=c->x_distance_to_circle(current_x, current_y);
+                            double dy=c->y_distance_to_circle(current_x, current_y);
+                            double alpha=1.0;
+                            double theta=1.0;
+                            if(abs(dx)<h){
+                                theta=abs(dx)/h;
+                                A[index][index]+=-2.0/(2*theta-1);
+                                int direction=1;
+                                if(dx<0){
+                                    direction=-1;
+                                }
+                                A[index][index-direction]=2.0/(2*theta-1);
+                                values[index]+=2.0*h*g(i*h+dx, k*h)*c->angle_x_direction(i*h+dx)/(2*theta-1);
+                            }
+                            else{
+                                A[index][index]+=2.0;
+                                A[index][index+1]=-1.0;
+                                A[index][index-1]=-1.0;
+                            }
+                            if(abs(dy)<h){
+                                alpha=abs(dy)/h;
+                                int direction=1;
+                                A[index][index]+=-2.0/(2*alpha-1);
+                                if(dy<0){
+                                    direction=-1;
+                                }
+                                A[index][index-direction*(N+1)]=2.0/(2*alpha-1);
+                                values[index]+=2.0*h*g(i*h, k*h+dy)*c->angle_y_direction(k*h+dy)/(2*alpha-1);
+                            }
+                            else{
+                                A[index][index]+=2.0;
+                                A[index][index+N+1]=-1.0;
+                                A[index][index-N-1]=-1.0;
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        values[0]=Diri[0];
+        values[N]=Diri[1];
+        values[(N+1)*N]=Diri[2];
+        values[(N+1)*(N+1)-1]=Diri[3];
+        for(int i=0; i<(N+1)*(N+1); ++i){
+            cout<<values[i]<<" ";
+        }
+        cout<<endl;
+        return A;
+    }
+
+    vector<double> convert(const Function &g, const vector<double> &Diri=vector<double>{}){
         vector<vector<double>> A;
         if(D==Domain::regular){
             A=coeffMatrix();
         }
         else{
-            A=coeffMatrix(g);
+            if(BC==BoundaryCondition::Dirichlet){
+                A=coeffMatrix(g);
+            }
+            else if(BC==BoundaryCondition::Neumann){
+                A=this->coeff_Matrix(g, Diri);
+            }
+
         }
         vector<double> a;
         for(int i=0; i<A.size(); ++i){
@@ -299,9 +358,12 @@ private:
             cout<<endl;
         }
     }
-    void solve(const Function &g){
-        vector<double> matrix=convert(g);
+    void solve(const Function &g,const vector<double> &Diri=vector<double>{}){
+        vector<double> matrix=convert(g,Diri);
         int n=(N-1)*(N-1);
+        if(D==Domain::irregular, BC==BoundaryCondition::Neumann){
+            n=(N+1)*(N+1);
+        }
         if(D==Domain::regular){
             getcolumn(g);
         }
@@ -320,7 +382,7 @@ public:
             for(int j=1; j<N; ++j){
                 for(int i=1; i<N; ++i){
                     values.push_back(f(i*h, j*h)*h*h);
-                    grids.push_back(vector{i*h,j*h});
+                    grids.push_back(vector<double>{i*h,j*h});
                 }
             }
         }
@@ -329,21 +391,38 @@ public:
             return;
         }
     }
-
     EquationSolver(const int &_N, const Function &f, Circle *_c):N(_N), c(_c){  
         h=1.0/N;
         int count=0;
-        for(int j=1; j<N; ++j){
-            for(int i=1; i<N; ++i){
-                grids.push_back(vector{i*h,j*h});
-                if(c->inCircle(i*h, j*h)){
-                    values.push_back(0.0);
-                    incircle.push_back(true);
-                    count++;
+        if(BC==BoundaryCondition::Dirichlet){
+            for(int j=1; j<N; ++j){
+                for(int i=1; i<N; ++i){
+                    grids.push_back(vector<double>{i*h,j*h});
+                    if(c->inCircle(i*h, j*h)){
+                        values.push_back(0.0);
+                        incircle.push_back(true);
+                        count++;
+                    }
+                    else{
+                        values.push_back(f(i*h, j*h)*h*h);
+                        incircle.push_back(false);
+                    }
                 }
-                else{
-                    values.push_back(f(i*h, j*h)*h*h);
-                    incircle.push_back(false);
+            }
+        }
+        else if(BC==BoundaryCondition::Neumann){
+            for(int i=0; i<=N; ++i){
+                for(int j=0; j<=N; ++j){
+                    grids.push_back(vector<double>{j*h, i*h});
+                    if(c->inCircle(j*h, i*h)){
+                        values.push_back(0.0);
+                        incircle.push_back(true);
+                        count++;
+                    }
+                    else{
+                        values.push_back(h*h*f(j*h, i*h));
+                        incircle.push_back(false);
+                    }
                 }
             }
         }
@@ -392,8 +471,8 @@ public:
 
     }
 
-    void solveEquation(const Function &g){
-        solve(g);
+    void solveEquation(const Function &g,const vector<double> &Diri=vector<double>{}){
+        solve(g, Diri);
     }
 
     void print(const string &filename, const Function &f){

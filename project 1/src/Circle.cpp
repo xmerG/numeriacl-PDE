@@ -26,6 +26,15 @@ bool Circle::inCircle(double x, double y) const{
     }
 }
 
+bool Circle::onCircle(double x, double y) const{
+    if(abs(this->distance(x,y)-radius)<0.000001){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 double Circle::distance(double x, double y) const{
     return sqrt(pow(x0-x, 2) + pow(y0-y, 2));
 }

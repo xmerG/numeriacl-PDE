@@ -13,6 +13,8 @@ public:
     Circle(double x, double y, double r);
     bool inCircle(double x, double y) const;
 
+    bool onCircle(double x, double y) const;
+
     double get_radius() const;
 
     double getX() const;
