@@ -23,25 +23,26 @@ private:
     Circle *c=nullptr;
     vector<bool> incircle;
 
-    vector<vector<double>> coeffMatrix(){
+    vector<vector<double>> precondition(){
         vector<vector<double>> A((N-1)*(N-1),vector<double>((N-1)*(N-1),0.0));
-        if(BC==BoundaryCondition::Dirichlet){
-            for(int k=0; k<N-1; ++k){
-                int m=k*(N-1);
-                for(int i=0; i<N-1; ++i){
-                    A[i+m][i+m]=4.0;
-                    if(i!=N-2){
-                        A[i+m][i+m+1]=-1.0;
-                        A[i+m+1][i+m]=-1.0; 
-                    }
-                    if(k!=N-2){
-                        A[m+i][m+i+N-1]=-1.0;
-                        A[m+i+N-1][m+i]=-1.0;
-                    }
-                }
+        for(int k=1; k<N-2; ++k){
+            int m=k*(N-1);
+            for(int i=1; i<N-2; ++i){
+                int index=m+i;
+                A[index][index]=4.0;
+                A[index][index-1]=-1.0;
+                A[index][index+1]=-1.0;
+                A[index][index+N-1]=-1.0;
+                A[index][index-N+1]=-1.0;
             }
         }
-        else if(BC==BoundaryCondition::Neumann){
+        return A;
+    }
+
+
+    vector<vector<double>> coeffMatrix(const vector<int> & mixed){
+        vector<vector<double>> A((N-1)*(N-1),vector<double>((N-1)*(N-1),0.0));
+        if(BC==BoundaryCondition::Neumann){
             for(int k=0; k<N-1; ++k){
                 int m=k*(N-1);
                 if(k==0){
@@ -63,8 +64,7 @@ private:
                     A[m+N-2][m+N-3]=-2.0;
                     A[m][m-N+1]=-2.0;
                     A[m+N-2][m-1]=-2.0;
-                    for(int i=1
-                        ; i<N-2; ++i){
+                    for(int i=1; i<N-2; ++i){
                         A[m+i][m+i]=8.0;
                         A[m+i][m+i-1]=-3.0;
                         A[m+i][m+i+1]=-3.0;
@@ -96,18 +96,130 @@ private:
                 }
             }
             // to be completed
+        }
+        else{
+            A=this->precondition();
+            for(int i=0; i<N-1; ++i){
+                bool p=true;
+                if(i==0 || i==N-2){
+                    p=false;
+                }
+                int index=i*(N-1);
+                if(mixed[0]==0){
+                    A[i][i+N-1]=-1.0;
+                    if(p){
+                        A[i][i]=4.0;
+                        A[i][i-1]=-1.0;
+                        A[i][i+1]=-1.0;
+                    }
+                    else{
+                        A[i][i]+=2.0;
+                    }
+                }
+                else{
+                    if(p){
+                        A[i][i]=8.0;
+                        A[i][i+1]=-3.0;
+                        A[i][i-1]=-3.0;
+                        A[i][i+N-1]=-2.0;
+                    }
+                    else{
+                        A[i][i]+=2.0/3.0;
+                        A[i][i+N-1]=-2.0/3.0;
+                    }
+                }
+
+                if(mixed[1]==0){
+                    A[index][index+1]=-1.0;
+                    if(p){
+                        A[index][index]=4.0;
+                        A[index][index+N-1]=-1.0;
+                        A[index][index-N+1]=-1.0;
+                    }
+                    else{
+                        A[index][index]+=2.0;
+                        
+                    }
+                }
+                else{
+                    if(p){
+                        A[index][index]=8.0;
+                        A[index][index+1]=-2.0;
+                        A[index][index+N-1]=-3.0;
+                        A[index][index-N+1]=-3.0;
+                    }
+                    else{
+                        A[index][index]+=2.0/3.0;
+                        A[index][index+1]=-2.0/3.0;
+                    }
+                }
+                index+=N-2;
+                if(mixed[2]==0){
+                    A[index][index-1]=-1.0;
+                    if(p){
+                        A[index][index]=4.0;
+                        A[index][index+N-1]=-1.0;
+                        A[index][index-N+1]=-1.0;
+                    }
+                    else{
+                        A[index][index]+=2.0;
+                    }
+                }
+                else{
+                    if(p){
+                        A[index][index]=8.0;
+                        A[index][index-1]=-2.0;
+                        A[index][index+N-1]=-3.0;
+                        A[index][index-N+1]=-3.0;
+                    }
+                    else{
+                        A[index][index]+=2.0/3.0;
+                        A[index][index-1]=-2.0/3.0;
+                    }
+                }
+                index=(N-1)*(N-2)+i;
+                if(mixed[3]==0){
+                    A[index][index-N+1]=-1.0;
+                    if(p){
+                        A[index][index]=4.0;
+                        A[index][index+1]=-1.0;
+                        A[index][index-1]=-1.0;
+                    }
+                    else{
+                        A[index][index]+=2.0;
+                    }
+                }
+                else{
+                    if(p){
+                        A[index][index]=8.0;
+                        A[index][index-N+1]=-2.0;
+                        A[index][index-1]=-3.0;
+                        A[index][index+1]=-3.0;
+                    }
+                    else{
+                        A[index][index]+=2.0/3.0;
+                        A[index][index-N+1]=-2.0/3.0;
+                    }
+                }
+            }
+            cout<<"------------------------------------"<<endl;
             for(int i=0; i<(N-1)*(N-1); ++i){
                 for(int j=0; j<(N-1)*(N-1); ++j){
                     cout<<A[i][j]<<" ";
                 }
                 cout<<endl;
             }
+            cout<<"------------------------------------"<<endl;
+            /*if(BC==BoundaryCondition::Neumann){
+                A[0]=vector<double>((N-1)*(N-1), 0.0);
+                A[0][0]=1.0;
+            }*/
         }
         return A;
     }
 
     vector<vector<double>> coeffMatrix(const Function &g){
-        vector<vector<double>> A=this->coeffMatrix();
+        vector<vector<double>> A=this->coeffMatrix(vector<int>{0,0,0,0});
         for(int k=0; k<N-1; ++k){
             int m=k*(N-1);
             for(int i=0; i<N-1; ++i){
@@ -178,13 +290,16 @@ private:
                         }
                         A[index][index]=2.0/alpha+2.0/theta;
                     }
+                    else if(BC==BoundaryCondition::Neumann){
+
+                    }
                 }
             }
         }
         return A;
     }
 
-    vector<vector<double>> coeff_Matrix(const Function &g, const vector<double> &Diri){
+    /*vector<vector<double>> coeff_Matrix(const Function &g, const vector<double> &Diri){
         vector<vector<double>> A((N+1)*(N+1),vector<double>((N+1)*(N+1),0.0));
         for(int k=0; k<N+1; ++k){
             int m=k*(N+1);
@@ -287,21 +402,17 @@ private:
         }
         cout<<endl;
         return A;
-    }
+    }*/
 
-    vector<double> convert(const Function &g, const vector<double> &Diri=vector<double>{}){
+    vector<double> convert(const Function &g, const vector<int> &mixed){
         vector<vector<double>> A;
         if(D==Domain::regular){
-            A=coeffMatrix();
+            A=coeffMatrix(mixed);
         }
         else{
             if(BC==BoundaryCondition::Dirichlet){
                 A=coeffMatrix(g);
             }
-            else if(BC==BoundaryCondition::Neumann){
-                A=this->coeff_Matrix(g, Diri);
-            }
-
         }
         vector<double> a;
         for(int i=0; i<A.size(); ++i){
@@ -313,25 +424,13 @@ private:
     }
 
 
-    void getcolumn(const Function &g){
+    void getcolumn(const Function &g, const vector<int> &mixed){
         int n=(N-1)*(N-1);
-        if(BC==BoundaryCondition::Dirichlet){
-            values[0]=values[0]+g(h, 0.0)+g(0.0, h);
-            values[N-2]=values[N-2]+g(1.0,h)+g(1-h, 0.0);
-            values[n-1]=values[n-1]+g(1.0, 1-h)+g(1-h,1.0);
-            values[(N-2)*(N-1)]=values[(N-2)*(N-1)]+g(0.0,1-h)+g(h,1.0);
-            for(int i=1; i<N-2; ++i){
-                values[i]+=g((i+1)*h, 0.0);
-                values[(N-1)*i]+=g(0.0, (i+1)*h);
-                values[(N-1)*(i+1)-1]+=g(1.0, (i+1)*h);
-                values[(N-1)*(N-2)+i]+=g((i+1)*h, 1.0);
-            }
-        }
-        else if(BC==BoundaryCondition::Neumann){
+        if(BC==BoundaryCondition::Neumann){
             double m=2*h;
             values[0]=0.0;
             values[n-1]=3*values[n-1]+m*g(1-h, 1.0)+m*g(1.0,1-h);
-            values[N-2]=3*values[N-2]+m*g(1-h,0.0)+m*g(1.0, h);
+            values[N-2]=3*values[N-2]+m*g(1-h,0.0)+m*g(1.0, h);  
             values[(N-2)*(N-1)]=3*values[(N-2)*(N-1)]+m*g(h,1.0)+m*g(0.0,1-h);
             for(int i=0; i<N-1; ++i){
                 int k=(N-1)*i;
@@ -350,22 +449,82 @@ private:
                         values[k+N-2]=3*values[k+N-2]+m*g(1.0, (i+1)*h);
                     }
             }
-            //-----------------------------------------------------------------
-            
+            for(int i=0; i<n;++i){
+                cout<<values[i]<<"  ";
+            }
+            cout<<endl;
+        }
+        else{
+            if(mixed[0]==0){
+                for(int i=0; i<N-1; ++i){
+                    values[i]+=g((i+1)*h, 0.0);
+                }
+            }
+            else{
+                double m=2.0*h;
+                for(int i=1; i<N-2; ++i){
+                    values[i]=3*values[i]+m*g((i+1)*h,0.0);
+                }
+                values[0]+=m*g(h,0.0)/3.0;
+                values[N-2]+=m*g(1-h,0.0)/3.0;
+            }
+
+            if(mixed[1]==0){
+                for(int i=0; i<N-1; ++i){
+                    values[(N-1)*i]+=g(0.0, (i+1)*h);
+                }
+            }
+            else{
+                double m=2.0*h;
+                for(int i=1; i<N-2; ++i){
+                    values[i*(N-1)]=3*values[i*(N-1)]+m*g(0.0, (i+1)*h);
+                }
+                values[0]+=m*g(0.0, h)/3.0;
+                values[(N-2)*(N-1)]=g(0.0, 1.0-h);
+            }
+
+            if(mixed[2]==0){
+                for(int i=0; i<N-1; ++i){
+                    values[(i+1)*(N-1)-1]+=g(1.0, (i+1)*h);
+                }
+            }
+            else{
+                double m=2.0*h;
+                for(int i=1; i<N-2; ++i){
+                    values[(i+1)*(N-1)-1]=3*values[(i+1)*(N-1)-1]+m*g(1.0, (i+1)*h);
+                }
+                values[N-2]+=g(1.0,h)*m/3.0;
+                values[N*N-2*N]+=g(1.0,1.0-h)*m/3.0;
+            }
+
+            if(mixed[3]==0){
+                for(int i=0; i<N-1; ++i){
+                    values[(N-1)*(N-2)+i]+=g((i+1)*h, 1.0);
+                }
+            }
+            else{
+                double m=2*h;
+                for(int i=1; i<N-2; ++i){
+                    values[(N-1)*(N-2)+i]=3*values[(N-1)*(N-2)+i]+m*g((i+1)*h, 1.0);
+                }
+                values[(N-1)*(N-2)]+=m*g(h,1.0)/3.0;
+                values[N*N-2*N]+=m*g(1.0-h,1.0)/3.0;
+            }
+            /*if(BC==BoundaryCondition::Neumann){
+                values[0]=0.0;
+            }*/
+           cout<<"---------------------------"<<endl;
             for(int i=0; i<n;++i){
                 cout<<values[i]<<"  ";
             }
             cout<<endl;
         }
     }
-    void solve(const Function &g,const vector<double> &Diri=vector<double>{}){
-        vector<double> matrix=convert(g,Diri);
+    void solve(const Function &g, const vector<int> &mixed){
+        vector<double> matrix=convert(g,mixed);
         int n=(N-1)*(N-1);
-        if(D==Domain::irregular, BC==BoundaryCondition::Neumann){
-            n=(N+1)*(N+1);
-        }
         if(D==Domain::regular){
-            getcolumn(g);
+            getcolumn(g,mixed);
         }
         vector<int> ipiv(n);
         int info = LAPACKE_dgesv(LAPACK_COL_MAJOR, n, 1, matrix.data(), n, ipiv.data(), values.data(), n);
@@ -394,35 +553,17 @@ public:
     EquationSolver(const int &_N, const Function &f, Circle *_c):N(_N), c(_c){  
         h=1.0/N;
         int count=0;
-        if(BC==BoundaryCondition::Dirichlet){
-            for(int j=1; j<N; ++j){
-                for(int i=1; i<N; ++i){
-                    grids.push_back(vector<double>{i*h,j*h});
-                    if(c->inCircle(i*h, j*h)){
-                        values.push_back(0.0);
-                        incircle.push_back(true);
-                        count++;
-                    }
-                    else{
-                        values.push_back(f(i*h, j*h)*h*h);
-                        incircle.push_back(false);
-                    }
+        for(int j=1; j<N; ++j){
+            for(int i=1; i<N; ++i){
+                grids.push_back(vector<double>{i*h,j*h});
+                if(c->inCircle(i*h, j*h)){
+                    values.push_back(0.0);
+                    incircle.push_back(true);
+                    count++;
                 }
-            }
-        }
-        else if(BC==BoundaryCondition::Neumann){
-            for(int i=0; i<=N; ++i){
-                for(int j=0; j<=N; ++j){
-                    grids.push_back(vector<double>{j*h, i*h});
-                    if(c->inCircle(j*h, i*h)){
-                        values.push_back(0.0);
-                        incircle.push_back(true);
-                        count++;
-                    }
-                    else{
-                        values.push_back(h*h*f(j*h, i*h));
-                        incircle.push_back(false);
-                    }
+                else{
+                    values.push_back(f(i*h, j*h)*h*h);
+                    incircle.push_back(false);
                 }
             }
         }
@@ -471,8 +612,8 @@ public:
 
     }
 
-    void solveEquation(const Function &g,const vector<double> &Diri=vector<double>{}){
-        solve(g, Diri);
+    void solveEquation(const Function &g, const vector<int> &mixed=vector<int>{0,0,0,0}){
+        solve(g,mixed);
     }
 
     void print(const string &filename, const Function &f){
