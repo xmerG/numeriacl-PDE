@@ -41,7 +41,7 @@ double Circle::distance(double x, double y) const{
 
 double Circle::x_distance_to_circle(double x, double y) const{
     if(this->inCircle(x,y)){
-        cerr<<"can't calculate cause the point is in circle"<<endl;
+        cerr<<"can't calculate the distance cause the point is in circle and we need the point out"<<endl;
         return -1;
     }
     else if(y>=y0-radius && y<=y0+radius){
@@ -53,7 +53,15 @@ double Circle::x_distance_to_circle(double x, double y) const{
         }
     }
     else{
-        return 2.0;
+        if(x<x0){
+            return 2.0;
+        }
+        else if(x>x0){
+            return -2.0;
+        }
+        else{
+            return 0.0;
+        }
     }
 }
 
@@ -71,7 +79,13 @@ double Circle::y_distance_to_circle(double x, double y) const{
         }
     }
     else{
-        return 2.0;
+        if(y<y0){
+            return 2.0;
+        }
+        else if(y>y0){
+            return -2.0;
+        }
+        else{return 0.0;}
     }
 }
 

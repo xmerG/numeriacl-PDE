@@ -206,14 +206,6 @@ private:
                     A[0][0]=1.0;
                 }
             }
-            cout<<"------------------------------------"<<endl;
-            for(int i=0; i<(N-1)*(N-1); ++i){
-                for(int j=0; j<(N-1)*(N-1); ++j){
-                    cout<<A[i][j]<<" ";
-                }
-                cout<<endl;
-            }
-            cout<<"------------------------------------"<<endl;
             /*if(BC==BoundaryCondition::Neumann){
                 A[0]=vector<double>((N-1)*(N-1), 0.0);
                 A[0][0]=1.0;
@@ -222,8 +214,11 @@ private:
         return A;
     }
 
-    vector<vector<double>> coeffMatrix(const Function &g, vector<int> &mixed){
+    vector<vector<double>> coeffMatrix(const Function &g, const vector<int> &mixed){
         vector<vector<double>> A=this->coeffMatrix(mixed);
+        if(BC==BoundaryCondition::Neumann){
+            this->getcolumn(g, mixed);
+        }
         for(int k=0; k<N-1; ++k){
             int m=k*(N-1);
             for(int i=0; i<N-1; ++i){
@@ -233,6 +228,7 @@ private:
                 if(incircle[index]==true){
                     A[index]=vector<double>((N-1)*(N-1), 0.0);
                     A[index][index]=1.0;
+                    values[index]=0.0;
                 }
                 else{
                     double dx=c->x_distance_to_circle(current_x, current_y);
@@ -297,21 +293,29 @@ private:
                     else if(BC==BoundaryCondition::Neumann){
                         int xdirection=1;
                         int ydirection=1;
-                        if(abs(dx)<h){                            
+                        double r=c->get_radius();
+                        if(abs(dx)<h && abs(dx)>0){                            
                             if(dx<0){
                                 xdirection=-1;
                             }
-                            if(dy)<0{ydirection=-1;}
-                            double temp=(current_y-c->getY())/(abs(current_x-c->getX())-h);
-                            double Ty=current_y+h*temp;
-                            double d=c->distance(current_x, Ty);
-                            double r=c->get_radius();
-                            double Ex=current_x+(c->getX()-current_x)*(d-r)/d;
-                            double Ey=Ty+(c->getY()-Ty)*(d-r)/d;
-                            A[index][index]+=-1.0+abs(temp);
-                            A[index][index-(N-1)*ydirection]+=-abs(temp);
                             A[index][index+xdirection]=0.0;
-                            values+=(d-r)*g(Ex, Ey);
+                            
+                            if(dy==0.0){
+                                A[index][index]-=1.0;;
+                                double temp=c->getX()-xdirection*r;
+                                values[index]+=h*g(temp,current_y);
+                            }
+                            else{
+                                if(dy<0){ydirection=-1;}
+                                double temp=(current_y-c->getY())/(abs(current_x-c->getX())-h);
+                                double Ty=current_y+h*temp;
+                                double d=c->distance(current_x, Ty);
+                                double Ex=current_x+(c->getX()-current_x)*(d-r)/d;
+                                double Ey=Ty+(c->getY()-Ty)*(d-r)/d;
+                                A[index][index]+=-1.0+abs(temp);
+                                A[index][index-(N-1)*ydirection]+=-abs(temp);
+                                values[index]+=h*d*g(Ex, Ey)/(abs(current_x-c->getX()));
+                            }
                             /*double Ty=current_y-xdirection*h*(current_y-c->getY())/(current_x+h*xdirection-c->getX());
                             double d=c->distance(current_x, Ty);
                             double Ex=current_x-(current_x-c->getX())(d-c->get_radius())/d;  //-------------------
@@ -328,31 +332,33 @@ private:
                                 values[index]+=3.0*(d-c->get_radius())*g(Ex, Ey);
                             } */                           
                         }
-                        if(abs(dy)<h){
+                        if(abs(dy)<h && abs(dy)>0){
                             if(dy<0){
                                 ydirection=-1;
                             }
-                            if(dx<0){
-                                xdirection=-1;
-                            }
-                            double temp=(current_x-c->getX())/(abs(current_y-c->getY())-h);
-                            double Tx=current_x+h*temp;
-                            double d=c->distance(Tx, current_y);
-                            double r=c->get_radius();
-                            double Ex=Tx+(c->getX()-Tx)*(d-r)/d;
-                            double Ey=current_y+(c->getX()-current_y)*(d-r)/d;
-                            A[index][index]+=-1.0+abs(temp);
                             A[index][index+(N-1)*ydirection]=0.0;
-                            A[index][index-xdirection]+=-abs(temp);
-                            values[index]+=(d-r)*g(Ex, Ey);
+                            if(dx==0.0){
+                                A[index][index]-=1.0;;
+                                double temp=c->getY()-ydirection*r;
+                                values[index]+=h*g(current_x, temp);
+                            }
+                            else{
+                                if(dx<0){
+                                    xdirection=-1;
+                                }
+                                double temp=(current_x-c->getX())/(abs(current_y-c->getY())-h);
+                                double Tx=current_x+h*temp;
+                                double d=c->distance(Tx, current_y);
+                                double Ex=Tx+(c->getX()-Tx)*(d-r)/d;
+                                double Ey=current_y+(c->getX()-current_y)*(d-r)/d;
+                                A[index][index]+=-1.0+abs(temp);
+                                A[index][index-xdirection]+=-abs(temp);
+                                values[index]+=d*h*g(Ex, Ey)/abs(current_y-c->getY());
+                            }
                         }
                     }
                 }
             }
-        }
-        if(BC==BoundaryCondition::Neumann){
-            A[0]=vector<double>((N-1)*(N-1), 0.0);
-            values[0]=0.0;
         }
         return A;
     }
@@ -468,9 +474,7 @@ private:
             A=coeffMatrix(mixed);
         }
         else{
-            if(BC==BoundaryCondition::Dirichlet){
-                A=coeffMatrix(g);
-            }
+            A=coeffMatrix(g, mixed);
         }
         vector<double> a;
         for(int i=0; i<A.size(); ++i){
@@ -507,10 +511,6 @@ private:
                         values[k+N-2]=3*values[k+N-2]+m*g(1.0, (i+1)*h);
                     }
             }
-            for(int i=0; i<n;++i){
-                cout<<values[i]<<"  ";
-            }
-            cout<<endl;
         }
         else{
             if(mixed[0]==0){
@@ -574,10 +574,6 @@ private:
             /*if(BC==BoundaryCondition::Neumann){
                 values[0]=0.0;
             }*/
-           cout<<"---------------------------"<<endl;
-            for(int i=0; i<n;++i){
-                cout<<values[i]<<"  ";
-            }
             cout<<endl;
         }
     }
@@ -589,6 +585,38 @@ private:
         }
         vector<int> ipiv(n);
         int info = LAPACKE_dgesv(LAPACK_COL_MAJOR, n, 1, matrix.data(), n, ipiv.data(), values.data(), n);
+
+    }
+
+    void adjust(const double &initial){
+        if(D==Domain::irregular){
+            vector<vector<double>> newgrid;
+            vector<double> newvalues;
+            for(int i=0; i<(N-1)*(N-1); ++i){
+                if(!incircle[i]){
+                    newgrid.push_back(grids[i]);
+                    newvalues.push_back(values[i]);
+                }
+            }
+            grids=newgrid;
+            values=newvalues;
+        }
+        if(BC==BoundaryCondition::Neumann){
+            for(int i=0; i<values.size(); ++i){
+                values[i]+=initial;
+            }
+        }
+    }
+
+    vector<double> errors(const Function &f){
+        int n=grids.size();
+        vector<double> e(n, 0.0);
+        for(int i=0; i<n; ++i){
+            double x=grids[i][0];
+            double y=grids[i][1];
+            e[i]=abs(values[i]-f(x,y));
+        }
+        return e;
 
     }
 public:
@@ -642,17 +670,6 @@ public:
         return values;
     }
 
-    vector<double> errors(const Function &f){
-        int n=grids.size();
-        vector<double> e(n, 0.0);
-        for(int i=0; i<n; ++i){
-            double x=grids[i][0];
-            double y=grids[i][1];
-            e[i]=abs(values[i]-f(x,y));
-        }
-        return e;
-
-    }
 
     void norm_error(const Function &f){
         vector<double> error=this->errors(f);
@@ -673,8 +690,9 @@ public:
 
     }
 
-    void solveEquation(const Function &g, const vector<int> &mixed=vector<int>{0,0,0,0}){
+    void solveEquation(const Function &g, const double &initial=0.0, const vector<int> &mixed=vector<int>{0,0,0,0}){
         solve(g,mixed);
+        this->adjust(initial);
     }
 
     void print(const string &filename, const Function &f){
