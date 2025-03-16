@@ -1,0 +1,142 @@
+[
+    {
+        "boundary_condition": "Dirichlet",
+        "domain": "regular",
+        "grid_number": 8
+    },
+    {
+        "boundary_condition": "Dirichlet",
+        "domain": "regular",
+        "grid_number": 16
+    },
+    {
+        "boundary_condition": "Dirichlet",
+        "domain": "regular",
+        "grid_number": 32
+    },
+    {
+        "boundary_condition": "Dirichlet",
+        "domain": "regular",
+        "grid_number": 64
+    },
+    {
+        "boundary_condition": "Neumann",
+        "domain": "regular",
+        "grid_number": 8
+    },
+    {
+        "boundary_condition": "Neumann",
+        "domain": "regular",
+        "grid_number": 16
+    },
+    {
+        "boundary_condition": "Neumann",
+        "domain": "regular",
+        "grid_number": 32
+    },
+    {
+        "boundary_condition": "Neumann",
+        "domain": "regular",
+        "grid_number": 64
+    },
+    {
+        "boundary_condition": "Mixed",
+        "domain": "regular",
+        "grid_number": 8,
+        "mixed": [1,0,0,1]
+    },
+    {
+        "boundary_condition": "Mixed",
+        "domain": "regular",
+        "grid_number": 16,
+        "mixed": [1,0,1,1]
+    },
+    {
+        "boundary_condition": "Mixed",
+        "domain": "regular",
+        "grid_number": 32,
+        "mixed": [0,0,0,1]
+    },
+    {
+        "boundary_condition": "Mixed",
+        "domain": "regular",
+        "grid_number": 64,
+        "mixed": [0,0,1,0]
+    },
+    {
+        "boundary_condition": "Dirichlet",
+        "domain": "irregular",
+        "grid_number": 8,
+        "circle": [0.4,0.6,0.2]
+    },
+    {
+        "boundary_condition": "Dirichlet",
+        "domain": "irregular",
+        "grid_number": 16,
+        "circle": [0.4,0.6,0.2]
+    },
+    {
+        "boundary_condition": "Dirichlet",
+        "domain": "irregular",
+        "grid_number": 32,
+        "circle": [0.4,0.6,0.2]
+    },
+    {
+        "boundary_condition": "Dirichlet",
+        "domain": "irregular",
+        "grid_number": 64,
+        "circle": [0.45,0.5,0.25]
+    },
+    {
+        "boundary_condition": "Neumann",
+        "domain": "irregular",
+        "grid_number": 8,
+        "circle": [0.5,0.5,0.2]
+    },
+    {
+        "boundary_condition": "Neumann",
+        "domain": "irregular",
+        "grid_number": 16,
+        "circle": [0.5,0.5,0.2]
+    },
+    {
+        "boundary_condition": "Neumann",
+        "domain": "irregular",
+        "grid_number": 32,
+        "circle": [0.5,0.5,0.25]
+    },
+    {
+        "boundary_condition": "Neumann",
+        "domain": "irregular",
+        "grid_number": 32,
+        "circle": [0.5,0.5,0.2]
+    },
+    {
+        "boundary_condition": "Mixed",
+        "domain": "irregular",
+        "grid_number": 8,
+        "circle": [0.5,0.5,0.2],
+        "mixed": [0,0,1,1,1]
+    },
+    {
+        "boundary_condition": "Mixed",
+        "domain": "irregular",
+        "grid_number": 16,
+        "circle": [0.5,0.5,0.2],
+        "mixed": [0,0,1,1,1]
+    },
+    {
+        "boundary_condition": "Mixed",
+        "domain": "irregular",
+        "grid_number": 32,
+        "circle": [0.5,0.5,0.2],
+        "mixed": [0,0,1,1,1]
+    },
+    {
+        "boundary_condition": "Mixed",
+        "domain": "irregular",
+        "grid_number": 64,
+        "circle": [0.5,0.5,0.2],
+        "mixed": [0,0,1,0,1]
+    }
+]

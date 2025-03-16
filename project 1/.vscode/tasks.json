@@ -10,7 +10,6 @@
                 "-g", // 生成调试信息
                 "test.cpp", // 主程序文件
                 "Circle.cpp", // 依赖的源文件
-                "TestFunctionA.cpp",
                 "-o", // 指定输出文件名
                 "${fileDirname}/test", // 可执行文件路径
                 "-llapacke", // 链接 LAPACK 库

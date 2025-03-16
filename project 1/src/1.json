@@ -1,0 +1,58 @@
+[
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": null,
+        "l2_norm": null,
+        "linfinity_norm": 0.0
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": null,
+        "l2_norm": null,
+        "linfinity_norm": 0.0
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": null,
+        "l2_norm": null,
+        "linfinity_norm": 0.0
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": null,
+        "l2_norm": null,
+        "linfinity_norm": 0.0
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": null,
+        "l2_norm": null,
+        "linfinity_norm": 0.0
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.0014581508563709545,
+        "l2_norm": 0.0012126326687364809,
+        "linfinity_norm": 0.0016780144043750944
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": null,
+        "l2_norm": null,
+        "linfinity_norm": 0.0
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.0006435135717375862,
+        "l2_norm": 0.0003732445373349998,
+        "linfinity_norm": 0.0004958374980565949
+    }
+]
