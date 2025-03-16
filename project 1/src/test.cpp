@@ -41,7 +41,7 @@ unique_ptr<Function> createFunction(const string& bc, const string &d,Circle* c 
 int main(){
     Laplacian f1;
     primitive f0;
-   /* fstream ifs("../input/input.json");
+    fstream ifs("../input/input.json");
     nlohmann::json json;
     ifs>>json;
     for(const auto &item : json){
@@ -105,7 +105,7 @@ int main(){
     }
 
     return 0;
-}*/
+}
     //Laplacian f1;
     //DirichletF g;
     //primitive f0;
@@ -117,9 +117,9 @@ int main(){
 
     /*vector<int> neumann=vector<int>{1,1,1,1};
     NeumannF g1;
-    EquationSolver<Domain::regular, BoundaryCondition::Neumann> solver2(4,f1);
-    solver2.solveEquation(g1,f0(1.0/4.0, 1.0/4.0),neumann);
-    solver2.norm_error(f0);
+    EquationSolver<Domain::regular, BoundaryCondition::Neumann> solver2(64,f1);
+    solver2.solveEquation(g1,f0(1.0/64.0, 1.0/64.0),neumann);
+    solver2.norm_error(f0,"1.json");
     solver2.print("test.json", f0);*/
 
     /*vector<int> mixed=vector<int>{1,0,0,1};
@@ -131,13 +131,13 @@ int main(){
 
 
 
-    vector<double> D{f0(0.0,0.0), f0(1.0,0.0), f0(0.0,1.0), f0(1.0,1.0)};
+    /*vector<double> D{f0(0.0,0.0), f0(1.0,0.0), f0(0.0,1.0), f0(1.0,1.0)};
     Circle *c = new Circle(0.5, 0.5, 0.2);
     EquationSolver<Domain::irregular,BoundaryCondition::Dirichlet> solver3(8,f1,c);
     solver3.solveEquation(f0);
     solver3.norm_error(f0,"1.json");
     solver3.print("test.json", f0);
-    delete c;
+    delete c;*/
 
     /*irreMixed m1(c,vector<int>{0,0,1,1,1});
     EquationSolver<Domain::irregular, BoundaryCondition::Mixed> solver6(8, f1, c);
@@ -145,10 +145,11 @@ int main(){
     solver6.norm_error(f0);
     solver6.print("../output/test1.json", f0);*/
 
-    /*irreNeumann g1(c);
-    EquationSolver<Domain::irregular, BoundaryCondition::Neumann> solver4(64,f1,c);
-    solver4.solveEquation(g1, f0(1.0/64.0,1.0/64.0));
+    /*Circle *c = new Circle(0.5, 0.5, 0.2);
+    irreNeumann g1(c);
+    EquationSolver<Domain::irregular, BoundaryCondition::Neumann> solver4(32,f1,c);
+    solver4.solveEquation(g1, f0(1.0/32.0,1.0/32.0));
     solver4.print("test.json", f0);
-    solver4.norm_error(f0);*/
-    return 0;
-}
+    solver4.norm_error(f0,"1.json");*/
+    //return 0;
+//}

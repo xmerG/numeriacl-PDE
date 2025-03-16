@@ -44,6 +44,44 @@ private:
     void coeffMatrix(const vector<int> & mixed){
         A=vector<vector<double>>((N-1)*(N-1),vector<double>((N-1)*(N-1),0.0));
         if(BC==BoundaryCondition::Neumann){
+            /*this->precondition();
+            for(int i=1; i<N-1; ++i){
+                A[i][i]=8.0;
+                A[i][i+N-1]=-2.0;
+                A[i][i-1]=-3.0;
+                A[i][i+1]=-3.0;
+                int index=i*(N-1);
+                A[index][index]=8.0;
+                A[index][index+1]=-2.0;
+                A[index][index+N-1]=-3.0;
+                A[index][index-N+1]=-3.0;
+                index+=N-2;
+                A[index][index]=8.0;
+                A[index][index-1]=-2.0;
+                A[index][index+N-1]=-3.0;
+                A[index][index-N+1]=-3.0;
+                index=N*N-3*N+1+i;
+                A[index][index]=8.0;
+                A[index][index+1]=-3.0;
+                A[index][index-1]=-3.0;
+                A[index][index-N+1]=-2.0;
+            }
+            A[0][0]=1.0;
+            A[N-2][N-2]=4.0;
+            A[N-2][N-3]=-2.0;
+            A[N-2][2*N-3]=-2.0;
+            A[(N-1)*(N-1)-1][(N-1)*(N-1)-1]=4.0;
+            A[(N-1)*(N-1)-1][N*N-2*N-1]=-2.0;
+            A[(N-1)*(N-1)-1][N*N-3*N+1]=-2.0;
+            A[(N-1)*(N-2)][(N-1)*(N-2)]=4.0;
+            A[(N-1)*(N-2)][(N-1)*(N-2)+1]=-2.0;
+            A[(N-1)*(N-2)][(N-1)*(N-3)]=-2.0;
+            for(int i=0;i<(N-1)*(N-1); ++i){
+                for(int j=0; j<(N-1)*(N-1); ++j){
+                    cout<<A[i][j]<<" ";
+                }
+                cout<<endl;
+            }*/
             for(int k=0; k<N-1; ++k){
                 int m=k*(N-1);
                 if(k==0){
@@ -65,7 +103,8 @@ private:
                     A[m+N-2][m+N-3]=-2.0;
                     A[m][m-N+1]=-2.0;
                     A[m+N-2][m-1]=-2.0;
-                    for(int i=1; i<N-2; ++i){
+                    for(int i=1
+                        ; i<N-2; ++i){
                         A[m+i][m+i]=8.0;
                         A[m+i][m+i-1]=-3.0;
                         A[m+i][m+i+1]=-3.0;
@@ -202,10 +241,6 @@ private:
                         A[index][index-N+1]=-2.0/3.0;
                     }
                 }
-                if(BC==BoundaryCondition::Neumann){
-                    A[0]=vector<double>((N-1)*(N-1), 0.0);
-                    A[0][0]=1.0;
-                }
             }
             /*if(BC==BoundaryCondition::Neumann){
                 A[0]=vector<double>((N-1)*(N-1), 0.0);
@@ -287,12 +322,6 @@ private:
                     }
                 }
             }
-        }
-        for(int i=0; i<(N-1)*(N-1); ++i){
-            for(int j =0; j<(N-1)*(N-1); ++j){
-                cout<<A[i][j]<<" ";
-            }
-            cout<<endl;
         }
     }
 
