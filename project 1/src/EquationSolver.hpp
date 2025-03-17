@@ -265,61 +265,59 @@ private:
                     double dy=c->y_distance_to_circle(current_x, current_y);
                     double alpha=1.0;
                     double theta=1.0;
-                    if(BC==BoundaryCondition::Dirichlet){
-                        if(abs(dx)<=h && abs(dx)>0){
-                            int direction=1;
-                            if(dx<0){
-                                direction=-1;
-                            }
-                            theta=abs(dx)/h;
-                            values[index]+=2.0*g((i+1)*h+dx, (k+1)*h)/(theta*(1+theta));
-                            A[index][index+direction]=0.0;
-                            if(i!=0 && i!=N-2){//左右两边都不是正方形边界
-                                A[index][index-direction]=-2.0/(1+theta);
-                            }
-                            else if(i==0){ //左边是正方形边界
-                                values[index]+=2.0*g(0.0, (k+1)*h)/(1+theta);
-                            }
-                            else{
-                                values[index]+=2.0*g(1.0,(k+1)*h)/(1+theta);
-                            }
+                    if(abs(dx)<=h && abs(dx)>0){
+                        int direction=1;
+                        if(dx<0){
+                            direction=-1;
+                        }
+                        theta=abs(dx)/h;
+                        values[index]+=2.0*g((i+1)*h+dx, (k+1)*h)/(theta*(1+theta));
+                        A[index][index+direction]=0.0;
+                        if(i!=0 && i!=N-2){//左右两边都不是正方形边界
+                            A[index][index-direction]=-2.0/(1+theta);
+                        }
+                        else if(i==0){ //左边是正方形边界
+                            values[index]+=2.0*g(0.0, (k+1)*h)/(1+theta);
                         }
                         else{
-                            if(i==0){
-                                values[index]+=g(0.0, (k+1)*h);
-                            }
-                            else if(i==N-2){
-                                values[index]+=g(1.0, (k+1)*h);
-                            }
+                            values[index]+=2.0*g(1.0,(k+1)*h)/(1+theta);
                         }
-                        if(abs(dy)<=h && abs(dy)>0){
-                            int direction=1;
-                            if(dy<0){
-                                direction=-1;
-                            }
-                            alpha=abs(dy)/h;
-                            values[index]+=2.0*g((i+1)*h, (k+1)*h+dy)/(alpha*(1+alpha));
-                            A[index][index+(N-1)*direction]=0.0;
-                            if(k!=0 && k!=N-2){
-                                A[index][index-(N-1)*direction]=-2.0/(1+alpha);
-                            }
-                            else if(k==0){//下面是正方形边界
-                                values[index]+=2.0*g((i+1)*h, 0.0)/(1+alpha);
-                            }
-                            else{
-                                values[index]+=2.0*g((i+1)*h, 1.0)/(1+alpha);
-                            }
-                        }
-                        else{
-                            if(k==0){
-                                values[index]+=g((i+1)*h, 0.0);
-                            }
-                            else if(k==N-2){
-                                values[index]+=g((i+1)*h, 1.0);
-                            }
-                        }
-                        A[index][index]=2.0/alpha+2.0/theta;
                     }
+                    else{
+                        if(i==0){
+                            values[index]+=g(0.0, (k+1)*h);
+                        }
+                        else if(i==N-2){
+                            values[index]+=g(1.0, (k+1)*h);
+                        }
+                    }
+                    if(abs(dy)<=h && abs(dy)>0){
+                        int direction=1;
+                        if(dy<0){
+                            direction=-1;
+                        }
+                        alpha=abs(dy)/h;
+                        values[index]+=2.0*g((i+1)*h, (k+1)*h+dy)/(alpha*(1+alpha));
+                        A[index][index+(N-1)*direction]=0.0;
+                        if(k!=0 && k!=N-2){
+                            A[index][index-(N-1)*direction]=-2.0/(1+alpha);
+                        }
+                        else if(k==0){//下面是正方形边界
+                            values[index]+=2.0*g((i+1)*h, 0.0)/(1+alpha);
+                        }
+                        else{
+                            values[index]+=2.0*g((i+1)*h, 1.0)/(1+alpha);
+                        }
+                    }
+                    else{
+                        if(k==0){
+                            values[index]+=g((i+1)*h, 0.0);
+                        }
+                        else if(k==N-2){
+                            values[index]+=g((i+1)*h, 1.0);
+                        }
+                    }
+                    A[index][index]=2.0/alpha+2.0/theta;
                 }
             }
         }
@@ -353,14 +351,12 @@ private:
                         
                         if(dy==0.0){
                             if(p){
-                                A[index][index]-=3.0;;
-                                double temp=c->getX()-xdirection*r;
-                                values[index]+=3.0*h*g(temp,current_y);
+                                A[index][index]-=2.0;;
+                                values[index]+=2.0*h*g(dx+current_x,current_y);
                             }
                             else{
                                 A[index][index]-=1.0;;
-                                double temp=c->getX()-xdirection*r;
-                                values[index]+=h*g(temp,current_y);
+                                values[index]+=h*g(current_x+dx,current_y);
                             }
                         }
                         else{
@@ -389,9 +385,9 @@ private:
                         A[index][index+(N-1)*ydirection]=0.0;
                         if(dx==0.0){
                             if(p){
-                                A[index][index]-=3.0;;
+                                A[index][index]-=2.0;;
                                 double temp=c->getY()-ydirection*r;
-                                values[index]+=3.0*h*g(current_x, temp);
+                                values[index]+=2.0*h*g(current_x, temp);
                             }
                             else{
                                 A[index][index]-=1.0;;
@@ -407,9 +403,9 @@ private:
                             double Tx=current_x+h*temp;
                             double d=c->distance(Tx, current_y);
                             double Ex=Tx+(c->getX()-Tx)*(d-r)/d;
-                            double Ey=current_y+(c->getX()-current_y)*(d-r)/d;
+                            double Ey=current_y+(c->getY()-current_y)*(d-r)/d;
                             if(p){
-                                A[index][index]+=-2.0+abs(temp);
+                                A[index][index]+=-2.0+2.0*abs(temp);
                                 A[index][index-xdirection]+=-2.0*abs(temp);
                                 values[index]+=2.0*d*h*g(Ex, Ey)/abs(current_y-c->getY());
                             }
@@ -578,7 +574,13 @@ private:
             values[n-1]=3*values[n-1]+m*g(1-h, 1.0)+m*g(1.0,1-h);
             values[N-2]=3*values[N-2]+m*g(1-h,0.0)+m*g(1.0, h);  
             values[(N-2)*(N-1)]=3*values[(N-2)*(N-1)]+m*g(h,1.0)+m*g(0.0,1-h);
-            for(int i=0; i<N-1; ++i){
+            for(int i=1; i<N-2; ++i){
+                values[i]=3*values[i]+m*g((i+1)*h, 0.0);
+                values[i*(N-1)]=3*values[i*(N-1)]+m*g(0.0,(i+1)*h);
+                values[(i+1)*(N-1)-1]=3*values[(i+1)*(N-1)-1]+m*g(1.0,(i+1)*h);
+                values[(N-2)*(N-1)+i]=3*values[(N-2)*(N-1)+i]+m*g((i+1)*h, 1.0);
+            }
+            /*for(int i=0; i<N-1; ++i){
                 int k=(N-1)*i;
                     if(i==0){
                         for(int j=1; j<N-2; ++j){
@@ -594,7 +596,7 @@ private:
                         values[k]=3*values[k]+m*g(0.0, (i+1)*h);
                         values[k+N-2]=3*values[k+N-2]+m*g(1.0, (i+1)*h);
                     }
-            }
+            }*/
         }
         else{
             if(mixed[0]==0){
@@ -622,7 +624,7 @@ private:
                     values[i*(N-1)]=3*values[i*(N-1)]+m*g(0.0, (i+1)*h);
                 }
                 values[0]+=m*g(0.0, h)/3.0;
-                values[(N-2)*(N-1)]=g(0.0, 1.0-h);
+                values[(N-2)*(N-1)]+=m*g(0.0, 1.0-h)/3.0;
             }
 
             if(mixed[2]==0){
@@ -651,9 +653,6 @@ private:
                 }
                 values[(N-1)*(N-2)]+=m*g(h,1.0)/3.0;
                 values[N*N-2*N]+=m*g(1.0-h,1.0)/3.0;
-            }
-            if(BC==BoundaryCondition::Neumann){
-                values[0]=1.0;
             }
             /*if(BC==BoundaryCondition::Neumann){
                 values[0]=0.0;

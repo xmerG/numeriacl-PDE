@@ -1,7 +1,7 @@
 #include<iostream>
 #include"EquationSolver.hpp"
 #include<cmath>
-#include"TestFunctionA.hpp"
+#include"TestFunction.hpp"
 #include <nlohmann/json.hpp>
 #include"Circle.hpp"
 #include<fstream>
@@ -21,26 +21,61 @@ Domain str2D(const string &str){
     else {return Domain::irregular;}
 }
 
-unique_ptr<Function> createFunction(const string& bc, const string &d,Circle* c = nullptr, const vector<int> &v=vector<int>{}) {
-    if (bc == "Dirichlet" && d=="regular") {
-        return make_unique<DirichletF>();
-    } else if (bc == "Neumann" && d=="regular") {
-        return make_unique<NeumannF>();
-    } else if (bc == "Mixed" && d=="regular") {
-        return make_unique<Mixed>(v);
-    } else if (bc == "Dirichlet" && d=="irregular") {
-        return make_unique<primitive>();
-    } else if (bc == "Neumann" && d=="irregular") {
-        return make_unique<irreNeumann>(c);
-    } else {
-        return make_unique<irreMixed>(c,v);
+unique_ptr<Function> Laplacian(int ftype){
+    if(ftype==1){
+        return make_unique<LaplacianA>();
+    }
+    else if(ftype==2){
+        return make_unique<LaplacianB>();
+    }
+    else{
+        return make_unique<LaplacianC>();
+    }
+}
+
+unique_ptr<Function> Primitive(int ftype){
+    if(ftype==1){
+        return make_unique<PrimitiveA>();
+    }
+    else if(ftype==2){
+        return make_unique<PrimitiveB>();
+    }
+    else{
+        return make_unique<PrimitiveC>();
+    }
+}
+
+
+
+unique_ptr<Function> createFunction(int functiontype, const string& bc, 
+    Circle* c = nullptr, const vector<int>& v = vector<int>{}) {
+    if (functiontype == 1) {
+        if(bc=="Neumann"){
+            return make_unique<NeumannA>(c);
+        }
+        else if(bc=="Mixed"){
+            return make_unique<MixedA>(c,v);
+        }
+    } else if (functiontype == 2) {
+        if(bc=="Neumann"){
+            return make_unique<NeumannB>(c);
+        }
+        else if(bc=="Mixed"){
+            return make_unique<MixedB>(c,v);
+        }
+    }
+    else{
+        if(bc=="Neumann"){
+            return make_unique<NeumannC>(c);
+        }
+        else if(bc=="Mixed"){
+            return make_unique<MixedC>(c,v);
+        }
     }
 }
 
 
 int main(){
-    Laplacian f1;
-    primitive f0;
     fstream ifs("../input/input.json");
     nlohmann::json json;
     ifs>>json;
@@ -53,6 +88,9 @@ int main(){
         string D=item["domain"];
         Domain d=str2D(D);
         int grid_number=item["grid_number"];
+        int functype=item["functionType"];
+        unique_ptr<Function> f1=Laplacian(functype);
+        unique_ptr<Function> f0=Primitive(functype);
         if(d==Domain::irregular){
             if(item.contains("circle") && item["circle"].is_array()){
                 auto data=item["circle"];
@@ -68,47 +106,46 @@ int main(){
                 v=newv;
             }
         }
-        cout<<"-------------running test "<<BC<<" "<<D<<" "<<"for grid number "<<grid_number<<"--------------------"<<endl;
-        unique_ptr<Function> func = createFunction(BC, D, c, v);
+        cout<<"-------------running test "<<"functype "<<functype<<" "<<BC<<" "<<D<<" "<<"for grid number "<<grid_number<<"--------------------"<<endl;
+        unique_ptr<Function> func = createFunction(functype,BC, c, v);
         if (d == Domain::regular && bc == BoundaryCondition::Dirichlet) {
-            EquationSolver<Domain::regular, BoundaryCondition::Dirichlet> solver(grid_number, f1);
-            solver.solveEquation(*func);
-            solver.norm_error(f0,"../output/error1.json");
-            solver.print("../output/output1.json", f0);
+            EquationSolver<Domain::regular, BoundaryCondition::Dirichlet> solver(grid_number, *f1);
+            solver.solveEquation(*f0);
+            solver.norm_error(*f0,"../output/error.json");
+            solver.print("../output/output.json", *f0);
         } else if (d == Domain::regular && bc == BoundaryCondition::Neumann) {
-            EquationSolver<Domain::regular, BoundaryCondition::Neumann> solver(grid_number, f1);
-            solver.solveEquation(*func,f0(1.0/grid_number, 1.0/grid_number));
-            solver.norm_error(f0,"../output/error1.json");
-            solver.print("../output/output1.json", f0);
+            EquationSolver<Domain::regular, BoundaryCondition::Neumann> solver(grid_number, *f1);
+            solver.solveEquation(*func,(*f0)(1.0/grid_number, 1.0/grid_number));
+            solver.norm_error(*f0,"../output/error.json");
+            solver.print("../output/output.json", *f0);
         } else if (d == Domain::regular && bc == BoundaryCondition::Mixed) {
-            EquationSolver<Domain::regular, BoundaryCondition::Mixed> solver(grid_number, f1);
+            EquationSolver<Domain::regular, BoundaryCondition::Mixed> solver(grid_number, *f1);
             solver.solveEquation(*func,0.0,v);
-            solver.norm_error(f0,"../output/error1.json");
-            solver.print("../output/output1.json", f0);
+            solver.norm_error(*f0,"../output/error.json");
+            solver.print("../output/output.json", *f0);
         } else if (d == Domain::irregular && bc == BoundaryCondition::Dirichlet) {
-            EquationSolver<Domain::irregular, BoundaryCondition::Dirichlet> solver(grid_number, f1, c);
-            solver.solveEquation(*func);
-            solver.norm_error(f0,"../output/error1.json");
-            solver.print("..output/output1.json", f0);
+            EquationSolver<Domain::irregular, BoundaryCondition::Dirichlet> solver(grid_number, *f1, c);
+            solver.solveEquation(*f0);
+            solver.norm_error(*f0,"../output/error.json");
+            solver.print("..output/output.json", *f0);
         } else if (d == Domain::irregular && bc == BoundaryCondition::Neumann) {
-            EquationSolver<Domain::irregular, BoundaryCondition::Neumann> solver(grid_number, f1, c);
-            solver.solveEquation(*func, f0(1.0/grid_number, 1.0/grid_number));
-            solver.norm_error(f0,"../output/error1.json");
-            solver.print("../output/output1.json", f0);
+            EquationSolver<Domain::irregular, BoundaryCondition::Neumann> solver(grid_number, *f1, c);
+            solver.solveEquation(*func, (*f0)(1.0/grid_number, 1.0/grid_number));
+            solver.norm_error(*f0,"../output/error.json");
+            solver.print("../output/output.json", *f0);
         } else{
-            EquationSolver<Domain::irregular, BoundaryCondition::Mixed> solver(grid_number, f1, c);
+            EquationSolver<Domain::irregular, BoundaryCondition::Mixed> solver(grid_number, *f1, c);
             solver.solveEquation(*func,0.0,v);
-            solver.norm_error(f0,"../output/error1.json");
-            solver.print("../output/output1.json", f0);
+            solver.norm_error(*f0,"../output/error.json");
+            solver.print("../output/output.json", *f0);
         }
         cout<<"------------------------------test ends----------------------------------"<<endl;
     }
 
     return 0;
 }
-    //Laplacian f1;
-    //DirichletF g;
-    //primitive f0;
+    LaplacianC f1;
+    PrimitiveC f0;
 
     /*EquationSolver<Domain::regular, BoundaryCondition::Dirichlet> solver1(32, f1);
     solver1.solveEquation(g);
@@ -131,9 +168,9 @@ int main(){
 
 
 
-    /*vector<double> D{f0(0.0,0.0), f0(1.0,0.0), f0(0.0,1.0), f0(1.0,1.0)};
-    Circle *c = new Circle(0.5, 0.5, 0.2);
-    EquationSolver<Domain::irregular,BoundaryCondition::Dirichlet> solver3(8,f1,c);
+
+    //Circle *c = new Circle(0.5, 0.5, 0.2);
+    /*EquationSolver<Domain::irregular,BoundaryCondition::Dirichlet> solver3(8,f1,c);
     solver3.solveEquation(f0);
     solver3.norm_error(f0,"1.json");
     solver3.print("test.json", f0);
@@ -145,11 +182,11 @@ int main(){
     solver6.norm_error(f0);
     solver6.print("../output/test1.json", f0);*/
 
-    /*Circle *c = new Circle(0.5, 0.5, 0.2);
-    irreNeumann g1(c);
-    EquationSolver<Domain::irregular, BoundaryCondition::Neumann> solver4(32,f1,c);
-    solver4.solveEquation(g1, f0(1.0/32.0,1.0/32.0));
+    /*Circle *c = new Circle(0.52, 0.45, 0.17);
+    NeumannC g1(c);
+    EquationSolver<Domain::irregular, BoundaryCondition::Neumann> solver4(8,f1,c);
+    solver4.solveEquation(g1, f0(1.0/8.0,1.0/8.0));
     solver4.print("test.json", f0);
-    solver4.norm_error(f0,"1.json");*/
-    //return 0;
-//}
+    solver4.norm_error(f0,"1.json");
+    return 0;
+}*/

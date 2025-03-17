@@ -1,17 +1,26 @@
-CC = g++
-CFLAG = -std=c++11 -O2
-LDFLAGS = -llapacke -lblas
-SRC = .
-OD = ..
-OBJ = $(SRC)/Circle.o	#	object files of all common files
-CIRCLEOBJ = $(SRC)/test1.o			#	object file for pdadd
+CXX = g++
 
-all: $(OD)/pdadd $(OD)/pdlist $(OD)/pdremove $(OD)/pdshow
+CXXFLAGS = -w -std=c++14 -O2  
 
-	
+LDFLAGS = -llapacke -llapack -lblas
 
-.cpp.o:
-	$(CC) $(CFLAG) -c $< -o $@ $^ $(LDFLAGS)
+TARGET = test
+
+SRCS = test.cpp Circle.cpp TestFunction.cpp
+
+OBJS = $(SRCS:.cpp=.o)
+
+
+all: $(TARGET)
+	./$(TARGET) 
+
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ) $(ADDOBJ) $(LISTOBJ) $(REMOVEOBJ) $(SHOWOBJ) $(OD)/pdadd $(OD)/pdlist $(OD)/pdremove $(OD)/pdshow
+	rm -f $(OBJS) $(TARGET)
+
+.PHONY: all clean
