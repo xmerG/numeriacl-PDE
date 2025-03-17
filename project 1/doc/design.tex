@@ -1,0 +1,199 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{geometry}
+\geometry{margin=1.5cm, vmargin={0pt,1cm}}
+\setlength{\topmargin}{-1cm}
+\setlength{\paperheight}{29.7cm}
+\setlength{\textheight}{25.3cm}
+
+% useful packages.
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{fancyhdr}
+\usepackage{layout}
+\usepackage{float, caption}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{tikz}
+
+% 自定义配色方案，尽量模仿 VS Code 的高亮效果
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codeblue}{rgb}{0,0,0.9}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{codered}{rgb}{0.8,0,0}
+\definecolor{backcolor}{rgb}{0.95,0.95,0.95}
+
+% lstlisting 的风格设置
+\lstdefinestyle{vscode}{
+	backgroundcolor=\color{backcolor},   % 背景颜色
+	commentstyle=\color{codegreen},     % 注释颜色
+	keywordstyle=\color{codeblue}\bfseries, % 关键字颜色
+	numberstyle=\tiny\color{gray},      % 行号颜色
+	stringstyle=\color{codered},        % 字符串颜色
+	basicstyle=\ttfamily\footnotesize,  % 基本字体
+	breakatwhitespace=false,            % 仅在空格处断行
+	breaklines=true,                    % 自动换行
+	captionpos=b,                       % 标题位置（bottom）
+	keepspaces=true,                    % 保持空格
+	numbers=left,                       % 显示行号
+	numbersep=5pt,                      % 行号与代码间的间隔
+	rulecolor=\color{black},            % 框线颜色
+	showspaces=false,                   % 不显示空格符号
+	showstringspaces=false,             % 不显示字符串中的空格
+	showtabs=false,                     % 不显示制表符
+	frame=single,                       % 外框
+	tabsize=4,                          % 制表符宽度
+	escapeinside={(*@}{@*)},            % 特殊字符转义
+	morekeywords={*,...}                % 添加更多自定义关键字
+}
+\lstset{style=vscode}
+
+% some common command
+\newcommand{\dif}{\mathrm{d}}
+\newcommand{\avg}[1]{\left\langle #1 \right\rangle}
+\newcommand{\difFrac}[2]{\frac{\dif #1}{\dif #2}}
+\newcommand{\pdfFrac}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\OFL}{\mathrm{OFL}}
+\newcommand{\UFL}{\mathrm{UFL}}
+\newcommand{\fl}{\mathrm{fl}}
+\newcommand{\op}{\odot}
+\newcommand{\Eabs}{E_{\mathrm{abs}}}
+\newcommand{\Erel}{E_{\mathrm{rel}}}
+
+\lstdefinestyle{json}{
+	basicstyle=\ttfamily\footnotesize,
+	commentstyle=\color{gray},
+	stringstyle=\color{red},
+	keywordstyle=\color{blue},
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	stepnumber=1,
+	numbersep=5pt,
+	backgroundcolor=\color{white},
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	tabsize=2,
+	breaklines=true,
+	frame=single,
+	captionpos=b
+}
+
+\begin{document}
+	
+	\pagestyle{fancy}
+	\fancyhead{}
+	\lhead{高凌溪, 3210105373}
+	\chead{微分方程数值解project \#1 设计文档}
+	\rhead{\today}
+	\begin{abstract}
+		本次编程作业设计了一个二维Poission方程（$\Delta u=f$）求解器，用来求解定义在正方形区域$\Omega$和不规则区域$\Omega \setminus \mathbb{D}$的Poission的边值问题，实现了对Dirichlet边界条件、Neumann边界条件和混合边界条件三种边界条件对应的Poission方程求解。
+	\end{abstract}
+	\section{程序实现}
+	\subsection{类和成员}
+	\begin{enumerate}
+		\item  \textbf{\texttt{EquationSolver}类}	首先我定义了\texttt{EquationSolver}类，用来实现求解Poission方程，私有成员如下
+		\begin{lstlisting}[language=C++, caption={运算符实现}, label={lst:operators}]
+		class EquationSolver{
+		private:
+			vector<vector<double>> grids;  // denote the 2 dimension grids
+			vector<double> values; //求解的数值解将储存在values中
+			int N=0;  //the number of grids in 1 dimension
+			double h=0.0;
+			Circle *c=nullptr;
+			vector<bool> incircle;
+			vector<double> laplacian;
+			vector<vector<double>> A; 离散拉普拉斯算子得到的矩阵
+			void precondition(); //处理内部的点
+			void coeffMatrix(const vector<int> & mixed); //处理规则边界
+			void Diri(const Function &g); //处理不规则边界的Dirichlet边值
+			void Neum(const Function &g, const vector<int> &mixed);
+			//处理不规则边界的Neumann边值
+			void coeffMatrix(const Function &g, const vector<int> &mixed); //处理不规则边界
+			void getcolumn(const Function &g, const vector<int> &mixed);
+			//处理右端项
+			void solve(const Function &g, const vector<int> &mixed);//lapacke求解
+			vector<double> convert(const Function &g, const vector<int> &mixed);
+			void adjust(const double &initial); //对不规则区域去掉圆内的格点，对Neumann边界条件加一个常数
+			vector<double> errors(const Function &f) //计算误差
+			vector<double> realValues(const Function &f) //计算真实值
+		\end{lstlisting}
+		公有成员如下，其中调用\texttt{void solveEquation(const Function \&g, const double \&initial=0.0, const vector<int> \&mixed=vector<int>{0,0,0,0,0})}函数将求解方程，这里的\texttt{const Function \&g}是边值条件，\texttt{const double \&initial=0.0}是点$(\frac{1}{h}, \frac{1}{h})$的值，由于Neumann边值问题的求解会相差一个常数，为了消除这个常数的影响，由用户自行指定希望得到的函数在$(\frac{1}{h}, \frac{1}{h})$的值。\texttt{const vector<int> \&mixed=vector<int>{0,0,0,0,0}} 给出混合边值条件，具体地：分别给直线$y=0,\ x=0,\ x=1,\ y=1,\ $编号为$0,\ 1,\ 2,\ 3,\ $，给$\partial \mathbb{D}$ 编号为$4$，$0$代表Dirichlet边值条件，$1$代表Neumann边值条件。
+		\begin{lstlisting}[language=C++, caption={运算符实现},
+			 label={lst:operators}]
+		public:
+			EquationSolver(const int &_N, const Function &f) //对于规则区域求解，需要输入格点数目和方程右端函数
+			EquationSolver(const int &_N, const Function &f, Circle *_c):N(_N), c(_c) //对于不规则区域求解，需要输入格点数目和方程右端函数以及圆的参数
+			void norm_error(const Function &f,const string &filename)//计算$l_1$ $l_2$ $l_\infty$范数下的误差，将误差输出到屏幕和文件
+			void solveEquation(const Function &g, const double &initial=0.0, const vector<int> &mixed=vector<int>{0,0,0,0,0}) //求解方程
+			void print(const string &filename, const Function &f) //将格点 格点上的真实值 格点上的数值解输出到文件。
+		\end{lstlisting}
+		\item \textbf{\texttt{Circle}类：}定义了\texttt{Circle}类，记录圆的圆心半径，实现了和一些简单的计算，如点到圆的距离，$x$轴方向点到圆的有向距离，$y$轴方向点到圆的有向距离。具体如下：
+		\begin{lstlisting}[language=C++, caption={运算符实现},
+			label={lst:operators}]
+			class Circle{
+				private:
+				double x0=0.0;
+				double y0=0.0;
+				double radius=0.0;
+				public:
+				Circle();
+				Circle(double x, double y, double r);
+				bool inCircle(double x, double y) const;
+				
+				bool onCircle(double x, double y) const;
+				
+				double get_radius() const;
+				
+				double getX() const;
+				
+				double getY()const;
+				
+				double distance(double x, double y) const;
+				
+				double x_distance_to_circle(double x, double y) const;  //有向距离
+				
+				double y_distance_to_circle(double x, double y) const; //有向距离
+				
+				double angle_x_direction(double x) const; 
+				
+				double angle_y_direction(double y) const;
+			};
+			
+		\end{lstlisting}
+	\end{enumerate}
+	\subsection{测试函数}
+	测试函数全部定义在\texttt{TestFunction.cpp}中。一共定义了3个测试函数。
+	\subsection{输入和输出}
+	由于测试用例很多，采用\texttt{jsoncpp}控制输入和输出。
+	\begin{itemize}
+		\item  \textbf{输入：}输入文件放在\texttt{input}文件夹下，输入文件格式如下：
+		\begin{lstlisting}[style=json]
+			{
+				"boundary_condition": "Mixed",
+				"domain": "irregular",
+				"grid_number": 32,
+				"functionType": 3,
+				"circle": [0.6,0.53,0.17],
+				"mixed": [1,0,0,1,1]
+			}
+		\end{lstlisting}
+		这里\texttt{"circle"}的参数分别是$x$坐标，$y$坐标，半径。\texttt{"mixed"}的参数只能是$0,\ 1$，代表边界上的Dirichlet条件或者Neumann边界条件。
+		\item \textbf{输出:}最终程序运行的具体结果写在\texttt{output}文件夹下的\texttt{output.json}文件中，记录了格点、格点上数值解 、格点上的函数真实值。\texttt{error.json}格式如下：
+				\begin{lstlisting}[style=json]
+	{
+		"boundary_condition": 0,
+		"domain": 0,
+		"l1_norm": 0.0018029833955581775,
+		"l2_norm": 0.0008034791522725579,
+		"linfinity_norm": 0.0005369806601569493
+	}
+			}
+		\end{lstlisting}
+	\end{itemize}
+
+	\end{document}
