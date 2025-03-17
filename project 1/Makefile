@@ -13,6 +13,5 @@ report:
 clean:
 	$(MAKE) -C src clean
 	$(MAKE) -C doc clean
-	rm -f output/*.json  
 
 .PHONY: all cleanoutput draw report clean
