@@ -3,40 +3,76 @@ Sparse_Matrix::Sparse_Matrix():n(0){}
 
 Sparse_Matrix::Sparse_Matrix(const int &_n):n(_n){}
 
-Sparse_Matrix::Sparse_Matrix(const int &_n, const map<label, double> &_A):n(_n), A(_A){}
+Sparse_Matrix::Sparse_Matrix(const int &_n, const vector<label> &e):n(_n), elements(e){}
 
 void Sparse_Matrix::setValues(const int &i, const int &j, const double &value){
-    label l(i,j);
     if(i>=0 && i<n && j>=0 && j<n){
-        A[l]=value;
+        elements[i][j]=value;
     }
     else{
         cerr<<"invalid label!"<<endl;
     }
 }
 
-double Sparse_Matrix::operator()(const int &i, const int &j){
+double Sparse_Matrix::operator()(const int &i, const int &j) {
     if(i>=0 && i<n && j>=0 && j<n){
-        label l(i,j);
-        return A[l];
+        return elements[i][j];
     }
+    else{return 0.0;}
 }
+
+//void Sparse_Matrix::transform(){
+    //for(map<label, double>::iterator i=A.begin(); i!=A.end(); ++i){
+        
+    //}
+//}
 
 Sparse_Matrix Sparse_Matrix::operator+(const Sparse_Matrix &B){
     if(n!=B.n){
         cerr<<"invalid since the matrix dimension must agree for addision"<<endl;
+        return Sparse_Matrix();
     } 
-    //-------------------不能直接修改A-------------------------
     else{
-        Sparse_Matrix C(n);
-        map<label, double> A1=B.A;
-        for(map<label, double>::iterator i=A1.begin(); i!=A1.end(); ++i){
-            if(A.count(i->first)){
-                A[i->first]+=i->second;
-            }
-            else{
-                A[i->first]=i->second;
+        vector<label> new_elements(n);
+        for(int i=0; i<n; ++i){
+            label lA=elements[i];
+            label l=B.elements[i];
+            new_elements[i]=lA;
+            for(map<int, double>::iterator itr=l.begin(); itr!=l.end(); ++itr){
+                if(lA.count(l[itr->first])){
+                    new_elements[i][itr->first]+=itr->second;
+                }
+                else{
+                    new_elements[i][itr->first]=itr->second;
+                }
             }
         }
+        return Sparse_Matrix(n, new_elements);
     }
+}
+
+Sparse_Matrix Sparse_Matrix::operator*(const double &a){
+    vector<label> new_elements(n);
+    for(int i=0; i<n; ++i){
+        label l=elements[i];
+        new_elements[i]=elements[i];
+        for(map<int,double>::iterator itr=l.begin(); itr!=l.end(); ++itr){
+            new_elements[i][itr->first]=a*itr->second;
+        }
+    }
+    return Sparse_Matrix(n, new_elements);
+}
+
+Vector Sparse_Matrix::operator*(const Vector &v){
+    vector<double> new_elements(n);
+    vector<double> V=v.elements;
+    for(int i=0; i<n; ++i){
+        label l=elements[i];
+        double current=0.0;
+        for(map<int, double>::iterator itr=l.begin(); itr!=l.end(); ++itr){
+            current+=itr->second*V[itr->first];
+        }
+        new_elements[i]=current;
+    }
+    return Vector(n, new_elements);
 }
