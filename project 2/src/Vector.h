@@ -13,10 +13,19 @@ private:
 public:
     Vector();
     Vector(const int &n);
+    Vector(const vector<double> &e);
     Vector(const int &n, const vector<double> &_e);
-    Vector operator+(const Vector &v);
-    Vector operator-(const Vector &v);
-    Vector operator*(const double &a);
+    Vector(Vector&& other) noexcept;
+    Vector(const Vector&) = delete;           // 禁用拷贝
+    Vector& operator=(const Vector&) = delete;
+    void set_Value(const int &i, const double &value);
+    Vector& operator=(Vector&& other) noexcept;
+    double operator()(const int &i) const;
+    Vector operator+(const Vector &v) const;
+    Vector operator-(const Vector &v) const;
+    Vector operator*(const double &a) const;
+    int getdim() const;
+    void print() const;
     friend class Sparse_Matrix;
 };
 
