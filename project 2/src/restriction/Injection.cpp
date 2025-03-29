@@ -1,5 +1,4 @@
 #include"Injection.h"
-#include<cmath>
 template<int dim>
 Vector Injection<dim>::operator()(const Vector &v) const{
     if constexpr (dim == 1){

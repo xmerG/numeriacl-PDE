@@ -1,9 +1,10 @@
-#ifndef _RESTRICTION_
-#define _RESTRICTION_
-#include"Vector.h"
+#ifndef _PROLONGATION_
+#define _PROLONGATION_
+
+#include"../Vector.h"
 
 template<int dim>
-class Retriction{
+class Prolongation{
 public:
     virtual Vector operator()(const Vector &v) const=0;
 };
