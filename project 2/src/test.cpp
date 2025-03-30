@@ -1,10 +1,8 @@
-#include"prolongation/Linear.h"
-
+#include"Multigrid.h"
+#include"testFunction.h"
 int main(){
-    vector<double> e{1.0, 7.0, 5.0, 4.0, 2.0, 0.0, -1.0, 3.0, 8.0};
-    Vector v1=Vector(e);
-    Linear<2> inj1;
-    Vector v2=inj1(v1);
-    v2.print();
+    F1 f1;
+    Multigrid<2> M1(f1, f1, BoundaryCondition::Dirichlet, 4);
+    M1.print();
     return 0;
 }

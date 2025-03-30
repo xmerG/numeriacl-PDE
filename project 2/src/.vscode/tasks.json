@@ -9,17 +9,24 @@
                 "-fdiagnostics-color=always",
                 "-g",
                 "test.cpp",
-                "prolongation/Linear.cpp",
                 "Vector.cpp",
+                "Sparse_Matrix.cpp",
+                "Multigrid.cpp",
+                "restriction/Full_weighting.cpp",
+                "restriction/Injection.cpp",
+                "prolongation/Linear.cpp",
+                "prolongation/Quadric.cpp",
                 "-o",
-                "${fileDirname}/test"
+                "${fileDirname}/test",
+                "-llapacke",   // 链接 LAPACKE
+                "-llapack",    // 链接 LAPACK
+                "-lblas",      // 链接 BLAS
+                "-lm"          // 链接数学库（某些系统需要）
             ],
             "options": {
                 "cwd": "${fileDirname}"
             },
-            "problemMatcher": [
-                "$gcc"
-            ],
+            "problemMatcher": ["$gcc"],
             "group": {
                 "kind": "build",
                 "isDefault": true

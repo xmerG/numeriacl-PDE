@@ -100,3 +100,12 @@ void Vector::set_Value(const int &i, const int &j, const double &value){
         elements[i+j*m]=value;
     }
 }
+
+void Vector::go_zero(){
+    fill(elements.begin(), elements.end(), 0.0);
+}
+
+vector<double> Vector::getelements() const{
+    return elements;
+}
+

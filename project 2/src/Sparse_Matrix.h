@@ -10,13 +10,15 @@ using label=map<int, double>; //the first int denote jth column while the second
 class Sparse_Matrix{
 private: 
     vector<label> elements;
-    int n;
+    int n;  //size of matrix
 public:
     Sparse_Matrix();
     Sparse_Matrix(const int &_n);
     Sparse_Matrix(const int &_n, const vector<label> &e);
     Sparse_Matrix(Sparse_Matrix&& other) noexcept;
     Sparse_Matrix& operator=(Sparse_Matrix&& other) noexcept;
+    Sparse_Matrix(const Sparse_Matrix&) = delete;           // 禁用拷贝
+    Sparse_Matrix& operator=(const Sparse_Matrix&) = delete;
     void setValues(const int &i, const int &j, const double &value); //set A(i,j)
     double operator()(const int &i, const int &j) const;
     void transform();
@@ -24,6 +26,9 @@ public:
     Sparse_Matrix operator*(const Sparse_Matrix &B) const;
     Sparse_Matrix operator*(const double &a) const;
     Vector operator*(const Vector &v) const;
+    vector<double> convert_to_vector() const;
+    int getdim() const;
+    void print();
 
 };
 

@@ -3,6 +3,10 @@
 #include<vector>
 #include<iostream>
 #include<cmath>
+#include <algorithm>
+#include<fstream>
+#include<string>
+#include <nlohmann/json.hpp>
 using namespace std;
 
 class Sparse_Matrix;
@@ -30,7 +34,10 @@ public:
     int getdim() const;
     void print() const;
     double operator()(const int &i, const int &j) const;
+    void go_zero();
     friend class Sparse_Matrix;
+    vector<double> getelements() const;
+    void print_to_file(const string &filename);
 };
 
 #endif
