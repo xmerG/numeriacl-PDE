@@ -20,10 +20,9 @@ public:
     Vector();
     Vector(const int &n);
     Vector(const vector<double> &e);
+    Vector(const Vector& other);
     Vector(const int &n, const vector<double> &_e);
     Vector(Vector&& other) noexcept;
-    Vector(const Vector&) = delete;           // 禁用拷贝
-    Vector& operator=(const Vector&) = delete;
     void set_Value(const int &i, const double &value);
     void set_Value(const int &i, const int &j, const double &value);
     Vector& operator=(Vector&& other) noexcept;
@@ -34,7 +33,7 @@ public:
     int getdim() const;
     void print() const;
     double operator()(const int &i, const int &j) const;
-    void go_zero();
+    void go_zero(const int &k);
     friend class Sparse_Matrix;
     vector<double> getelements() const;
     void print_to_file(const string &filename);

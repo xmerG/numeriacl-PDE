@@ -22,7 +22,9 @@ Sparse_Matrix& Sparse_Matrix::operator=(Sparse_Matrix&& other) noexcept{
 
 void Sparse_Matrix::setValues(const int &i, const int &j, const double &value){
     if(i>=0 && i<n && j>=0 && j<n){
-        (elements[i])[j]=value;
+        label l=elements[i];
+        l[j]=value;
+        elements[i]=l;
     }
 }
 

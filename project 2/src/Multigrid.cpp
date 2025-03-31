@@ -1,7 +1,7 @@
 #include"Multigrid.h"
 template<int dim>
-Vector Multigrid<dim>::w_Jacobi(int i, const Vector &initial){
-    Sparse_Matrix A=move(discretors[i].first);
+Vector Multigrid<dim>::w_Jacobi(int j, const Vector &initial){
+    Sparse_Matrix& A = discretors[j].first;
     double weighted=0.0;
     if constexpr(dim==1){
         weighted=1.0/3.0;
@@ -10,29 +10,53 @@ Vector Multigrid<dim>::w_Jacobi(int i, const Vector &initial){
         weighted=1.0/6.0;
     }
     Vector temp=A*initial;
-    return initial+(discretors[i].second-temp)*weighted;
+    return initial+(discretors[j].second-temp)*weighted;
 }
 
 template<int dim>
-Vector Multigrid<dim>::V_cycle(const int &n, Vector& initial_guess, int nu1, int nu2){
+Vector Multigrid<dim>::V_cycle(const int &_n, Vector& initial_guess, int nu1, int nu2){ //_n 网格个数
     for(int i=0; i<nu1; ++i){
-        initial_guess=this->w_Jacobi(n, initial_guess);
+        initial_guess=this->w_Jacobi(_n, initial_guess);
     }
-    Vector v=move(initial_guess);
-    if(n==2){
-        v=this->corsa_solve(n);
+    Vector v=initial_guess;
+    if(_n==2){
+        v=this->corsa_solve(_n);
     }
     else{
-        Vector fnew=discretors[n].second-discretors[n].first*initial_guess;
-        discretors[n/2].second=(*restriction)(fnew);
-        initial_guess.go_zero();
-        initial_guess=V_cycle(n/2, initial_guess, nu1, nu2);
+        Vector fnew=discretors[_n].second-discretors[_n].first*initial_guess;
+        int corsa=_n/2;
+        discretors[corsa].second=(*restriction)(fnew);
+        if (dim==1){
+            initial_guess.go_zero(corsa-1);
+        }
+        else{
+            initial_guess.go_zero((corsa-1)*(corsa-1));
+        }
+        initial_guess=V_cycle(corsa, initial_guess, nu1, nu2);
+        v=v+(*prolongation)(initial_guess);
     }
-    v=v+(*prolongation)(initial_guess);
     for(int i=0; i<nu2; ++i){
-        v=this->w_Jacobi(n, v);
+        v=this->w_Jacobi(_n, v);
     }
     return v;    
+}
+
+template<int dim>
+Vector Multigrid<dim>::FMG(const int &_n, int nu1, int nu2){
+    int corsa=_n;
+    if(_n==2){
+        Vector v=Vector(1);
+        v=this->V_cycle(_n, v, nu1, nu2);
+        return v;
+    }
+    else{
+        corsa/=2;
+        discretors[corsa].second=(*restriction)(discretors[_n].second);
+        Vector v=this->FMG(corsa, nu1, nu2);
+        v=(*prolongation)(v);
+        v=this->V_cycle(_n, v, nu1, nu2);
+        return v;
+    }
 }
 
 template<int dim>
@@ -54,10 +78,14 @@ void Multigrid<1>::create_grids_D(const Function &f, const Function &g, const in
         A.setValues(j,j,2.0);
         A.setValues(j,j-1,-1.0);
         A.setValues(j, j+1, -1.0);
-        fh.set_Value(j, h*h*f((j+1)*h));
     }
-    fh.set_Value(0, fh(0)+g(0.0));
-    fh.set_Value(i-2, fh(i-2)+g(1.0));
+    if(i==n){
+        for(int j=0; j<n-1; ++j){
+            fh.set_Value(j, h*h*f((j+1)*h));
+        }
+        fh.set_Value(0, fh(0)+g(0.0));
+        fh.set_Value(i-2, fh(i-2)+g(1.0));
+    }
     discretors[i]=pair{move(A),move(fh)};   
 }
 
@@ -74,27 +102,31 @@ void Multigrid<2>::create_grids_D(const Function &f, const Function &g, const in
         A.setValues(j, j+i-1, -1.0);
         A.setValues(j, j-i+1, -1.0);
     }
-    for(int j=0; j<i-1; ++j){
-        for(int k=0; k<i-1; ++k){
-            fh.set_Value(k, j, h*h*f((k+1)*h, (j+1)*h));
+    if(i==n){
+        for(int j=0; j<i-1; ++j){
+            for(int k=0; k<i-1; ++k){
+                fh.set_Value(k, j, h*h*f((k+1)*h, (j+1)*h));
+            }
         }
-    }
-    for(int j=0; j<i-1; ++j){
-        double temp=(j+1)*h;
-        double value=fh(j, 0)+g(temp, 0.0);
-        fh.set_Value(j,0, value);
-        
-        value=fh(0, j)+g(0.0, temp);
-        fh.set_Value(0, j, value);
-
-        value=fh(j, i-2)+g(temp, 1.0);
-        fh.set_Value(j, i-2, value);
-
-        value=fh(i-2, j)+g(1.0, temp);
-        fh.set_Value(i-2, j, value);
+        for(int j=0; j<i-1; ++j){
+            double temp=(j+1)*h;
+            double value=fh(j, 0)+g(temp, 0.0);
+            fh.set_Value(j,0, value);
+            
+            value=fh(0, j)+g(0.0, temp);
+            fh.set_Value(0, j, value);
+    
+            value=fh(j, i-2)+g(temp, 1.0);
+            fh.set_Value(j, i-2, value);
+    
+            value=fh(i-2, j)+g(1.0, temp);
+            fh.set_Value(i-2, j, value);
+        }
     }
     discretors[i]=make_pair(move(A), move(fh));
 }
+
+
 
 
 template<int dim>
@@ -122,27 +154,35 @@ void Multigrid<dim>::print(){
 }
 
 template<int dim>
-void Multigrid<dim>::solve(string r, string p, string c, Vector& initial_guess, int nu1, int nu2){
-    if (r== "full_weighting") {
-        restriction = make_unique<Full_weighting<dim>>(); 
-    } else if (r == "injection") {
-        restriction = make_unique<Injection<dim>>(); 
-    } else {
-        std::cerr << "Invalid restriction method: " << restriction_str << std::endl;
-        return;
+void Multigrid<dim>::solve(const string& r, const string& p, const string& c, 
+    Vector& initial_guess, int nu1, int nu2) {
+    if (r == "full_weighting") {
+    restriction = make_unique<Full_weighting<dim>>(); 
+    } 
+    else if (r == "injection") {
+    restriction = make_unique<Injection<dim>>(); 
     }
-
+     else {
+    cerr << "Invalid restriction method: " << r << endl;
+    return;
+    }
+    
     if (p == "linear") {
-        prolongation = std::make_unique<Linear<dim>>(); 
-    } else if (prolongation == "quadric") {
-        p = std::make_unique<Quadric<dim>>(); 
-    } else {
-        std::cerr << "Invalid prolongation method: " << prolongation_str << std::endl;
-        return;
+    prolongation = make_unique<Linear<dim>>(); 
+    } 
+    else if (p == "quadric") { 
+    prolongation = make_unique<Quadric<dim>>();  
     }
-    cycle = &Multigrid<dim>::V_cycle;
-    solutions=(*cyce)(n,initial_sguess, nu1, nu2);
-
+     else {
+    cerr << "Invalid prolongation method: " << p << endl;
+    return;
+    }
+    if(c=="v-cylce"){
+        solutions=this->V_cycle(n, initial_guess, nu1, nu2);
+    }
+    else{
+        solutions=this->FMG(n, nu1, nu2);
+    }
 }
 
 template<>

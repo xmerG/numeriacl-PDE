@@ -17,8 +17,6 @@ public:
     Sparse_Matrix(const int &_n, const vector<label> &e);
     Sparse_Matrix(Sparse_Matrix&& other) noexcept;
     Sparse_Matrix& operator=(Sparse_Matrix&& other) noexcept;
-    Sparse_Matrix(const Sparse_Matrix&) = delete;           // 禁用拷贝
-    Sparse_Matrix& operator=(const Sparse_Matrix&) = delete;
     void setValues(const int &i, const int &j, const double &value); //set A(i,j)
     double operator()(const int &i, const int &j) const;
     void transform();

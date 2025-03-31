@@ -11,6 +11,9 @@ Vector::Vector(const vector<double> &e):elements(e){n=e.size(); m=sqrt(n);}
 
 Vector::Vector(const int &_n, const vector<double> & _e):n(_n), elements(_e){m=sqrt(n);}
 
+Vector::Vector(const Vector& other) 
+    : n(other.n), m(other.m), elements(other.elements) {} 
+
 Vector::Vector(Vector &&other) noexcept: n(other.n), m(other.m),elements(std::move(other.elements)) {
     other.n = 0;
     other.m=0;
@@ -101,8 +104,11 @@ void Vector::set_Value(const int &i, const int &j, const double &value){
     }
 }
 
-void Vector::go_zero(){
+void Vector::go_zero(const int &k){
+    elements.resize(k, 0.0);
     fill(elements.begin(), elements.end(), 0.0);
+    n=k;
+    m=sqrt(n);
 }
 
 vector<double> Vector::getelements() const{
