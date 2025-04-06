@@ -18,9 +18,6 @@
                 "prolongation/Quadric.cpp",
                 "-o",
                 "${fileDirname}/test",
-                "-llapacke",   // 链接 LAPACKE
-                "-llapack",    // 链接 LAPACK
-                "-lblas",      // 链接 BLAS
                 "-lm"          // 链接数学库（某些系统需要）
             ],
             "options": {

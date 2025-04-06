@@ -7,9 +7,16 @@ Vector::Vector(const int &_n):n(_n){
     m=sqrt(n);
 }
 
-Vector::Vector(const vector<double> &e):elements(e){n=e.size(); m=sqrt(n);}
+Vector::Vector(const vector<double> &e) 
+    : elements(e), n(e.size()), m(sqrt(n)) {}  
 
-Vector::Vector(const int &_n, const vector<double> & _e):n(_n), elements(_e){m=sqrt(n);}
+Vector::Vector(const int &_n, const vector<double> &_e) {
+    elements=_e;
+    n=_n;
+    m=sqrt(n);
+}
+
+
 
 Vector::Vector(const Vector& other) 
     : n(other.n), m(other.m), elements(other.elements) {} 
@@ -17,15 +24,17 @@ Vector::Vector(const Vector& other)
 Vector::Vector(Vector &&other) noexcept: n(other.n), m(other.m),elements(std::move(other.elements)) {
     other.n = 0;
     other.m=0;
+    other.elements.clear();
 }
 
 Vector& Vector::operator=(Vector&& other) noexcept {
     if (this != &other) {
         n = other.n;
         m=other.m;
-        elements = std::move(other.elements);
+        elements = move(other.elements);
         other.n = 0;
         other.m=0;
+        other.elements.clear();
     }
     return *this;
 }
@@ -112,6 +121,13 @@ void Vector::go_zero(const int &k){
 }
 
 vector<double> Vector::getelements() const{
-    return elements;
+    return vector<double>(elements);
 }
 
+void Vector::copy(const Vector& other) {
+    if (this != &other) {  // 防止自赋值
+        n = other.n;
+        m = other.m;
+        elements = other.elements;  // 深拷贝
+    }
+}

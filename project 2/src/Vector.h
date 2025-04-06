@@ -36,6 +36,7 @@ public:
     void go_zero(const int &k);
     friend class Sparse_Matrix;
     vector<double> getelements() const;
+    void copy(const Vector& other);
     void print_to_file(const string &filename);
 };
 

@@ -7,18 +7,18 @@ Sparse_Matrix::Sparse_Matrix(const int &_n):n(_n){
 
 Sparse_Matrix::Sparse_Matrix(const int &_n, const vector<label> &e):n(_n), elements(e){}
 
-Sparse_Matrix::Sparse_Matrix(Sparse_Matrix&& other) noexcept: n(other.n), elements(move(other.elements)){
+/*Sparse_Matrix::Sparse_Matrix(Sparse_Matrix&& other) noexcept: n(other.n), elements(move(other.elements)){
     other.n=0;
-}
+}*/
 
-Sparse_Matrix& Sparse_Matrix::operator=(Sparse_Matrix&& other) noexcept{
+/*Sparse_Matrix& Sparse_Matrix::operator=(Sparse_Matrix&& other) noexcept{
     if (this != &other) {
         n = other.n;
         elements = move(other.elements);
         other.n = 0;
     }
     return *this;
-}
+}*/
 
 void Sparse_Matrix::setValues(const int &i, const int &j, const double &value){
     if(i>=0 && i<n && j>=0 && j<n){
@@ -117,3 +117,30 @@ void Sparse_Matrix::print() {
         cout<<endl;
     }
 }
+
+void Sparse_Matrix::Gauss_Seidel(Vector &initial, const Vector &b){
+    for(int i=0; i<n; ++i){
+        label l=elements[i];
+        double value=0.0;
+        double a=0.0;
+        for(map<int, double>::iterator itr=l.begin(); itr!=l.end(); ++itr){
+            if(itr->first!=i){
+                value-=itr->second*initial(itr->first);
+            }
+            else{
+                a=itr->second;
+            }
+        }
+        value+=b(i);
+        value/=a;
+        initial.set_Value(i, value);
+    }
+}
+/*
+void Sparse_Matrix::solve(Vector b){
+    vector<double> B=b.getelements();
+    vector<double> matrix = this->convert_to_vector();  
+    vector<int> ipiv(n); 
+    int info = LAPACKE_dgesv(LAPACK_ROW_MAJOR, n, 1, matrix.data(), n, ipiv.data(), B.data(), n);
+    b=Vector(n, B);
+}*/

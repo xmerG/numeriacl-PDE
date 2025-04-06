@@ -15,8 +15,8 @@ public:
     Sparse_Matrix();
     Sparse_Matrix(const int &_n);
     Sparse_Matrix(const int &_n, const vector<label> &e);
-    Sparse_Matrix(Sparse_Matrix&& other) noexcept;
-    Sparse_Matrix& operator=(Sparse_Matrix&& other) noexcept;
+    //Sparse_Matrix(Sparse_Matrix&& other) noexcept;
+    //Sparse_Matrix& operator=(Sparse_Matrix&& other) noexcept;
     void setValues(const int &i, const int &j, const double &value); //set A(i,j)
     double operator()(const int &i, const int &j) const;
     void transform();
@@ -25,6 +25,8 @@ public:
     Sparse_Matrix operator*(const double &a) const;
     Vector operator*(const Vector &v) const;
     vector<double> convert_to_vector() const;
+    void Gauss_Seidel(Vector &initial, const Vector &b);
+    void solve(Vector b) ;
     int getdim() const;
     void print();
 
