@@ -8,21 +8,25 @@ Vector Multigrid<dim>::w_Jacobi(int j, const Vector &initial){
         weighted=1.0/3.0;
     }
     else {
-        weighted=1.0/6.0;
+        weighted=1.0/5.0;
     }
     Vector temp=A*initial;
-    return initial+(discretors[j].second*(currh*currh)-temp)*weighted;
+    temp= initial+(discretors[j].second*(currh*currh)-temp)*weighted;
+    if(BC==BoundaryCondition::Neumann){
+        temp.projection();
+    }
+    return temp;
 }
 
 
 template<int dim>
-Vector Multigrid<dim>::V_cycle(const int &_n, Vector& initial_guess, int nu1, int nu2){ //_n 网格个数
+Vector Multigrid<dim>::V_cycle(const int &_n,  Vector& initial_guess, int nu1, int nu2){ //_n 网格个数
     for(int i=0; i<nu1; ++i){
         initial_guess=this->w_Jacobi(_n, initial_guess);
     }
     if(_n==4){
         Vector v=discretors[_n].second*(1.0/(_n*_n));
-        for(int i=0; i<10; ++i){
+        for(int i=0; i<20; ++i){
             discretors[_n].first.Gauss_Seidel(initial_guess, v);
         }
         for(int i=0; i<nu2; ++i){
@@ -34,9 +38,9 @@ Vector Multigrid<dim>::V_cycle(const int &_n, Vector& initial_guess, int nu1, in
         Vector fnew=discretors[_n].second-discretors[_n].first*initial_guess*(_n*_n);
         int corsa=_n/2;
         discretors[corsa].second=(*restriction)(fnew);
-        Vector v(corsa-1);
+        Vector v(corsa+1);
         if (dim==2){
-            v.go_zero((corsa-1)*(corsa-1));
+            v.go_zero((corsa+1)*(corsa+1));
         }
         v=V_cycle(corsa,v , nu1, nu2);
         initial_guess=initial_guess+(*prolongation)(v);
@@ -52,7 +56,10 @@ template<int dim>
 Vector Multigrid<dim>::FMG(const int &_n, int nu1, int nu2){
     int corsa=_n;
     if(_n==4){
-        Vector v=Vector(_n-1);
+        Vector v=Vector(_n+1);
+        if(dim==2){
+            v.go_zero((_n+1)*(_n+1));
+        }
         v=this->V_cycle(_n, v, nu1, nu2);
         return v;
     }
@@ -66,15 +73,6 @@ Vector Multigrid<dim>::FMG(const int &_n, int nu1, int nu2){
     }
 }
 
-/*template<int dim>
-vector<double> Multigrid<dim>::corsa_solve(const int &i) {
-    vector<double> matrix = discretors[i].first.convert_to_vector();
-    vector<double> values = discretors[i].second.getelements();
-    int n = discretors[i].first.getdim();
-    vector<int> ipiv(n);
-    int info = LAPACKE_dgesv(LAPACK_ROW_MAJOR, n, 1, matrix.data(), n, ipiv.data(), values.data(), n);
-    return values;
-}*/
 
 template<>
 void Multigrid<1>::create_grids_D(const Function &f, const Function &g, const int &i) {
@@ -111,8 +109,8 @@ void Multigrid<2>::create_grids_D(const Function &f, const Function &g, const in
             A.setValues(index, index, 4.0);
             A.setValues(index, index+1, -1.0);
             A.setValues(index, index-1, -1.0);
-            A.setValues(index, index+i-1, -1.0);
-            A.setValues(index, index-i+1, -1.0);
+            A.setValues(index, index+i+1, -1.0);
+            A.setValues(index, index-i-1, -1.0);
         }
     }
 
@@ -125,39 +123,7 @@ void Multigrid<2>::create_grids_D(const Function &f, const Function &g, const in
         A.setValues(index, index, 4.0);
         index=(i+1)*i+j;
         A.setValues(index, index, 4.0);
-        /*A.setValues(j,j, 4.0);
-        A.setValues(j, j+1, -1.0);
-        A.setValues(j, j-1, -1.0);
-        A.setValues(j, j+i-1, -1.0);
-        int index=j*(i-1);
-        A.setValues(index, index, 4.0);
-        A.setValues(index, index+1, -1.0);
-        A.setValues(index, index+i-1, -1.0);
-        A.setValues(index, index-i+1, -1.0);
-        index=index+i-2;
-        A.setValues(index, index, 4.0);
-        A.setValues(index, index-1, -1.0);
-        A.setValues(index, index-i+1, -1.0);
-        A.setValues(index, index+i-1, -1.0);
-        index=(i-1)*(i-2)+j;
-        A.setValues(index, index, 4.0);
-        A.setValues(index, index-1, -1.0);
-        A.setValues(index, index+1, -1.0);
-        A.setValues(index, index-i+1, -1.0);*/
     }
-    /*A.setValues(0,0, 4.0);
-    A.setValues(0,1, -1.0);
-    A.setValues(0, i-1, -1.0);
-    A.setValues(i-2, i-2, 4.0);
-    A.setValues(i-2, i-3, -1.0);
-    A.setValues(i-2, 2*i-3, -1.0);
-    A.setValues(dim-1, dim-1, 4.0);
-    A.setValues(dim-1, dim-2, -1.0);
-    A.setValues(dim-1, dim-i+1, -1.0);
-    int index=(i-1)*(i-2);
-    A.setValues(index, index, 4.0);
-    A.setValues(index, index+1, -1.0);
-    A.setValues(index, index-i+1, -1.0);*/
     if(i==n){
         int n2=n*n;
         for(int j=1; j<n; ++j){
@@ -168,13 +134,13 @@ void Multigrid<2>::create_grids_D(const Function &f, const Function &g, const in
         //边界
         for(int j=0; j<=n; ++j){
             double temp=j*h;
-            fh.set_Value(j,0, g(temp, 0.0)*n2);
+            fh.set_Value(j,0, 4*g(temp, 0.0)*n2);
             
-            fh.set_Value(0, j, g(0.0, temp)*n2);
+            fh.set_Value(0, j, 4*g(0.0, temp)*n2);
     
-            fh.set_Value(j, n, g(temp, 1.0)*n2);
+            fh.set_Value(j, n, 4*g(temp, 1.0)*n2);
     
-            fh.set_Value(n, j, g(1.0, temp)*n2);
+            fh.set_Value(n, j, 4*g(1.0, temp)*n2);
         }
     }
     discretors[i]=make_pair(move(A), move(fh));
@@ -182,104 +148,271 @@ void Multigrid<2>::create_grids_D(const Function &f, const Function &g, const in
 
 //---------------------------------------to be modified--------------------------------------------------------------
 template<>
-void Multigrid<1>::create_grids_N(const Function &f, const Function &g,const int &i, double value){
-    Sparse_Matrix A(i-1);
-    Vector fh(i-1);
-    for(int j=1; j<i-2; ++j){
+void Multigrid<1>::create_grids_N(const Function &f, const Function &g,const int &i){
+    Sparse_Matrix A(i+1);
+    Vector fh(i+1);
+    for(int j=1; j<i; ++j){
         A.setValues(j,j,2.0);
         A.setValues(j,j-1,-1.0);
         A.setValues(j, j+1, -1.0);
     }
     A.setValues(0,0, 2.0);
-    A.setValues(i-2, i-3, -2.0);
-    A.setValues(i-2, i-2, 2.0);
+    A.setValues(0, 1, -2.0);
+    A.setValues(i, i, 2.0);
+    A.setValues(i, i-1, -2.0);
     if(i==n){
         double h=1.0/i;
-        for(int j=0; j<n-1; ++j){
-            fh.set_Value(j,f((j+1)*h));
+        for(int j=0; j<=n; ++j){
+            fh.set_Value(j,f(j*h));
         }
-        fh.set_Value(0, 2*value*n*n);
-        fh.set_Value(i-2, 3*fh(i-2)+2*g(1.0)*n);
+        fh.set_Value(0, fh(0)+2*g(0.0)*n);
+        fh.set_Value(i, fh(i)+2*g(1.0)*n);
     }
     discretors[i]=pair{move(A),move(fh)};   
 }
 
 //-------------------------------------------------to be modified----------------------------------------
 template<>
-void Multigrid<2>::create_grids_N(const Function &f, const Function &g,const int &i, double value){
-    int dim=pow(i-1,2);
-    Sparse_Matrix A(dim);
+void Multigrid<2>::create_grids_N(const Function &f, const Function &g,const int &i){
+    int currdim=pow(i+1,2);
+    Sparse_Matrix A(currdim);
     double h=1.0/i;
-    Vector fh(dim);
-    int temp=(i-1)*(i-2);
-    for(int j=1; j<dim; ++j){
-        A.setValues(j,j, 4.0);
-        if(j==i-2 || j==dim-1 || i==temp){
-            A.setValues(j, j+1, -2.0);
-            A.setValues(j, j-1, -2.0);
-            A.setValues(j, j+i-1, -2.0);
-            A.setValues(j, j-i+1, -2.0);
-        }
-        else{
-            A.setValues(j, j+1, -1.0);
-            A.setValues(j, j-1, -1.0);
-            A.setValues(j, j+i-1, -1.0);
-            A.setValues(j, j-i+1, -1.0);
+    Vector fh(currdim);
+    for(int j=1; j<i; ++j){
+        for(int k=1; k<i; ++k){
+            int index=k+(i+1)*j;
+            A.setValues(index, index, 4.0);
+            A.setValues(index, index+1, -1.0);
+            A.setValues(index, index-1, -1.0);
+            A.setValues(index, index+i+1, -1.0);
+            A.setValues(index, index-i-1, -1.0);
         }
     }
-    for(int j=1; j<i-2; ++j){
-        A.setValues(j, j+i-1, -1.0);
-        A.setValues(j, j-1, -1.5);
-        A.setValues(j, j+1, -1.5);
-        int index=j*(i-1);
+    for(int j=1; j<i; ++j){
+        int index=j;
+        A.setValues(index, index, 4.0);
         A.setValues(index, index+1, -1.0);
-        A.setValues(index, index+i-1, -1.5);
-        A.setValues(index, index-i+1, -1.5);
-        index+=i-2;
         A.setValues(index, index-1, -1.0);
-        A.setValues(index, index+i-1, -1.5);
-        A.setValues(index, index-i+1, -1.5);
-        index=(i-1)*(i-2)+j;
-        A.setValues(index, index+i+1,-1.0);
-        A.setValues(index, index-1, -1.5);
-        A.setValues(index, index+1, -1.5);
-        A.setValues(0, 0, 4.0);
+        A.setValues(index, index+i+1, -2.0);
+        index=j*(i+1);
+        A.setValues(index, index, 4.0);
+        A.setValues(index, index-i-1, -1.0);
+        A.setValues(index, index+i+1, -1.0);
+        A.setValues(index, index+1, -2.0);
+        index+=i;
+        A.setValues(index, index, 4.0);
+        A.setValues(index, index-1, -2.0);
+        A.setValues(index, index-i-1, -1.0);
+        A.setValues(index, index+i+1, -1.0);
+        index=j+i*(i+1);
+        A.setValues(index, index, 4.0);
+        A.setValues(index, index+1, -1.0);
+        A.setValues(index, index-1, -1.0);
+        A.setValues(index, index-i-1, -2.0);
     }
+    A.setValues(0,0, 4.0);
+    A.setValues(0,1, -2.0);
+    A.setValues(0, i+1, -2.0);
+    A.setValues(i,i, 4.0);
+    A.setValues(i, i-1, -2.0);
+    A.setValues(i, 2*i+1, -2.0);
+    int index=currdim-1;
+    A.setValues(index, index, 4.0);
+    A.setValues(index, index-1, -2.0);
+    A.setValues(index, index-i-1, -2.0);
+    index=i*(i+1);
+    A.setValues(index, index, 4.0);
+    A.setValues(index, index-i-1, -2.0);
+    A.setValues(index, index+1, -2.0);
     if(i==n){
-        for(int j=0; j<i-1; ++j){
-            for(int k=0; k<i-1; ++k){
-                fh.set_Value(k, j, f((k+1)*h, (j+1)*h));
+        for(int j=0; j<=i; ++j){
+            for(int k=0; k<=i; ++k){
+                fh.set_Value(k, j, f(k*h, j*h));
             }
         }
-        for(int j=1; j<i-2; ++j){
-            double temp=(j+1)*h;
-            double value=1.5*fh(j, 0)+g(temp, 0.0)*n;
+        for(int j=0; j<=n; ++j){
+            double temp=j*h;
+            double value=fh(j, 0)+2*g(temp, 0.0)*n;
             fh.set_Value(j,0, value);
             
-            value=1.5*fh(0, j)+g(0.0, temp)*n;
+            value=fh(0, j)+2*g(0.0, temp)*n;
             fh.set_Value(0, j, value);
     
-            value=1.5*fh(j, i-2)+g(temp, 1.0)*n;
-            fh.set_Value(j, i-2, value);
+            value=fh(j, i)+2*g(temp, 1.0)*n;
+            fh.set_Value(j, i, value);
     
-            value=1.5*fh(i-2, j)+g(1.0, temp)*n;
-            fh.set_Value(i-2, j, value);
+            value=fh(i, j)+2*g(1.0, temp)*n;
+            fh.set_Value(i, j, value);
         }
-        fh.set_Value(0,0, 4*value*n*n);
-        fh.set_Value(i-2,0, 3*fh(i-2,0)+(g(1-h,0.0)+g(1.0, h))*n*2);
-        fh.set_Value(0,i-2, 3*fh(0,i-2)+(g(h,1.0)+g(0.0, 1-h))*n*2);
-        fh.set_Value(i-2,i-2, 3*fh(i-2,i-2)+(g(1-h,1.0)+g(1.0, 1-h))*n*2);
     }
     discretors[i]=make_pair(move(A), move(fh));
 }
+
+
+template<>
+void Multigrid<1>::create_grids_M(const Function &f, const Function &g,const int &i, const vector<double> &mixed){
+    Sparse_Matrix A(i+1);
+    Vector fh(i+1);
+    for(int j=1; j<i; ++j){
+        A.setValues(j,j,2.0);
+        A.setValues(j,j-1,-1.0);
+        A.setValues(j, j+1, -1.0);
+    }
+    A.setValues(0,0, 2.0);
+    A.setValues(i, i, 2.0);
+    if(mixed[0]==1){
+        A.setValues(0, 1, -2.0);
+    }
+
+    if(mixed[1]==1){
+        A.setValues(i, i-1, -2.0);
+    }
+
+
+    if(i==n){
+        double h=1.0/i;
+        for(int j=1; j<n; ++j){
+            fh.set_Value(j,f(j*h));
+        }
+        if(mixed[0]==0){
+            fh.set_Value(0, 2*g(0.0)*n*n);
+        }
+        else{
+            double value=f(0.0)+2*g(0.0)*n;
+            fh.set_Value(i, i-1, value);
+        }
+
+        if(mixed[0]==0){
+            fh.set_Value(n, 2*g(1.0)*n*n);
+        }
+        else{
+            double value=f(1.0)+2*g(1.0)*n;
+        }
+
+    }
+    discretors[i]=pair{move(A),move(fh)};   
+
+}
+
+template<>
+void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int &i, const vector<double> &mixed){
+    int currdim=pow(i+1,2);
+    Sparse_Matrix A(currdim);
+    double h=1.0/i;
+    Vector fh(currdim);
+    for(int j=1; j<i; ++j){
+        for(int k=1; k<i; ++k){
+            int index=k+(i+1)*j;
+            A.setValues(index, index, 4.0);
+            A.setValues(index, index+1, -1.0);
+            A.setValues(index, index-1, -1.0);
+            A.setValues(index, index+i+1, -1.0);
+            A.setValues(index, index-i-1, -1.0);
+        }
+    }
+    for(int j=1; j<i; ++j){
+        int index=j;
+        A.setValues(index, index, 4.0);
+        if(mixed[0]==1){
+            A.setValues(index, index+1, -1.0);
+            A.setValues(index, index-1, -1.0);
+            A.setValues(index, index+i+1, -2.0);
+        }
+
+        index=j*(i+1);
+        A.setValues(index, index, 4.0);
+        if(mixed[1]==1){
+            A.setValues(index, index-i-1, -1.0);
+            A.setValues(index, index+i+1, -1.0);
+            A.setValues(index, index+1, -2.0);
+        }
+
+        index+=i;
+        A.setValues(index, index, 4.0);
+        if(mixed[2]==1){
+            A.setValues(index, index-1, -2.0);
+            A.setValues(index, index-i-1, -1.0);
+            A.setValues(index, index+i+1, -1.0);
+        }
+
+        index=j+i*(i+1);
+        A.setValues(index, index, 4.0);
+        if(mixed[3]==1){
+            A.setValues(index, index+1, -1.0);
+            A.setValues(index, index-1, -1.0);
+            A.setValues(index, index-i-1, -2.0);
+        }
+    }
+    //------------------------to be modified------------------------
+    A.setValues(0,0, 4.0);
+    A.setValues(0,1, -2.0);
+    A.setValues(0, i+1, -2.0);
+    A.setValues(i,i, 4.0);
+    A.setValues(i, i-1, -2.0);
+    A.setValues(i, 2*i+1, -2.0);
+    int index=currdim-1;
+    A.setValues(index, index, 4.0);
+    A.setValues(index, index-1, -2.0);
+    A.setValues(index, index-i-1, -2.0);
+    index=i*(i+1);
+    A.setValues(index, index, 4.0);
+    A.setValues(index, index-i-1, -2.0);
+    A.setValues(index, index+1, -2.0);
+    if(i==n){
+        for(int j=1; j<i; ++j){
+            for(int k=1; k<i; ++k){
+                fh.set_Value(k, j, f(k*h, j*h));
+            }
+        }
+        for(int j=1; j<n; ++j){
+            double temp=j*h;
+            if(mixed[0]==0){
+                fh.set_Value(j, 0, 4*g(temp, 0.0));
+            }
+            else{
+                double value=fh(j, 0)+2*g(temp, 0.0)*n;
+                fh.set_Value(j,0, value);
+            }
+
+            if(mixed[1]==0){
+                fh.set_Value(0, j, 4*g(0.0, temp));
+            }
+            else{
+                double value=fh(0, j)+2*g(0.0, temp)*n;
+                fh.set_Value(0, j, value);
+            }
+
+            if(mixed[2]==0){
+                fh.set_Value(j, i, 4*g(temp , 1.0));
+            }
+            else{
+                double value=fh(j, i)+2*g(temp, 1.0)*n;
+                fh.set_Value(j, i, value);
+            }
+
+            if(mixed[3]==0){
+                fh.set_Value(i, j, 4*g(1.0, temp));
+            }
+            else{
+                double value=fh(i, j)+2*g(1.0, temp)*n;
+                fh.set_Value(i, j, value);
+            }      
+  
+        }
+    }
+    //-------------to be modified------------------------------
+    discretors[i]=make_pair(move(A), move(fh));
+}
+
 
 
 template<int dim>
 Multigrid<dim>::Multigrid(){}
 
 template<int dim>
-Multigrid<dim>::Multigrid(const Function &f, const Function &g, BoundaryCondition bc,const int &i, double value){
+Multigrid<dim>::Multigrid(const Function &f, const Function &g, BoundaryCondition bc,const int &i,const vector<double> &mixed){
     n=i;
+    BC=bc;
     if(bc==BoundaryCondition::Dirichlet){
         for(int j=i; j>3; j/=2){
             this->create_grids_D(f, g, j);
@@ -287,9 +420,15 @@ Multigrid<dim>::Multigrid(const Function &f, const Function &g, BoundaryConditio
     }
     else if(bc==BoundaryCondition::Neumann){
         for(int j=i; j>3; j/=2){
-            this->create_grids_N(f, g, j, value);
+            this->create_grids_N(f, g, j);
         }
     }
+    else{
+        for(int j=i; j>3; j/=2){
+            this->create_grids_M(f, g, j);
+        }
+    }
+    //discretors[i].first.print();
 }
 
 template<int dim>
@@ -304,8 +443,8 @@ void Multigrid<dim>::print(){
 }
 
 template<int dim>
-void Multigrid<dim>::solve(const string& r, const string& p, const string& c, 
-    Vector& initial_guess, int nu1, int nu2) {
+void Multigrid<dim>::solve(const string &r, const string &p, const string &c, Vector& initial_guess, 
+                        int nu1, int nu2, double tol,const double &value, int max_itr) {
     if (r == "full_weighting") {
     restriction = make_unique<Full_weighting<dim>>(); 
     } 
@@ -329,52 +468,89 @@ void Multigrid<dim>::solve(const string& r, const string& p, const string& c,
     }
     if(c=="v-cylce"){
         solutions=this->V_cycle(n, initial_guess, nu1, nu2);
-        Vector f=discretors[n].second;
-        int n2=n*n;
-        for(int i=0; i<5; ++i){
-            Vector error=f-discretors[n].first*solutions*n2;
-            discretors[n].second=move(error);
-            solutions=solutions+this->V_cycle(n, initial_guess, nu1, nu2);
+        double oldnorm=0.0;
+        double newnorm=solutions.l2_norm();
+        while (abs(newnorm-oldnorm)>tol){   
+            oldnorm=newnorm;
+            solutions=this->V_cycle(n, solutions, nu1, nu2);
+            newnorm=solutions.l2_norm();
+            counter++;
         }
+        if(counter>max_itr){
+            cout<<"not converge"<<endl;
+        }
+        //int n2=n*n;
+        //for(int i=0; i<5; ++i){
+            //Vector error=f-discretors[n].first*solutions*n2;
+            //discretors[n].second=move(error);
+            //solutions=solutions+this->V_cycle(n, initial_guess, nu1, nu2);
+        //}
     }
     else{
         solutions=this->FMG(n, nu1, nu2);
+        double oldnorm=0.0;
+        double newnorm=solutions.l2_norm();
+        Vector f=discretors[n].second;
+        int n2=n*n;
+        while (abs(newnorm-oldnorm)>tol){
+            oldnorm=newnorm;
+            discretors[n].second=f-discretors[n].first*solutions*n2;
+            solutions=solutions+FMG(n, nu1, nu2);
+            newnorm=solutions.l2_norm();
+            counter++;
+            if(counter>10){
+                cout<<"not converge"<<endl;
+                break;
+            }
+        }
+        
     }
-}
-
-template<>
-vector<double> Multigrid<1>::error(const Function &f){
-    double h=1.0/n;
-    vector<double> e(n-1,0.0);
-    for(int j=0; j<n-1; ++j){
-        e[j]=abs(solutions(j)-f((j+1)*h));
-    }
-    return e;
-}
-
-template<>
-vector<double> Multigrid<2>::error(const Function &f){
-    double h=1.0/n;
-    int m=(n-1)*(n-1);
-    vector<double> e(m, 0.0);
-    for(int i=0; i<n-1; ++i){
-        for(int j=0; j<n-1; ++j){
-            e[i*(n-1)+j]=abs(solutions(j, i)-f((j+1)*h, (i+1)*h));
+    if(BC==BoundaryCondition::Neumann){
+        double drift=value-solutions(0);
+        for(int i=0; i<=solutions.getdim(); ++i){
+            solutions.set_Value(i,solutions(i)+drift);
         }
     }
-    return e;
+}
+
+template<>
+Vector Multigrid<1>::error(const Function &f){
+    double h=1.0/n;
+    vector<double> e(n+1,0.0);
+    for(int j=0; j<=n; ++j){
+        e[j]=abs(solutions(j)-f(j*h));
+    }
+    return Vector(e);
+}
+
+template<>
+Vector Multigrid<2>::error(const Function &f){
+    double h=1.0/n;
+    int m=(n+1)*(n+1);
+    vector<double> e(m, 0.0);
+    for(int i=0; i<=n; ++i){
+        for(int j=0; j<=n; ++j){
+            e[i*(n+1)+j]=abs(solutions(j, i)-f(j*h, i*h));
+        }
+    }
+    return Vector(e);
 }
 
 
 
 template<int dim>
-void Multigrid<dim>::print_to_file(const string &filename, BoundaryCondition BC,const Function &f) {
+void Multigrid<dim>::print_to_file(const string &filename, const Function &f) {
     nlohmann::json j;
     j["boundary_condition"] = BC; 
-    vector<double> e=this->error(f);//-------------------------------------------------------;
+    j["iterator times"]=counter;
+    Vector err=this->error(f);
+    vector<double> e=err.getelements();
     j["errors"] = e;
     j["solutions"]=solutions.getelements();
     j["number"]=n;
+    j["infinity_norm"]=err.infinity_norm();
+    j["l2_norm"]=err.l2_norm();
+    j["l1_norm"]=err.l1_norm();
     ifstream file_check(filename); 
     bool is_empty = file_check.peek() == std::ifstream::traits_type::eof(); 
     file_check.close();  

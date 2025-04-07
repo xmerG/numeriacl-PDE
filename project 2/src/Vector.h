@@ -13,8 +13,8 @@ class Sparse_Matrix;
 
 class Vector{
 private:
-    int n=0;
-    int m=0;
+    int n=0;  //length
+    int m=0; //sqrt(n)
     vector<double> elements;
 public:
     Vector();
@@ -36,6 +36,10 @@ public:
     void go_zero(const int &k);
     friend class Sparse_Matrix;
     vector<double> getelements() const;
+    double infinity_norm() const;
+    double l2_norm() const;
+    double l1_norm() const;
+    void projection(); //投影到与kernel正交的子空间
     void copy(const Vector& other);
     void print_to_file(const string &filename);
 };

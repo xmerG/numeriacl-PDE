@@ -131,3 +131,43 @@ void Vector::copy(const Vector& other) {
         elements = other.elements;  // 深拷贝
     }
 }
+
+
+double Vector::infinity_norm() const{
+    double max = *std::max_element(
+        elements.begin(),
+        elements.end(),
+        [](double a, double b) {
+            return std::abs(a) < std::abs(b);
+        }
+    );
+    return max;
+}
+
+double Vector::l1_norm() const{
+    double norm=0.0;
+    for(int i=0; i<n; ++i){
+        norm+=abs(elements[i]);
+    }
+    return norm;
+}
+
+double Vector::l2_norm() const{
+    double norm=0.0;
+    for(int i=0; i<n; ++i){
+        norm+=pow(elements[i],2);
+    }
+    return sqrt(norm);
+}
+
+
+void Vector::projection(){
+    double sum=0.0;
+    for(int i=0; i<n; ++i){
+        sum+=elements[i];
+    }
+    sum/=n;
+    for(int i=0; i<n; ++i){
+        elements[i]=elements[i]-sum;
+    }
+}
