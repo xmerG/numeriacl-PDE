@@ -15,7 +15,7 @@
                 "restriction/Full_weighting.cpp",
                 "restriction/Injection.cpp",
                 "prolongation/Linear.cpp",
-                "prolongation/Quadric.cpp",
+                "prolongation/Quadratic.cpp",
                 "-o",
                 "${fileDirname}/test",
                 "-lm"          // 链接数学库（某些系统需要）

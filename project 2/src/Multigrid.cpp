@@ -468,7 +468,7 @@ Multigrid<dim>::Multigrid(const Function &f, const Function &g, BoundaryConditio
             this->create_grids_M(f, g, j, mixed);
         }
     }
-    discretors[i].first.print();
+    //discretors[i].first.print();
 }
 
 template<int dim>
@@ -500,7 +500,7 @@ void Multigrid<dim>::solve(const string &r, const string &p, const string &c, Ve
     prolongation = make_unique<Linear<dim>>(); 
     } 
     else if (p == "quadric") { 
-    prolongation = make_unique<Quadric<dim>>();  
+    prolongation = make_unique<Quadratic<dim>>();  
     }
      else {
     cerr << "Invalid prolongation method: " << p << endl;
@@ -538,7 +538,7 @@ void Multigrid<dim>::solve(const string &r, const string &p, const string &c, Ve
             solutions=solutions+FMG(n, nu1, nu2);
             newnorm=solutions.l2_norm();
             counter++;
-            if(counter>10){
+            if(counter>max_itr){
                 cout<<"not converge"<<endl;
                 break;
             }

@@ -4,7 +4,7 @@
 #include"restriction/Full_weighting.h"
 #include"restriction/Injection.h"
 #include"prolongation/Linear.h"
-#include"prolongation/Quadric.h"
+#include"prolongation/Quadratic.h"
 #include"BoudaryCondition.h"
 #include"Function.hpp"
 #include <memory>

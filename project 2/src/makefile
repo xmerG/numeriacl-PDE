@@ -8,7 +8,7 @@ TARGET := test
 
 # 定义所有源文件
 SRCS := test.cpp restriction/Full_weighting.cpp restriction/Injection.cpp \
-        prolongation/Linear.cpp prolongation/Quadric.cpp Vector.cpp \
+        prolongation/Linear.cpp prolongation/Quadratic.cpp Vector.cpp \
         Multigrid.cpp Sparse_Matrix.cpp
 
 # 生成对应的对象文件列表
