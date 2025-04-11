@@ -19,14 +19,12 @@ public:
     //Sparse_Matrix& operator=(Sparse_Matrix&& other) noexcept;
     void setValues(const int &i, const int &j, const double &value); //set A(i,j)
     double operator()(const int &i, const int &j) const;
-    void transform();
     Sparse_Matrix operator+(const Sparse_Matrix &B) const;
     Sparse_Matrix operator*(const Sparse_Matrix &B) const;
     Sparse_Matrix operator*(const double &a) const;
     Vector operator*(const Vector &v) const;
     vector<double> convert_to_vector() const;
     void Gauss_Seidel(Vector &initial, const Vector &b);
-    void solve(Vector b) ;
     int getdim() const;
     void print();
 

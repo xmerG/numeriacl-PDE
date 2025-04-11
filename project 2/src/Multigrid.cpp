@@ -250,7 +250,7 @@ void Multigrid<2>::create_grids_N(const Function &f, const Function &g,const int
 
 
 template<>
-void Multigrid<1>::create_grids_M(const Function &f, const Function &g,const int &i, const vector<double> &mixed){
+void Multigrid<1>::create_grids_M(const Function &f, const Function &g,const int &i, const vector<int> &mixed){
     Sparse_Matrix A(i+1);
     Vector fh(i+1);
     for(int j=1; j<i; ++j){
@@ -295,7 +295,7 @@ void Multigrid<1>::create_grids_M(const Function &f, const Function &g,const int
 }
 
 template<>
-void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int &i, const vector<double> &mixed){
+void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int &i, const vector<int> &mixed){
     int currdim=pow(i+1,2);
     Sparse_Matrix A(currdim);
     double h=1.0/i;
@@ -345,19 +345,31 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
     }
     //------------------------to be modified------------------------
     A.setValues(0,0, 4.0);
-    A.setValues(0,1, -2.0);
-    A.setValues(0, i+1, -2.0);
+    if(mixed[0]==1 && mixed[1]==1){
+        A.setValues(0,1, -2.0);
+        A.setValues(0, i+1, -2.0);
+    }
+
     A.setValues(i,i, 4.0);
-    A.setValues(i, i-1, -2.0);
-    A.setValues(i, 2*i+1, -2.0);
+    if(mixed[0]==1 && mixed[2]==1){
+        A.setValues(i, i-1, -2.0);
+        A.setValues(i, 2*i+1, -2.0);
+    }
+
     int index=currdim-1;
     A.setValues(index, index, 4.0);
-    A.setValues(index, index-1, -2.0);
-    A.setValues(index, index-i-1, -2.0);
+    if(mixed[1]==1 && mixed[3]==1){
+        A.setValues(index, index-1, -2.0);
+        A.setValues(index, index-i-1, -2.0);
+    }
+
     index=i*(i+1);
     A.setValues(index, index, 4.0);
-    A.setValues(index, index-i-1, -2.0);
-    A.setValues(index, index+1, -2.0);
+    if(mixed[2]==1 && mixed[3]==1){
+        A.setValues(index, index-i-1, -2.0);
+        A.setValues(index, index+1, -2.0);
+    }
+
     if(i==n){
         for(int j=1; j<i; ++j){
             for(int k=1; k<i; ++k){
@@ -400,6 +412,34 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
   
         }
     }
+    if(mixed[0]==1 && mixed[1]==1){
+        fh.set_Value(0, 0, fh(0, 0)+4*g(0.0, 0.0)*n);
+    }
+    else{
+        fh.set_Value(0, 0, 4*g(0.0, 0.0));
+
+    }
+
+    if(mixed[0]==1 && mixed[2]==1){
+        fh.set_Value(i, 0, fh(i, 0)+4*g(1.0, 0.0)*n);
+    }
+    else{
+        fh.set_Value(i, 0, 4*g(1.0, 0.0));
+    }
+
+    if(mixed[1]==1 && mixed[3]==1){
+        fh.set_Value(0, i, fh(0, i)+4*g(0.0, 1.0)*n);
+    }
+    else{
+        fh.set_Value(0, i, 4*g(0.0, 1.0));
+    }
+
+    if(mixed[2]==1 && mixed[3]==1){
+        fh.set_Value(i, i, fh(i, i)+4*g(1.0, 1.0)*n);
+    }
+    else{
+        fh.set_Value(i, i, 4*g(1.0, 1.0));
+    }
     //-------------to be modified------------------------------
     discretors[i]=make_pair(move(A), move(fh));
 }
@@ -410,7 +450,7 @@ template<int dim>
 Multigrid<dim>::Multigrid(){}
 
 template<int dim>
-Multigrid<dim>::Multigrid(const Function &f, const Function &g, BoundaryCondition bc,const int &i,const vector<double> &mixed){
+Multigrid<dim>::Multigrid(const Function &f, const Function &g, BoundaryCondition bc,const int &i,const vector<int> &mixed){
     n=i;
     BC=bc;
     if(bc==BoundaryCondition::Dirichlet){
@@ -425,10 +465,10 @@ Multigrid<dim>::Multigrid(const Function &f, const Function &g, BoundaryConditio
     }
     else{
         for(int j=i; j>3; j/=2){
-            this->create_grids_M(f, g, j);
+            this->create_grids_M(f, g, j, mixed);
         }
     }
-    //discretors[i].first.print();
+    discretors[i].first.print();
 }
 
 template<int dim>

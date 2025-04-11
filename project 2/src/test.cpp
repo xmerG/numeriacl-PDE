@@ -11,13 +11,15 @@ int main(){
     F1 f1;
     Neumann g1;
     Laplacian f;
-    int n=256;
+    int n=4;
     Vector v(n+1);
     Vector &v0=v;
     double value=f1(0.0);
-    Multigrid<1> M1(f, g1, BoundaryCondition::Neumann, n);
-    M1.solve("injection", "linear","FMG", v0, 5,5, 1e-8, value);
-    M1.print_to_file("output.json", f1);
+    Multigrid<2> M1(f, g1, BoundaryCondition::Mixed, n, vector<int>{0,1,0,1});
+    cout<<"------------------------------------------------------------------"<<endl;
+    Multigrid<1> M2(f, g1, BoundaryCondition::Neumann, n, vector<int>{0,1});
+    //M1.solve("injection", "linear","FMG", v0, 5,5, 1e-8, value);
+    //M1.print_to_file("output.json", f1);
 
     //Multigrid<1> M3(f, f1, BoundaryCondition::Dirichlet, n);
     //M3.solve("injection", "linear","FMG", v0, 5,5,1e-8);
@@ -33,7 +35,7 @@ int main(){
     //M2.print_to_file("output.json", primitive);
 
     //Neumann2 g2;
-    //double value=primitive(0.0, 0.0);
+    //value=primitive(0.0, 0.0);
     //Multigrid<2> M3(l, g2, BoundaryCondition::Neumann, n);
     //M3.solve("injection", "linear","FMG", v1, 5,5, 10e-8, value);
     //M3.print_to_file("output.json", primitive);

@@ -29,13 +29,14 @@ private:
     vector<double> corsa_solve(const int &i);
     void create_grids_D(const Function &f, const Function &g,const int &i);
     void create_grids_N(const Function &f, const Function &g,const int &i);
-    void create_grids_M(const Function &f, const Function &g,const int &i, const vector<double> &mixed);
+    void create_grids_M(const Function &f, const Function &g,const int &i, 
+        const vector<int> &mixed=vector<int> {0,0,0,0});
     Vector error(const Function &f);
 
 public:
     Multigrid();
     Multigrid(const Function &f, const Function &g, BoundaryCondition bc, const int &i,
-            const vector<double> &mixed=vector<double>{0,0,0,0});
+            const vector<int> &mixed=vector<int>{0,0,0,0});
     void solve(const string &restriction, const string &prolongation, const string &cycle, Vector& initial_guess, int nu1, int nu2,
         double tol,const double &value=0.0, int max_itr=50);
     void print();
