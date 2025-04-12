@@ -106,15 +106,16 @@ int Sparse_Matrix::getdim() const{return n;}
 
 void Sparse_Matrix::print() {
     for(int i=0; i<n; ++i){
+        cout<<"[";
         for(int j=0; j<n; ++j){
             if(elements[i].count(j)){
-                cout<<elements[i][j]<<" ";
+                cout<<elements[i][j]<<", ";
             }
             else{
-                cout<<"0"<<" ";
+                cout<<"0"<<", ";
             }
         }
-        cout<<endl;
+        cout<<"],"<<endl;
     }
 }
 

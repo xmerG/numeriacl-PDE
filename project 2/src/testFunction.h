@@ -57,24 +57,106 @@ public:
 class Neumann2:public Function{
 public:
     double operator()(const double &x, const double &y) const {
-        if(x==0.0){
-            return -exp(y);
+        //直接给出角上的函数值
+        if(x==0.0 && y==0.0){
+            //return 1.0;
+            return -2.0;
         }
-        else if(x==1.0){
-            return b*exp(y+a);
-        }
-        else if(y==0.0){
-            return -exp(sin(x));
-        }
-        else if(y==1.0){
-            return exp(sin(x)+1.0);
-        }
-        else{
-            cerr<<"not defined on interior"<<endl;
+        else if(x==0.0 && y==1.0){
+            //return exp(1.0);
             return 0.0;
         }
+        else if(x==1.0 && y==0.0){
+            //return exp(a);
+            return (b-1.0)*exp(a);
+        }
+        else if(x==1.0 && y==1.0){
+            //return exp(a+1.0);
+            return (b+1.0)*exp(a+1.0);
+        }
+
+
+        else{
+            if(x==0.0){
+                return -exp(y);
+            }
+            else if(x==1.0){
+                return b*exp(y+a);
+            }
+            else if(y==0.0){
+                return -exp(sin(x));
+            }
+            else if(y==1.0){
+                return exp(sin(x)+1.0);
+            }
+            else{
+                cerr<<"not defined on interior"<<endl;
+                return 0.0;
+            }
+        }
+
     }
     double operator()(const double &x)const{return 0.0;}
+};
+
+class Mixed2:public Function{
+private:
+    vector<int> mixed=vector<int>{0,0,0,0};
+public:
+    Mixed2(){}
+    Mixed2(const vector<int> &_v):mixed(_v){}
+    double operator()(const double &x)const{return 0.0;}
+    double operator()(const double &x, const double &y) const {
+        //直接给出角上的函数值
+        if(x==0.0 && y==0.0){
+            return 1.0;
+        }
+        else if(x==0.0 && y==1.0){
+            return exp(1.0);
+        }
+        else if(x==1.0 && y==0.0){
+            return exp(a);
+        }
+        else if(x==1.0 && y==1.0){
+            return exp(a+1.0);
+        }
+
+
+        else{
+            if(x==0.0){
+                if(mixed[1]==1){
+                    return -exp(y);
+                }
+                else{
+                    return exp(y);
+                }
+            }
+            else if(x==1.0){
+                if(mixed[2]==1){
+                    return b*exp(y+a);
+                }
+                else{
+                    return exp(y+a);
+                }
+            }
+            else if(y==0.0){
+                if(mixed[0]==1){
+                    return -exp(sin(x));
+                }
+                else{
+                    return exp(sin(x));
+                }
+            }
+            else if(y==1.0){
+                return exp(sin(x)+1.0);
+            }
+            else{
+                cerr<<"not defined on interior"<<endl;
+                return 0.0;
+            }
+        }
+
+    }
 };
 
 #endif

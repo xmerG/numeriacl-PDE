@@ -230,20 +230,36 @@ void Multigrid<2>::create_grids_N(const Function &f, const Function &g,const int
                 fh.set_Value(k, j, f(k*h, j*h));
             }
         }
-        for(int j=0; j<=n; ++j){
+        for(int j=1; j<n; ++j){
             double temp=j*h;
-            double value=fh(j, 0)+2*g(temp, 0.0)*n;
+            double value=fh(j, 0)+2*g(temp, 0.0)*n;  //y=0
             fh.set_Value(j,0, value);
             
-            value=fh(0, j)+2*g(0.0, temp)*n;
+            value=fh(0, j)+2*g(0.0, temp)*n;   //x=0
             fh.set_Value(0, j, value);
     
-            value=fh(j, i)+2*g(temp, 1.0)*n;
+            value=fh(j, i)+2*g(temp, 1.0)*n;  //y=1
             fh.set_Value(j, i, value);
     
-            value=fh(i, j)+2*g(1.0, temp)*n;
+            value=fh(i, j)+2*g(1.0, temp)*n;   //x=1
             fh.set_Value(i, j, value);
         }
+        double value=fh(0, 0)+2*g(0.0, 0.0)*n;
+        //int n2=n*n;
+        //double value=4*g(0.0, 0.0)*n2;
+        fh.set_Value(0,0, value);
+
+        value=fh(n, 0)+2*g(1.0, 0.0)*n;
+        //value=4*g(1.0, 0.0)*n2;
+        fh.set_Value(n, 0, value);
+
+        value=fh(0, n)+2*g(0.0, 1.0)*n;
+        //value=4*g(0.0, 1.0)*n2;
+        fh.set_Value(0, n, value);
+
+        value=fh(n,n)+2*g(1.0, 1.0)*n;
+        //value=4*g(1.0, 1.0)*n2;
+        fh.set_Value(n, n, value);
     }
     discretors[i]=make_pair(move(A), move(fh));
 }
@@ -322,13 +338,13 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
         index=j*(i+1);
         A.setValues(index, index, 4.0);
         if(mixed[1]==1){
+            A.setValues(index, index+1, -2.0);
             A.setValues(index, index-i-1, -1.0);
             A.setValues(index, index+i+1, -1.0);
-            A.setValues(index, index+1, -2.0);
         }
-
         index+=i;
         A.setValues(index, index, 4.0);
+
         if(mixed[2]==1){
             A.setValues(index, index-1, -2.0);
             A.setValues(index, index-i-1, -1.0);
@@ -338,39 +354,25 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
         index=j+i*(i+1);
         A.setValues(index, index, 4.0);
         if(mixed[3]==1){
+            A.setValues(index, index-i-1, -2.0);
             A.setValues(index, index+1, -1.0);
             A.setValues(index, index-1, -1.0);
-            A.setValues(index, index-i-1, -2.0);
         }
+
     }
-    //------------------------to be modified------------------------
+    //默认混合边界条件下，四个角上的值已经给出
     A.setValues(0,0, 4.0);
-    if(mixed[0]==1 && mixed[1]==1){
-        A.setValues(0,1, -2.0);
-        A.setValues(0, i+1, -2.0);
-    }
 
     A.setValues(i,i, 4.0);
-    if(mixed[0]==1 && mixed[2]==1){
-        A.setValues(i, i-1, -2.0);
-        A.setValues(i, 2*i+1, -2.0);
-    }
 
     int index=currdim-1;
     A.setValues(index, index, 4.0);
-    if(mixed[1]==1 && mixed[3]==1){
-        A.setValues(index, index-1, -2.0);
-        A.setValues(index, index-i-1, -2.0);
-    }
 
     index=i*(i+1);
     A.setValues(index, index, 4.0);
-    if(mixed[2]==1 && mixed[3]==1){
-        A.setValues(index, index-i-1, -2.0);
-        A.setValues(index, index+1, -2.0);
-    }
 
     if(i==n){
+        int n2=n*n;
         for(int j=1; j<i; ++j){
             for(int k=1; k<i; ++k){
                 fh.set_Value(k, j, f(k*h, j*h));
@@ -379,7 +381,7 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
         for(int j=1; j<n; ++j){
             double temp=j*h;
             if(mixed[0]==0){
-                fh.set_Value(j, 0, 4*g(temp, 0.0));
+                fh.set_Value(j, 0, 4*g(temp, 0.0)*n2);
             }
             else{
                 double value=fh(j, 0)+2*g(temp, 0.0)*n;
@@ -387,7 +389,7 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
             }
 
             if(mixed[1]==0){
-                fh.set_Value(0, j, 4*g(0.0, temp));
+                fh.set_Value(0, j, 4*g(0.0, temp)*n2);
             }
             else{
                 double value=fh(0, j)+2*g(0.0, temp)*n;
@@ -395,7 +397,7 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
             }
 
             if(mixed[2]==0){
-                fh.set_Value(j, i, 4*g(temp , 1.0));
+                fh.set_Value(j, i, 4*g(temp , 1.0)*n2);
             }
             else{
                 double value=fh(j, i)+2*g(temp, 1.0)*n;
@@ -403,7 +405,7 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
             }
 
             if(mixed[3]==0){
-                fh.set_Value(i, j, 4*g(1.0, temp));
+                fh.set_Value(i, j, 4*g(1.0, temp)*n2);
             }
             else{
                 double value=fh(i, j)+2*g(1.0, temp)*n;
@@ -411,35 +413,12 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
             }      
   
         }
-    }
-    if(mixed[0]==1 && mixed[1]==1){
-        fh.set_Value(0, 0, fh(0, 0)+4*g(0.0, 0.0)*n);
-    }
-    else{
-        fh.set_Value(0, 0, 4*g(0.0, 0.0));
-
+        fh.set_Value(0,0, 4*g(0.0, 0.0)*n2);
+        fh.set_Value(n, 0.0, 4*g(1.0, 0.0)*n2);
+        fh.set_Value(0, n, 4*g(0.0, 1.0)*n2);
+        fh.set_Value(n, n, 4*g(1.0, 1.0)*n2);
     }
 
-    if(mixed[0]==1 && mixed[2]==1){
-        fh.set_Value(i, 0, fh(i, 0)+4*g(1.0, 0.0)*n);
-    }
-    else{
-        fh.set_Value(i, 0, 4*g(1.0, 0.0));
-    }
-
-    if(mixed[1]==1 && mixed[3]==1){
-        fh.set_Value(0, i, fh(0, i)+4*g(0.0, 1.0)*n);
-    }
-    else{
-        fh.set_Value(0, i, 4*g(0.0, 1.0));
-    }
-
-    if(mixed[2]==1 && mixed[3]==1){
-        fh.set_Value(i, i, fh(i, i)+4*g(1.0, 1.0)*n);
-    }
-    else{
-        fh.set_Value(i, i, 4*g(1.0, 1.0));
-    }
     //-------------to be modified------------------------------
     discretors[i]=make_pair(move(A), move(fh));
 }
@@ -468,7 +447,8 @@ Multigrid<dim>::Multigrid(const Function &f, const Function &g, BoundaryConditio
             this->create_grids_M(f, g, j, mixed);
         }
     }
-    //discretors[i].first.print();
+    discretors[i].first.print();
+    discretors[i].second.print();
 }
 
 template<int dim>
@@ -530,13 +510,15 @@ void Multigrid<dim>::solve(const string &r, const string &p, const string &c, Ve
         solutions=this->FMG(n, nu1, nu2);
         double oldnorm=0.0;
         double newnorm=solutions.l2_norm();
+        double infi_norm=solutions.infinity_norm();
         Vector f=discretors[n].second;
         int n2=n*n;
-        while (abs(newnorm-oldnorm)>tol){
+        while (abs(newnorm-oldnorm)>tol || infi_norm<1e-7){
             oldnorm=newnorm;
             discretors[n].second=f-discretors[n].first*solutions*n2;
             solutions=solutions+FMG(n, nu1, nu2);
             newnorm=solutions.l2_norm();
+            infi_norm=solutions.infinity_norm();
             counter++;
             if(counter>max_itr){
                 cout<<"not converge"<<endl;

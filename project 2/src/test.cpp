@@ -2,16 +2,16 @@
 #include"testFunction.h"
 #include <chrono>
 int main(){
-    //vector<double> fine{0, 2.5, 5, 4.5, 4, 1, 4, 7, 6.5, 6, 2, 5.5, 9, 8.5, 8, 4.5, 4.75, 5, 5.25, 5.5, 7, 4, 1, 2, 3 };
-    //Injection<2> pro;
-    //Vector fine_v(fine);
-    //Vector corsa=pro(fine_v);
-    //corsa.print();
+    vector<double> corsa{0.0, 1.0, 3.0, 5.0, 7.0, 4.0, 8.0, 6.0, 10.0};
+    Quadratic<2> q;
+    Vector corsa_v(corsa);
+    Vector fine=q(corsa_v);
+    fine.print();
 
     F1 f1;
     Neumann g1;
     Laplacian f;
-    int n=256;
+    int n=4;
     Vector v(n+1);
     Vector &v0=v;
     double value=f1(0.0);
@@ -30,15 +30,21 @@ int main(){
     Laplacian2 l;
     Vector V((n+1)*(n+1));
     Vector &v1=V;
-    Multigrid<2> M2(l, primitive, BoundaryCondition::Dirichlet, n);
-    M2.solve("full_weighting", "linear","FMG", v1, 5,5, 10e-8);
-    M2.print_to_file("output.json", primitive);
+    //Multigrid<2> M2(l, primitive, BoundaryCondition::Dirichlet, n);
+    //M2.solve("full_weighting", "quadric","FMG", v1, 5,5, 10e-8);
+    //M2.print_to_file("output.json", primitive);
 
-    Neumann2 g2;
+    /*Neumann2 g2;
     value=primitive(0.0, 0.0);
     Multigrid<2> M3(l, g2, BoundaryCondition::Neumann, n);
-    M3.solve("full_weighting", "linear","FMG", v1, 5,5, 10e-8, value);
-    M3.print_to_file("output.json", primitive);
+    M3.solve("full_weighting", "quadric","FMG", v1, 5,5, 10e-8, value);
+    M3.print_to_file("output.json", primitive);*/
+
+    vector<int> mixed=vector<int>{0,1,0,0};
+    Mixed2 m;
+    Multigrid<2> M4(l, m, BoundaryCondition::Mixed, n, mixed);
+    M4.solve("full_weighting", "quadric","FMG", v1, 5,5, 10e-8);
+    M4.print_to_file("output.json", primitive);
 
 
 

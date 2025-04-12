@@ -95,7 +95,7 @@ int Vector::getdim() const{return this->n;}
 
 void Vector::print() const{
     for(int i=0; i<n; ++i){
-        cout<<elements[i]<<" ";
+        cout<<elements[i]<<", ";
     }
     cout<<endl;
 }
