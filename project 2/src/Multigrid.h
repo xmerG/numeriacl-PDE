@@ -20,7 +20,7 @@ private:
     int n;  //网格个数
     Vector solutions;
     BoundaryCondition BC;
-    int counter=1; //迭代次数 
+    int counter=0; //迭代次数 
     unique_ptr<Retriction<dim>> restriction;
     unique_ptr<Prolongation<dim>> prolongation;
     Vector w_Jacobi(int i, const Vector &initial);

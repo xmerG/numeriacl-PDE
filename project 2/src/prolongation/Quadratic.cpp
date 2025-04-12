@@ -26,7 +26,7 @@ Vector Quadratic<dim>::operator()(const Vector &v) const{
         Vector result(resdim*resdim);
 
         //拟合内部点
-        for(int i=0; i<quarter_n; ++i){
+        /*for(int i=0; i<quarter_n; ++i){
             for(int j=0; j<quarter_n; ++j){
                 double value=0.5*(v(j+1, i)+v(j, i+1))+0.25*v(j+1, i+1)-0.125*(v(j+2, i)+v(j, i+2));
                 result.set_Value(2*j+1, 2*i+1, value);
@@ -43,7 +43,49 @@ Vector Quadratic<dim>::operator()(const Vector &v) const{
                         -0.125*(v(indexj-1, indexi+1)+v(indexj+1,indexi-1));
                 result.set_Value(2*indexj+1, 2*indexi+1, value);
             }
+        }*/
+        for(int i=1; i<half_n-1; ++i){
+            for(int j=1; j<half_n; ++j){
+                double value=81.0*(v(j, i)+v(j+1, i+1)+v(j, i+1)+v(j+1, i))/256.0-9.0*(v(j-1, i)+v(j-1, i+1)+v(j, i-1)+v(j+1, i-1)
+                                    +v(j, i+2)+v(j+1, i+2)+v(j+2, i)+v(j+2, i+1))/16.0+v(j-1, i-1)+v(j-1, i+2)+v(j+2, i)+v(j+2, i-1);
+                result.set_Value(2*j+1, 2*i+1, value);
+            }
         }
+        for(int i=1; i<half_n-1; ++i){
+            double value=-3.0*(v(0, i-1)+v(0, i+2))/8.0-6.0*(v(1, i-1)+v(1, i+2))/8.0+(v(2, i-1)+v(2, i+2))/8.0+
+                            27.0*(v(0, i)+v(0, i+1))/128.0+27.0*(v(1, i)+v(1, i+1))/64.0-9.0*(v(2, i)+v(2, i+1))/128.0;
+            result.set_Value(1, 2*i+1, value);
+
+            value=(-3.0*(v(half_n, i-1)+v(half_n, i+2))-6.0*(v(half_n-1, i-1)+v(half_n-1, i+2))+v(half_n-2, i-1)+v(half_n-2, i+2)+
+                    27.0*(v(half_n, i)+v(half_n, i+1))/16.0+27.0*(v(half_n-1, i)+v(half_n-1, i+1))/8.0
+                    -9.0*(v(half_n-2, i)+v(half_n-2, i+1))/16.0)/8.0;
+            result.set_Value(resdim-2, 2*i+1, value);
+
+            value=(-3.0*(v(i-1, 0)+v(i+2, 0))-6.0*(v(i-1, 1)+v(i+2, 1))-+v(i-1, 2)+v(i+2, 2)+
+                        27.0*(v(i, 0)+v(i+1, 0))/16.0+27.0*(v(i, 1)+v(i+1, 1))-9.0*(v(i+2, 2)+v(i+2, 2))/16.0)/8.0;
+            result.set_Value(2*i+1, 1, value);
+            
+            value=(-3.0*(v(i-1, half_n)+v(i+2, half_n))-6.0*(v(i-1, half_n-1)+v(i+2, half_n-1))-+v(i-1, half_n-2)+v(i+2, half_n-2)+
+                        27.0*(v(i, half_n)+v(i+1, half_n))/16.0+27.0*(v(i, half_n-1)+v(i+1, half_n-1))
+                        -9.0*(v(i+2, half_n-2)+v(i+2, half_n-2))/16.0)/8.0;
+            result.set_Value(2*i+1, resdim-2, value);              
+        }
+
+        double value=(-3.0*(v(0, 2)+v(2,0))-6.0*(v(1, 2)+v(2, 1))+18.0*(v(0,1)+v(1,0))+9.0*v(0,0)+36.0*v(1,1)+v(2,2))/64.0;
+        result.set_Value(1,1, value);
+
+        value=(-3.0*(v(0, half_n-2)+v(2, half_n))-6.0*(v(1, half_n-2)+v(2, half_n-1))+18.0*(v(0, half_n-1)+v(1, half_n))
+                +9.0*v(0, half_n)+36.0*v(1, half_n-1)+v(2, half_n-2))/64.0;
+        result.set_Value(1, resdim-2);
+
+        value=(-3.0*v(half_n-2, 0)+v(half_n, 2)-6.0*(v(half_n-2, 1)+v(half_n-1, 2))+18.0*(v(half_n-1, 0)+v(half_n, 1))
+                +9.0*v(half_n, 0)+36.0*v(half_n-1, 1)+v(half_n-2, 2))/64.0;
+        result.set_Value(resdim-2, 1, value);
+
+        value=(-3.0*(v(half_n, half_n-2)+v(half_n-2, half_n))-6.0*(v(half_n-1, half_n-2)+v(half_n-2, half_n-1))+
+                18.0*(v(half_n, half_n-1)+v(half_n-1, half_n))+9.0*v(half_n, half_n)+36.0*v(half_n-1, half_n-1)+
+                v(half_n-2, half_n-2))/64.0;
+        result.set_Value(resdim-2, resdim-2, value);
 
         //处理细网格中本来在粗网格上的点
         for(int i=0; i<=half_n; ++i){

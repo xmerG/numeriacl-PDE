@@ -396,7 +396,7 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
                 fh.set_Value(0, j, value);
             }
 
-            if(mixed[2]==0){
+            if(mixed[3]==0){
                 fh.set_Value(j, i, 4*g(temp , 1.0)*n2);
             }
             else{
@@ -404,7 +404,7 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
                 fh.set_Value(j, i, value);
             }
 
-            if(mixed[3]==0){
+            if(mixed[2]==0){
                 fh.set_Value(i, j, 4*g(1.0, temp)*n2);
             }
             else{
@@ -447,8 +447,8 @@ Multigrid<dim>::Multigrid(const Function &f, const Function &g, BoundaryConditio
             this->create_grids_M(f, g, j, mixed);
         }
     }
-    discretors[i].first.print();
-    discretors[i].second.print();
+    //discretors[i].first.print();
+    //discretors[i].second.print();
 }
 
 template<int dim>
@@ -490,14 +490,17 @@ void Multigrid<dim>::solve(const string &r, const string &p, const string &c, Ve
         solutions=this->V_cycle(n, initial_guess, nu1, nu2);
         double oldnorm=0.0;
         double newnorm=solutions.l2_norm();
-        while (abs(newnorm-oldnorm)>tol){   
+        while (abs(newnorm-oldnorm)>tol && counter<50){   
             oldnorm=newnorm;
             solutions=this->V_cycle(n, solutions, nu1, nu2);
+            if(BC==BoundaryCondition::Neumann){
+                double drift=value-solutions(0);
+                for(int i=0; i<=solutions.getdim(); ++i){
+                    solutions.set_Value(i,solutions(i)+drift);
+                }
+            }
             newnorm=solutions.l2_norm();
             counter++;
-        }
-        if(counter>max_itr){
-            cout<<"not converge"<<endl;
         }
         //int n2=n*n;
         //for(int i=0; i<5; ++i){
@@ -510,15 +513,13 @@ void Multigrid<dim>::solve(const string &r, const string &p, const string &c, Ve
         solutions=this->FMG(n, nu1, nu2);
         double oldnorm=0.0;
         double newnorm=solutions.l2_norm();
-        double infi_norm=solutions.infinity_norm();
         Vector f=discretors[n].second;
         int n2=n*n;
-        while (abs(newnorm-oldnorm)>tol || infi_norm<1e-7){
+        while (abs(newnorm-oldnorm)>tol ){
             oldnorm=newnorm;
             discretors[n].second=f-discretors[n].first*solutions*n2;
             solutions=solutions+FMG(n, nu1, nu2);
             newnorm=solutions.l2_norm();
-            infi_norm=solutions.infinity_norm();
             counter++;
             if(counter>max_itr){
                 cout<<"not converge"<<endl;
