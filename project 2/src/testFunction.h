@@ -39,12 +39,26 @@ public:
     //--------------------------------------------------------
     double operator()(const double &x)const{
         if(x==0){
-            return -2.0;
+            if(mixed[0]==0){
+                return 1.0;
+            }
+            else{
+                return -2.0;
+            }
         }
+
         else if(x==1.0){
-            return (1.0+cos(1.0))*exp(1.0+sin(1.0));
+            if(mixed[1]==0){
+                return exp(1.0+a);
+            }
+            else{
+                return (1.0+b)*exp(1.0+a);
+            }
         }
-        else{return 0.0;}
+        else{
+            cerr<<"not defined"<<endl;
+            return 0.0;
+        }
     }
 };
 
@@ -131,7 +145,7 @@ public:
             return 1.0;
         }
         else if(x==0.0 && y==1.0){
-            return exp(1.0);
+            return d;
         }
         else if(x==1.0 && y==0.0){
             return exp(a);

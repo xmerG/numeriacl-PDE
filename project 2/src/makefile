@@ -4,12 +4,12 @@ CXX := g++
 CXXFLAGS := -O2
 
 # 定义目标可执行文件
-TARGET := test
+TARGET := testall
 
 # 定义所有源文件
-SRCS := test.cpp restriction/Full_weighting.cpp restriction/Injection.cpp \
+SRCS := testall.cpp restriction/Full_weighting.cpp restriction/Injection.cpp \
         prolongation/Linear.cpp prolongation/Quadratic.cpp Vector.cpp \
-        Multigrid.cpp Sparse_Matrix.cpp
+        Multigrid.cpp Sparse_Matrix.cpp Test.cpp
 
 # 生成对应的对象文件列表
 OBJS := $(SRCS:.cpp=.o)

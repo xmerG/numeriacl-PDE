@@ -326,7 +326,7 @@ void Multigrid<1>::create_grids_M(const Function &f, const Function &g,const int
             fh.set_Value(i, i-1, value);
         }
 
-        if(mixed[0]==0){
+        if(mixed[1]==0){
             fh.set_Value(n, 2*g(1.0)*n*n);
         }
         else{
@@ -412,7 +412,7 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
                 fh.set_Value(j, 0, 4*g(temp, 0.0)*n2);
             }
             else{
-                double value=fh(j, 0)+2*g(temp, 0.0)*n;
+                double value=f(temp, 0)+2*g(temp, 0.0)*n;
                 fh.set_Value(j,0, value);
             }
 
@@ -420,7 +420,7 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
                 fh.set_Value(0, j, 4*g(0.0, temp)*n2);
             }
             else{
-                double value=fh(0, j)+2*g(0.0, temp)*n;
+                double value=f(0, temp)+2*g(0.0, temp)*n;
                 fh.set_Value(0, j, value);
             }
 
@@ -428,7 +428,7 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
                 fh.set_Value(j, i, 4*g(temp , 1.0)*n2);
             }
             else{
-                double value=fh(j, i)+2*g(temp, 1.0)*n;
+                double value=f(temp, 1.0)+2*g(temp, 1.0)*n;
                 fh.set_Value(j, i, value);
             }
 
@@ -436,7 +436,7 @@ void Multigrid<2>::create_grids_M(const Function &f, const Function &g,const int
                 fh.set_Value(i, j, 4*g(1.0, temp)*n2);
             }
             else{
-                double value=fh(i, j)+2*g(1.0, temp)*n;
+                double value=f(1.0, temp)+2*g(1.0, temp)*n;
                 fh.set_Value(i, j, value);
             }      
   
@@ -492,7 +492,8 @@ void Multigrid<dim>::print(){
 
 template<int dim>
 void Multigrid<dim>::solve(const string &r, const string &p, const string &c, Vector& initial_guess, 
-                        int nu1, int nu2, double tol,const double &value, int max_itr) {
+                        int nu1, int nu2, double tol,const double &value, int max_itr){
+    cycle=c;
     if (r == "full_weighting") {
     restriction = make_unique<Full_weighting<dim>>(); 
     } 
@@ -593,12 +594,35 @@ void Multigrid<dim>::print_to_file(const string &filename, const Function &f) {
     Vector err=this->error(f);
     vector<double> e=err.getelements();
     //j["errors"] = e;
-    j["solutions"]=solutions.getelements();
+    //j["solutions"]=solutions.getelements();
     j["number"]=n;
     j["infinity_norm"]=err.infinity_norm();
     j["l2_norm"]=err.l2_norm();
     j["l1_norm"]=err.l1_norm();
     j["dimension"]=dim;
+    j["cycle"]=cycle;
+    double h=1.0/n;
+    if constexpr(dim==1){
+        vector<double> grids(n+1, 0.0);
+        for(int i=0; i<=n; ++i){
+            grids[i]=i*h;
+        }
+        for(int i=0; i<=n; ++i){
+            grids[i]=i*h;
+        }
+        //j["grids"]=grids;
+    }
+    else if constexpr(dim==2){
+        vector<vector<double>> grids((n+1)*(n+1), vector<double>{0.0, 0.0});
+        for(int i=0; i<=n; ++i){
+            for(int j=0; j<=n; ++j){
+                int index=j+i*(n+1);
+                grids[index][0]=j*h;
+                grids[index][1]=i*h;
+            }
+        }
+        //j["grids"]=grids;
+    }
     //j["run_time"]=run_time;
     ifstream file_check(filename); 
     bool is_empty = file_check.peek() == std::ifstream::traits_type::eof(); 
@@ -610,7 +634,7 @@ void Multigrid<dim>::print_to_file(const string &filename, const Function &f) {
         inFile.close();  
     }
     jsonDataArray.push_back(j);
-    std::ofstream outFile(filename, std::ios::out | std::ios::trunc);  // 打开文件，清空内容
+    std::ofstream outFile(filename, std::ios::out | std::ios::trunc); 
     if (outFile.is_open()) {
         // 将修改后的 JSON 数组写回文件，并格式化输出
         outFile << jsonDataArray.dump(4);  // 4 个空格缩进

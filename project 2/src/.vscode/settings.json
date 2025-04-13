@@ -27,6 +27,7 @@
         "iosfwd": "cpp",
         "iostream": "cpp",
         "cmath": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "chrono": "cpp"
     }
 }

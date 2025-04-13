@@ -8,7 +8,8 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "test.cpp",
+                "testall.cpp",
+                "Test.cpp",
                 "Vector.cpp",
                 "Sparse_Matrix.cpp",
                 "Multigrid.cpp",

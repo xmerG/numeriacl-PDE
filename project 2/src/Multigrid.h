@@ -21,6 +21,7 @@ private:
     Vector solutions;
     BoundaryCondition BC;
     int counter=1; //迭代次数 
+    string cycle="";
     unique_ptr<Retriction<dim>> restriction;
     unique_ptr<Prolongation<dim>> prolongation;
     Vector w_Jacobi(int i, const Vector &initial);
@@ -41,6 +42,7 @@ public:
         double tol,const double &value=0.0, int max_itr=50);
     void print();
     void print_to_file(const string &filename, const Function &f);
+    void print_solution(const string &filename) const;
 };
 
 
