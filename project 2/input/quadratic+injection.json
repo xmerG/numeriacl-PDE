@@ -1,18 +1,9 @@
 [  
   {
-    "grid_number" :32,
-    "boundary_conditions":"Dirichlet",
-    "restriction_operator": "full_weighting",  
-    "interpolation_operator": "quadratic",        
-    "cycle_type": "V-cycle",                 
-    "max_iterations": 50,
-    "relative_accuracy": 1e-8,
-    "initial_guess": "zero"                
-  },
-  {
+    "dimension" :1,
     "grid_number" :64,
     "boundary_conditions":"Dirichlet",
-    "restriction_operator": "full_weighting",  
+    "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
     "cycle_type": "V-cycle",                 
     "max_iterations": 50,
@@ -20,9 +11,10 @@
     "initial_guess": "zero"                
   },
   {
+    "dimension" :1,
     "grid_number" :128,
     "boundary_conditions":"Dirichlet",
-    "restriction_operator": "full_weighting",  
+    "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
     "cycle_type": "V-cycle",                 
     "max_iterations": 50,
@@ -30,9 +22,10 @@
     "initial_guess": "zero"                
   },
   {
+    "dimension" :1,
     "grid_number" :256,
     "boundary_conditions":"Dirichlet",
-    "restriction_operator": "full_weighting",  
+    "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
     "cycle_type": "V-cycle",                 
     "max_iterations": 50,
@@ -40,19 +33,10 @@
     "initial_guess": "zero"                
   },
   {
-    "grid_number" :32,
-    "boundary_conditions":"Dirichlet",
-    "restriction_operator": "full_weighting",  
-    "interpolation_operator": "quadratic",        
-    "cycle_type": "FMG",                 
-    "max_iterations": 50,
-    "relative_accuracy": 1e-8,
-    "initial_guess": "zero"                
-  },
-  {
+    "dimension" :1,
     "grid_number" :64,
     "boundary_conditions":"Dirichlet",
-    "restriction_operator": "full_weighting",  
+    "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
     "cycle_type": "FMG",                 
     "max_iterations": 50,
@@ -60,9 +44,10 @@
     "initial_guess": "zero"                
   },
   {
+    "dimension" :1,
     "grid_number" :128,
     "boundary_conditions":"Dirichlet",
-    "restriction_operator": "full_weighting",  
+    "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
     "cycle_type": "FMG",                 
     "max_iterations": 50,
@@ -70,9 +55,10 @@
     "initial_guess": "zero"                
   },
   {
+    "dimension" :1,
     "grid_number" :256,
     "boundary_conditions":"Dirichlet",
-    "restriction_operator": "full_weighting",  
+    "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
     "cycle_type": "FMG",                 
     "max_iterations": 50,
@@ -80,19 +66,10 @@
     "initial_guess": "zero"                
   },
   {
-    "grid_number" :32,
-    "boundary_conditions":"Neumann",
-    "restriction_operator": "full_weighting",  
-    "interpolation_operator": "quadratic",        
-    "cycle_type": "V-cycle",                 
-    "max_iterations": 50,
-    "relative_accuracy": 1e-8,
-    "initial_guess": "zero"                
-  },
-  {
+    "dimension" :1,
     "grid_number" :64,
     "boundary_conditions":"Neumann",
-    "restriction_operator": "full_weighting",  
+    "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
     "cycle_type": "V-cycle",                 
     "max_iterations": 50,
@@ -100,9 +77,10 @@
     "initial_guess": "zero"                
   },
   {
+    "dimension" :1,
     "grid_number" :128,
     "boundary_conditions":"Neumann",
-    "restriction_operator": "full_weighting",  
+    "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
     "cycle_type": "V-cycle",                 
     "max_iterations": 50,
@@ -110,9 +88,35 @@
     "initial_guess": "zero"                
   },
   {
+    "dimension" :1,
+    "grid_number" :64,
+    "boundary_conditions":"Mixed",
+    "mixed":[0,1],
+    "restriction_operator": "injection",  
+    "interpolation_operator": "quadratic",        
+    "cycle_type": "V-cycle",                 
+    "max_iterations": 50,
+    "relative_accuracy": 1e-8,
+    "initial_guess": "zero"                
+  },
+  {
+    "dimension" :1,
+    "grid_number" :128,
+    "boundary_conditions":"Mixed",
+    "mixed":[0,1],
+    "restriction_operator": "injection",  
+    "interpolation_operator": "quadratic",        
+    "cycle_type": "V-cycle",                 
+    "max_iterations": 50,
+    "relative_accuracy": 1e-8,
+    "initial_guess": "zero"                
+  },
+  {
+    "dimension" :1,
     "grid_number" :256,
-    "boundary_conditions":"Neumann",
-    "restriction_operator": "full_weighting",  
+    "boundary_conditions":"Mixed",
+    "mixed":[0,1],
+    "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
     "cycle_type": "V-cycle",                 
     "max_iterations": 50,
@@ -120,9 +124,11 @@
     "initial_guess": "zero"                
   },
   {
-    "grid_number" :32,
-    "boundary_conditions":"Neumann",
-    "restriction_operator": "full_weighting",  
+    "dimension" :1,
+    "grid_number" :64,
+    "boundary_conditions":"Mixed",
+    "mixed":[0,1],
+    "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
     "cycle_type": "FMG",                 
     "max_iterations": 50,
@@ -130,31 +136,137 @@
     "initial_guess": "zero"                
   },
   {
+    "dimension" :1,
+    "grid_number" :128,
+    "boundary_conditions":"Mixed",
+    "mixed":[0,1],
+    "restriction_operator": "injection",  
+    "interpolation_operator": "quadratic",        
+    "cycle_type": "FMG",                 
+    "max_iterations": 50,
+    "relative_accuracy": 1e-8,
+    "initial_guess": "zero"                
+  },
+  {
+    "dimension" :2,
+    "grid_number" :64,
+    "boundary_conditions":"Dirichlet",
+    "restriction_operator": "injection",  
+    "interpolation_operator": "quadratic",        
+    "cycle_type": "V-cycle",                 
+    "max_iterations": 50,
+    "relative_accuracy": 1e-8,
+    "initial_guess": "zero"                
+  },
+  {
+    "dimension" :2,
+    "grid_number" :128,
+    "boundary_conditions":"Dirichlet",
+    "restriction_operator": "injection",  
+    "interpolation_operator": "quadratic",        
+    "cycle_type": "V-cycle",                 
+    "max_iterations": 50,
+    "relative_accuracy": 1e-8,
+    "initial_guess": "zero"                
+  },
+  {
+    "dimension" :2,
+    "grid_number" :256,
+    "boundary_conditions":"Dirichlet",
+    "restriction_operator": "injection",  
+    "interpolation_operator": "quadratic",        
+    "cycle_type": "V-cycle",                 
+    "max_iterations": 50,
+    "relative_accuracy": 1e-8,
+    "initial_guess": "zero"                
+  },
+  {
+    "dimension" :2,
+    "grid_number" :64,
+    "boundary_conditions":"Dirichlet",
+    "restriction_operator": "injection",  
+    "interpolation_operator": "quadratic",        
+    "cycle_type": "FMG",                 
+    "max_iterations": 50,
+    "relative_accuracy": 1e-8,
+    "initial_guess": "zero"                
+  },
+  {
+    "dimension" :2,
+    "grid_number" :128,
+    "boundary_conditions":"Dirichlet",
+    "restriction_operator": "injection",  
+    "interpolation_operator": "quadratic",        
+    "cycle_type": "FMG",                 
+    "max_iterations": 50,
+    "relative_accuracy": 1e-8,
+    "initial_guess": "zero"                
+  },
+  {
+    "dimension" :2,
+    "grid_number" :256,
+    "boundary_conditions":"Dirichlet",
+    "restriction_operator": "injection",  
+    "interpolation_operator": "quadratic",        
+    "cycle_type": "FMG",                 
+    "max_iterations": 50,
+    "relative_accuracy": 1e-8,
+    "initial_guess": "zero"                
+  },
+  {
+    "dimension" :2,
     "grid_number" :64,
     "boundary_conditions":"Neumann",
-    "restriction_operator": "full_weighting",  
+    "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
-    "cycle_type": "FMG",                 
+    "cycle_type": "V-cycle",                 
     "max_iterations": 50,
     "relative_accuracy": 1e-8,
     "initial_guess": "zero"                
   },
   {
+    "dimension" :2,
     "grid_number" :128,
     "boundary_conditions":"Neumann",
-    "restriction_operator": "full_weighting",  
+    "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
-    "cycle_type": "FMG",                 
+    "cycle_type": "V-cycle",                 
     "max_iterations": 50,
     "relative_accuracy": 1e-8,
     "initial_guess": "zero"                
   },
   {
-    "grid_number" :256,
-    "boundary_conditions":"Neumann",
-    "restriction_operator": "full_weighting",  
+    "dimension" :2,
+    "grid_number" :64,
+    "boundary_conditions":"Mixed",
+    "mixed" :[0,1,0,0],
+    "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
-    "cycle_type": "FMG",                 
+    "cycle_type": "V-cycle",                 
+    "max_iterations": 50,
+    "relative_accuracy": 1e-8,
+    "initial_guess": "zero"                
+  },
+  {
+    "dimension" :2,
+    "grid_number" :128,
+    "boundary_conditions":"Mixed",
+    "mixed" :[0,1,0,0],
+    "restriction_operator": "injection",  
+    "interpolation_operator": "quadratic",        
+    "cycle_type": "V-cycle",                 
+    "max_iterations": 50,
+    "relative_accuracy": 1e-8,
+    "initial_guess": "zero"                
+  },
+  {
+    "dimension" :2,
+    "grid_number" :256,
+    "boundary_conditions":"Mixed",
+    "mixed" :[0,1,0,0],
+    "restriction_operator": "injection",  
+    "interpolation_operator": "quadratic",        
+    "cycle_type": "V-cycle",                 
     "max_iterations": 50,
     "relative_accuracy": 1e-8,
     "initial_guess": "zero"                

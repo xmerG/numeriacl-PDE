@@ -507,14 +507,14 @@ void Multigrid<dim>::solve(const string &r, const string &p, const string &c, Ve
     if (p == "linear") {
     prolongation = make_unique<Linear<dim>>(); 
     } 
-    else if (p == "quadric") { 
+    else if (p == "quadratic") { 
     prolongation = make_unique<Quadratic<dim>>();  
     }
      else {
     cerr << "Invalid prolongation method: " << p << endl;
     return;
     }
-    if(c=="v-cylce"){
+    if(c=="V-cycle"){
         solutions=this->V_cycle(n, initial_guess, nu1, nu2);
         double oldnorm=0.0;
         double newnorm=solutions.l2_norm();
@@ -543,16 +543,12 @@ void Multigrid<dim>::solve(const string &r, const string &p, const string &c, Ve
         double newnorm=solutions.l2_norm();
         Vector f=discretors[n].second;
         int n2=n*n;
-        while (abs(newnorm-oldnorm)>tol ){
+        while (abs(newnorm-oldnorm)>tol && counter<max_itr){
             oldnorm=newnorm;
             discretors[n].second=f-discretors[n].first*solutions*n2;
             solutions=solutions+FMG(n, nu1, nu2);
             newnorm=solutions.l2_norm();
             counter++;
-            if(counter>max_itr){
-                cout<<"not converge"<<endl;
-                break;
-            }
         }
         
     }
@@ -596,12 +592,14 @@ void Multigrid<dim>::print_to_file(const string &filename, const Function &f) {
     j["iterator times"]=counter;
     Vector err=this->error(f);
     vector<double> e=err.getelements();
-    j["errors"] = e;
+    //j["errors"] = e;
     j["solutions"]=solutions.getelements();
     j["number"]=n;
     j["infinity_norm"]=err.infinity_norm();
     j["l2_norm"]=err.l2_norm();
     j["l1_norm"]=err.l1_norm();
+    j["dimension"]=dim;
+    //j["run_time"]=run_time;
     ifstream file_check(filename); 
     bool is_empty = file_check.peek() == std::ifstream::traits_type::eof(); 
     file_check.close();  

@@ -15,7 +15,7 @@ public:
     }
 };
 
-class Neumann:public Function{
+class Neumann1:public Function{
 public:
     double operator()(const double &x, const double &y) const {return 0.0;}
     double operator()(const double &x)const{
@@ -29,7 +29,26 @@ public:
     }
 };
 
-class Laplacian:public Function{
+class Mixed1:public Function{
+private:
+    vector<int> mixed;
+public:
+    Mixed1(){}
+    Mixed1(const vector<int> &v):mixed(v){}
+    double operator()(const double &x, const double &y) const {return 0.0;}
+    //--------------------------------------------------------
+    double operator()(const double &x)const{
+        if(x==0){
+            return -2.0;
+        }
+        else if(x==1.0){
+            return (1.0+cos(1.0))*exp(1.0+sin(1.0));
+        }
+        else{return 0.0;}
+    }
+};
+
+class Laplacian1:public Function{
 public:
     double operator()(const double &x, const double &y) const {return 0.0;}
     double operator()(const double &x)const{

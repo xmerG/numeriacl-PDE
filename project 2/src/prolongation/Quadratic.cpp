@@ -24,6 +24,19 @@ Vector Quadratic<dim>::operator()(const Vector &v) const{
         int resdim=2*half_n+1;   //n+1
         int quarter_n=half_n/2; //n/4
         Vector result(resdim*resdim);
+        /*for(int i=0; i<half_n; ++i){
+            for(int j=0; j<half_n; ++j){
+                if(i==0 || i==half_n-1 || j==0 || j==half_n-1){
+                    double value=0.25*(v(j, i)+v(j, i+1)+v(j+1, i)+v(j +1, i+1));
+                    result.set_Value(2*j+1, 2*i+1,value);
+                }
+                else{
+                    double value=0.5*(v(j, i+1)+v(j+1, i))+0.25*(v(j, i)+v(j+1, i+1))
+                        -0.125*(v(j+1, i-1)+v(j+2, i)+v(j-1, i+1)+v(j, i+2));
+                    result.set_Value(2*j+1, 2*i+1, value);
+                }
+            }
+        }*/
 
         //拟合内部点
         /*for(int i=0; i<quarter_n; ++i){
@@ -106,31 +119,8 @@ Vector Quadratic<dim>::operator()(const Vector &v) const{
             }
         }
 
-        value=(3.0*v(0, 0)+6.0*v(1, 0)-v(2, 0))/8.0;
-        result.set_Value(1, 0, value);
 
-        value=(3.0*v(0, 0)+6.0*v(0, 1)-v(0, 2))/8.0;
-        result.set_Value(0, 1, value);
-
-        value=(3.0*v(half_n, 0)+6.0*v(half_n-1, 0)-v(half_n-2, 0))/8.0;
-        result.set_Value(resdim-2, 0, value);
-
-        value=(3.0*v(half_n, 0)+6.0*v(half_n, 1)-v(half_n, 2))/8.0;
-        result.set_Value(resdim-1, 1, value);
-
-        value=(3.0*v(0, half_n)+6.0*v(0, half_n-1)-v(0, half_n-2))/8.0;
-        result.set_Value(0, resdim-2, value);
-
-        value=(3.0*v(0, half_n)+6.0*v(1, half_n)-v(2, half_n))/8.0;
-        result.set_Value(1, resdim-1, value);
-
-        value=(3.0*v(half_n, half_n)+6.0*v(half_n-1, half_n)-v(half_n-2, half_n))/8.0;
-        result.set_Value(resdim-2, resdim-1, value);
-
-        value=(3.0*v(half_n, half_n)+6.0*v(half_n, half_n-1)-v(half_n, half_n-2))/8.0;
-        result.set_Value(resdim-1, resdim-2, value);
-
-        /*for(int i=0; i<=half_n; ++i){
+        for(int i=0; i<=half_n; ++i){
             double value=(3.0*v(i, 0)+6.0*v(i, 1)-v(i, 2))/8.0;
             result.set_Value(2*i, 1, value);
 
@@ -143,7 +133,7 @@ Vector Quadratic<dim>::operator()(const Vector &v) const{
             value=(3.0*v(half_n, i)+6.0*v(half_n-1, i)-v(half_n-2, i))/8.0;
             result.set_Value(resdim-2, 2*i, value);
             
-        }*/
+        }
         /*for(int i=0; i<=half_n; ++i){
             for(int j=0; j<=half_n; ++j){
                 int newi=2*i;

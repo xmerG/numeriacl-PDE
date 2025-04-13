@@ -26,6 +26,7 @@
         "typeinfo": "cpp",
         "iosfwd": "cpp",
         "iostream": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "fstream": "cpp"
     }
 }
