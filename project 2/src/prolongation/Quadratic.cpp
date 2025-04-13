@@ -46,28 +46,29 @@ Vector Quadratic<dim>::operator()(const Vector &v) const{
         }*/
         for(int i=1; i<half_n-1; ++i){
             for(int j=1; j<half_n; ++j){
-                double value=81.0*(v(j, i)+v(j+1, i+1)+v(j, i+1)+v(j+1, i))/256.0-9.0*(v(j-1, i)+v(j-1, i+1)+v(j, i-1)+v(j+1, i-1)
-                                    +v(j, i+2)+v(j+1, i+2)+v(j+2, i)+v(j+2, i+1))/16.0+v(j-1, i-1)+v(j-1, i+2)+v(j+2, i)+v(j+2, i-1);
+                double value=81.0*(v(j, i)+v(j+1, i+1)+v(j, i+1)+v(j+1, i))/256.0
+                            -9.0*(v(j-1, i)+v(j-1, i+1)+v(j, i-1)+v(j+1, i-1)+v(j, i+2)+v(j+1, i+2)+v(j+2, i)+v(j+2, i+1))/256.0
+                                    +(v(j-1, i-1)+v(j-1, i+2)+v(j+2, i+2)+v(j+2, i-1))/256.0;
                 result.set_Value(2*j+1, 2*i+1, value);
             }
         }
         for(int i=1; i<half_n-1; ++i){
-            double value=-3.0*(v(0, i-1)+v(0, i+2))/8.0-6.0*(v(1, i-1)+v(1, i+2))/8.0+(v(2, i-1)+v(2, i+2))/8.0+
-                            27.0*(v(0, i)+v(0, i+1))/128.0+27.0*(v(1, i)+v(1, i+1))/64.0-9.0*(v(2, i)+v(2, i+1))/128.0;
+            double value=(-3.0*(v(0, i-1)+v(0, i+2))-6.0*(v(1, i-1)+v(1, i+2))+(v(2, i-1)+v(2, i+2))+
+                            27.0*(v(0, i)+v(0, i+1))+54.0*(v(1, i)+v(1, i+1))/64.0-9.0*(v(2, i)+v(2, i+1)))/128.0;
             result.set_Value(1, 2*i+1, value);
 
             value=(-3.0*(v(half_n, i-1)+v(half_n, i+2))-6.0*(v(half_n-1, i-1)+v(half_n-1, i+2))+v(half_n-2, i-1)+v(half_n-2, i+2)+
-                    27.0*(v(half_n, i)+v(half_n, i+1))/16.0+27.0*(v(half_n-1, i)+v(half_n-1, i+1))/8.0
-                    -9.0*(v(half_n-2, i)+v(half_n-2, i+1))/16.0)/8.0;
+                    27.0*(v(half_n, i)+v(half_n, i+1))+54.0*(v(half_n-1, i)+v(half_n-1, i+1))
+                    -9.0*(v(half_n-2, i)+v(half_n-2, i+1)))/128.0;
             result.set_Value(resdim-2, 2*i+1, value);
 
-            value=(-3.0*(v(i-1, 0)+v(i+2, 0))-6.0*(v(i-1, 1)+v(i+2, 1))-+v(i-1, 2)+v(i+2, 2)+
-                        27.0*(v(i, 0)+v(i+1, 0))/16.0+27.0*(v(i, 1)+v(i+1, 1))-9.0*(v(i+2, 2)+v(i+2, 2))/16.0)/8.0;
+            value=(-3.0*(v(i-1, 0)+v(i+2, 0))-6.0*(v(i-1, 1)+v(i+2, 1))+v(i-1, 2)+v(i+2, 2)+
+                        27.0*(v(i, 0)+v(i+1, 0))+54.0*(v(i, 1)+v(i+1, 1))-9.0*(v(i, 2)+v(i+1, 2)))/128.0;
             result.set_Value(2*i+1, 1, value);
             
-            value=(-3.0*(v(i-1, half_n)+v(i+2, half_n))-6.0*(v(i-1, half_n-1)+v(i+2, half_n-1))-+v(i-1, half_n-2)+v(i+2, half_n-2)+
-                        27.0*(v(i, half_n)+v(i+1, half_n))/16.0+27.0*(v(i, half_n-1)+v(i+1, half_n-1))
-                        -9.0*(v(i+2, half_n-2)+v(i+2, half_n-2))/16.0)/8.0;
+            value=(-3.0*(v(i-1, half_n)+v(i+2, half_n))-6.0*(v(i-1, half_n-1)+v(i+2, half_n-1))+v(i-1, half_n-2)+v(i+2, half_n-2)+
+                        27.0*(v(i, half_n)+v(i+1, half_n))+54.0*(v(i, half_n-1)+v(i+1, half_n-1))
+                        -9.0*(v(i, half_n-2)+v(i+1, half_n-2)))/128.0;
             result.set_Value(2*i+1, resdim-2, value);              
         }
 
@@ -105,7 +106,31 @@ Vector Quadratic<dim>::operator()(const Vector &v) const{
             }
         }
 
-        for(int i=0; i<=half_n; ++i){
+        value=(3.0*v(0, 0)+6.0*v(1, 0)-v(2, 0))/8.0;
+        result.set_Value(1, 0, value);
+
+        value=(3.0*v(0, 0)+6.0*v(0, 1)-v(0, 2))/8.0;
+        result.set_Value(0, 1, value);
+
+        value=(3.0*v(half_n, 0)+6.0*v(half_n-1, 0)-v(half_n-2, 0))/8.0;
+        result.set_Value(resdim-2, 0, value);
+
+        value=(3.0*v(half_n, 0)+6.0*v(half_n, 1)-v(half_n, 2))/8.0;
+        result.set_Value(resdim-1, 1, value);
+
+        value=(3.0*v(0, half_n)+6.0*v(0, half_n-1)-v(0, half_n-2))/8.0;
+        result.set_Value(0, resdim-2, value);
+
+        value=(3.0*v(0, half_n)+6.0*v(1, half_n)-v(2, half_n))/8.0;
+        result.set_Value(1, resdim-1, value);
+
+        value=(3.0*v(half_n, half_n)+6.0*v(half_n-1, half_n)-v(half_n-2, half_n))/8.0;
+        result.set_Value(resdim-2, resdim-1, value);
+
+        value=(3.0*v(half_n, half_n)+6.0*v(half_n, half_n-1)-v(half_n, half_n-2))/8.0;
+        result.set_Value(resdim-1, resdim-2, value);
+
+        /*for(int i=0; i<=half_n; ++i){
             double value=(3.0*v(i, 0)+6.0*v(i, 1)-v(i, 2))/8.0;
             result.set_Value(2*i, 1, value);
 
@@ -118,7 +143,7 @@ Vector Quadratic<dim>::operator()(const Vector &v) const{
             value=(3.0*v(half_n, i)+6.0*v(half_n-1, i)-v(half_n-2, i))/8.0;
             result.set_Value(resdim-2, 2*i, value);
             
-        }
+        }*/
         /*for(int i=0; i<=half_n; ++i){
             for(int j=0; j<=half_n; ++j){
                 int newi=2*i;

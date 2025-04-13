@@ -194,34 +194,58 @@ void Multigrid<2>::create_grids_N(const Function &f, const Function &g,const int
         A.setValues(index, index+1, -1.0);
         A.setValues(index, index-1, -1.0);
         A.setValues(index, index+i+1, -2.0);
+        //A.setValues(index, index+i+1, -16.0/3.0);
+        //A.setValues(index, index+2*i+2, 4.0/3.0);
         index=j*(i+1);
         A.setValues(index, index, 4.0);
         A.setValues(index, index-i-1, -1.0);
         A.setValues(index, index+i+1, -1.0);
         A.setValues(index, index+1, -2.0);
+        //A.setValues(index, index+1, -16.0/3.0);
+        //A.setValues(index, index+2, 4.0/3.0);
         index+=i;
         A.setValues(index, index, 4.0);
         A.setValues(index, index-1, -2.0);
         A.setValues(index, index-i-1, -1.0);
         A.setValues(index, index+i+1, -1.0);
+        //A.setValues(index, index-1, -16.0/3.0);
+        //A.setValues(index, index-2, 4.0/3.0);
         index=j+i*(i+1);
         A.setValues(index, index, 4.0);
         A.setValues(index, index+1, -1.0);
         A.setValues(index, index-1, -1.0);
         A.setValues(index, index-i-1, -2.0);
+        //A.setValues(index, index-i-1, -16.0/3.0);
+        //A.setValues(index, index-2*i-2, 4.0/3.0);
     }
     A.setValues(0,0, 4.0);
+    //A.setValues(0, 1, -8.0/3.0);
+    //A.setValues(0, 2, 2.0/3.0);
+    //A.setValues(0, i+1, -8.0/3.0);
+    //A.setValues(0, 2*i+2, 2.0/3.0);
     A.setValues(0,1, -2.0);
     A.setValues(0, i+1, -2.0);
     A.setValues(i,i, 4.0);
+    //A.setValues(i, i-1, -8.0/3.0);
+    //A.setValues(i, i-2, 2.0/3.0);
+    //A.setValues(i, 2*i+1, -8.0/3.0);
+    //A.setValues(i, 3*i+2, 2.0/3.0);
     A.setValues(i, i-1, -2.0);
     A.setValues(i, 2*i+1, -2.0);
     int index=currdim-1;
     A.setValues(index, index, 4.0);
+    //A.setValues(index, index-1, -8.0/3.0);
+    //A.setValues(index, index-2, 2.0/3.0);
+    //A.setValues(index, index-i-1, -8.0/3.0);
+    //A.setValues(index, index-2*i-2, 2.0/3.0);
     A.setValues(index, index-1, -2.0);
     A.setValues(index, index-i-1, -2.0);
     index=i*(i+1);
     A.setValues(index, index, 4.0);
+    //A.setValues(index, index+1, -8.0/3.0);
+    //A.setValues(index, index+2, 2.0/3.0);
+    //A.setValues(index, index-i-1, -8.0/3.0);
+    //A.setValues(index, index-2*i-2, 2.0/3.0);
     A.setValues(index, index-i-1, -2.0);
     A.setValues(index, index+1, -2.0);
     if(i==n){
@@ -233,32 +257,36 @@ void Multigrid<2>::create_grids_N(const Function &f, const Function &g,const int
         for(int j=1; j<n; ++j){
             double temp=j*h;
             double value=fh(j, 0)+2*g(temp, 0.0)*n;  //y=0
+            //double value=8.0*g(temp, 0.0)*n/3.0;
             fh.set_Value(j,0, value);
             
             value=fh(0, j)+2*g(0.0, temp)*n;   //x=0
+            //value=8.0*g(0.0, temp)*n/3.0;
             fh.set_Value(0, j, value);
     
             value=fh(j, i)+2*g(temp, 1.0)*n;  //y=1
+            //value=8.0*g(temp, 1.0)*n/3.0;
             fh.set_Value(j, i, value);
     
             value=fh(i, j)+2*g(1.0, temp)*n;   //x=1
+            //value=8.0*g(1.0, temp)*n/3.0;
             fh.set_Value(i, j, value);
         }
         double value=fh(0, 0)+2*g(0.0, 0.0)*n;
         //int n2=n*n;
-        //double value=4*g(0.0, 0.0)*n2;
+        //double value=4.0*g(0.0, 0.0)/3.0;
         fh.set_Value(0,0, value);
 
         value=fh(n, 0)+2*g(1.0, 0.0)*n;
-        //value=4*g(1.0, 0.0)*n2;
+        //value=4.0*g(1.0, 0.0)*n/3.0;
         fh.set_Value(n, 0, value);
 
         value=fh(0, n)+2*g(0.0, 1.0)*n;
-        //value=4*g(0.0, 1.0)*n2;
+        //value=4.0*g(0.0, 1.0)*n/3.0;
         fh.set_Value(0, n, value);
 
         value=fh(n,n)+2*g(1.0, 1.0)*n;
-        //value=4*g(1.0, 1.0)*n2;
+        //value=4.0*g(1.0, 1.0)*n/3.0;
         fh.set_Value(n, n, value);
     }
     discretors[i]=make_pair(move(A), move(fh));
