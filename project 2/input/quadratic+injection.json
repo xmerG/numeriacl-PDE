@@ -1,17 +1,6 @@
 [  
   {
     "dimension" :1,
-    "grid_number" :64,
-    "boundary_conditions":"Dirichlet",
-    "restriction_operator": "injection",  
-    "interpolation_operator": "quadratic",        
-    "cycle_type": "V-cycle",                 
-    "max_iterations": 50,
-    "relative_accuracy": 1e-8,
-    "initial_guess": "zero"                
-  },
-  {
-    "dimension" :1,
     "grid_number" :128,
     "boundary_conditions":"Dirichlet",
     "restriction_operator": "injection",  
@@ -28,17 +17,6 @@
     "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
     "cycle_type": "V-cycle",                 
-    "max_iterations": 50,
-    "relative_accuracy": 1e-8,
-    "initial_guess": "zero"                
-  },
-  {
-    "dimension" :1,
-    "grid_number" :64,
-    "boundary_conditions":"Dirichlet",
-    "restriction_operator": "injection",  
-    "interpolation_operator": "quadratic",        
-    "cycle_type": "FMG",                 
     "max_iterations": 50,
     "relative_accuracy": 1e-8,
     "initial_guess": "zero"                
@@ -149,17 +127,6 @@
   },
   {
     "dimension" :2,
-    "grid_number" :64,
-    "boundary_conditions":"Dirichlet",
-    "restriction_operator": "injection",  
-    "interpolation_operator": "quadratic",        
-    "cycle_type": "V-cycle",                 
-    "max_iterations": 50,
-    "relative_accuracy": 1e-8,
-    "initial_guess": "zero"                
-  },
-  {
-    "dimension" :2,
     "grid_number" :128,
     "boundary_conditions":"Dirichlet",
     "restriction_operator": "injection",  
@@ -182,17 +149,6 @@
   },
   {
     "dimension" :2,
-    "grid_number" :64,
-    "boundary_conditions":"Dirichlet",
-    "restriction_operator": "injection",  
-    "interpolation_operator": "quadratic",        
-    "cycle_type": "FMG",                 
-    "max_iterations": 50,
-    "relative_accuracy": 1e-8,
-    "initial_guess": "zero"                
-  },
-  {
-    "dimension" :2,
     "grid_number" :128,
     "boundary_conditions":"Dirichlet",
     "restriction_operator": "injection",  
@@ -209,17 +165,6 @@
     "restriction_operator": "injection",  
     "interpolation_operator": "quadratic",        
     "cycle_type": "FMG",                 
-    "max_iterations": 50,
-    "relative_accuracy": 1e-8,
-    "initial_guess": "zero"                
-  },
-  {
-    "dimension" :2,
-    "grid_number" :64,
-    "boundary_conditions":"Neumann",
-    "restriction_operator": "injection",  
-    "interpolation_operator": "quadratic",        
-    "cycle_type": "V-cycle",                 
     "max_iterations": 50,
     "relative_accuracy": 1e-8,
     "initial_guess": "zero"                

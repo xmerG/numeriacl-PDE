@@ -305,11 +305,13 @@ void Multigrid<1>::create_grids_M(const Function &f, const Function &g,const int
     A.setValues(0,0, 2.0);
     A.setValues(i, i, 2.0);
     if(mixed[0]==1){
-        A.setValues(0, 1, -2.0);
+        A.setValues(0, 1, -8.0/3.0);
+        A.setValues(0, 2, 2.0/3.0);
     }
 
     if(mixed[1]==1){
-        A.setValues(i, i-1, -2.0);
+        A.setValues(i, i-1, -8.0/3.0);
+        A.setValues(i, i-2, 2.0/3.0);
     }
 
 
@@ -322,7 +324,7 @@ void Multigrid<1>::create_grids_M(const Function &f, const Function &g,const int
             fh.set_Value(0, 2*g(0.0)*n*n);
         }
         else{
-            double value=f(0.0)+2*g(0.0)*n;
+            double value=4.0*g(0.0)*n/3.0;
             fh.set_Value(i, i-1, value);
         }
 
@@ -330,7 +332,7 @@ void Multigrid<1>::create_grids_M(const Function &f, const Function &g,const int
             fh.set_Value(n, 2*g(1.0)*n*n);
         }
         else{
-            double value=f(1.0)+2*g(1.0)*n;
+            double value=4.0*g(1.0)*n/3.0;
         }
 
     }
@@ -493,7 +495,7 @@ void Multigrid<dim>::print(){
 template<int dim>
 void Multigrid<dim>::solve(const string &r, const string &p, const string &c, Vector& initial_guess, 
                         int nu1, int nu2, double tol,const double &value, int max_itr){
-    cycle=c;
+    C=c;
     if (r == "full_weighting") {
     restriction = make_unique<Full_weighting<dim>>(); 
     } 
@@ -600,7 +602,7 @@ void Multigrid<dim>::print_to_file(const string &filename, const Function &f) {
     j["l2_norm"]=err.l2_norm();
     j["l1_norm"]=err.l1_norm();
     j["dimension"]=dim;
-    j["cycle"]=cycle;
+    j["cycle"]=C;
     double h=1.0/n;
     if constexpr(dim==1){
         vector<double> grids(n+1, 0.0);

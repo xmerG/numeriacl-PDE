@@ -21,7 +21,7 @@ private:
     Vector solutions;
     BoundaryCondition BC;
     int counter=1; //迭代次数 
-    string cycle="";
+    string C;
     unique_ptr<Retriction<dim>> restriction;
     unique_ptr<Prolongation<dim>> prolongation;
     Vector w_Jacobi(int i, const Vector &initial);

@@ -1,0 +1,192 @@
+[
+    {
+        "boundary_condition": 0,
+        "cycle": "V-cycle",
+        "dimension": 1,
+        "infinity_norm": 7.753254071651838e-06,
+        "iterator times": 11,
+        "l1_norm": 0.0005764908801146884,
+        "l2_norm": 5.851026177558587e-05,
+        "number": 128
+    },
+    {
+        "boundary_condition": 0,
+        "cycle": "V-cycle",
+        "dimension": 1,
+        "infinity_norm": 1.9383634364267266e-06,
+        "iterator times": 11,
+        "l1_norm": 0.0002882704693485394,
+        "l2_norm": 2.0687145732118532e-05,
+        "number": 256
+    },
+    {
+        "boundary_condition": 0,
+        "cycle": "FMG",
+        "dimension": 1,
+        "infinity_norm": 7.753748663130722e-06,
+        "iterator times": 29,
+        "l1_norm": 0.0005765195089395547,
+        "l2_norm": 5.851354825458174e-05,
+        "number": 128
+    },
+    {
+        "boundary_condition": 0,
+        "cycle": "FMG",
+        "dimension": 1,
+        "infinity_norm": 38.23873667542467,
+        "iterator times": 50,
+        "l1_norm": 5443.736076178236,
+        "l2_norm": 382.63142483537854,
+        "number": 256
+    },
+    {
+        "boundary_condition": 1,
+        "cycle": "V-cycle",
+        "dimension": 1,
+        "infinity_norm": 0.00015061246594516575,
+        "iterator times": 9,
+        "l1_norm": 0.006696048072877492,
+        "l2_norm": 0.0009124644384306118,
+        "number": 64
+    },
+    {
+        "boundary_condition": 1,
+        "cycle": "V-cycle",
+        "dimension": 1,
+        "infinity_norm": 3.7653582718455425e-05,
+        "iterator times": 11,
+        "l1_norm": 0.0033318641230939416,
+        "l2_norm": 0.00032178026088576554,
+        "number": 128
+    },
+    {
+        "boundary_condition": 2,
+        "cycle": "V-cycle",
+        "dimension": 1,
+        "infinity_norm": 9.713420930990871,
+        "iterator times": 42,
+        "l1_norm": 315.6873330341314,
+        "l2_norm": 45.389930971018245,
+        "number": 64
+    },
+    {
+        "boundary_condition": 2,
+        "cycle": "V-cycle",
+        "dimension": 1,
+        "infinity_norm": 20.43102224834414,
+        "iterator times": 50,
+        "l1_norm": 1516.9901514295861,
+        "l2_norm": 151.81973964609216,
+        "number": 128
+    },
+    {
+        "boundary_condition": 2,
+        "cycle": "V-cycle",
+        "dimension": 1,
+        "infinity_norm": 15082530246.115545,
+        "iterator times": 50,
+        "l1_norm": 1937771218076.6687,
+        "l2_norm": 140548365675.50342,
+        "number": 256
+    },
+    {
+        "boundary_condition": 2,
+        "cycle": "FMG",
+        "dimension": 1,
+        "infinity_norm": 29.992768188111857,
+        "iterator times": 50,
+        "l1_norm": 1053.7022517640135,
+        "l2_norm": 151.90281168983003,
+        "number": 64
+    },
+    {
+        "boundary_condition": 2,
+        "cycle": "FMG",
+        "dimension": 1,
+        "infinity_norm": 2758786701.2506742,
+        "iterator times": 50,
+        "l1_norm": 203478660274.66037,
+        "l2_norm": 20471544120.09622,
+        "number": 128
+    },
+    {
+        "boundary_condition": 0,
+        "cycle": "V-cycle",
+        "dimension": 2,
+        "infinity_norm": 2.1564733461154617e-06,
+        "iterator times": 11,
+        "l1_norm": 0.014944991538570429,
+        "l2_norm": 0.0001428897524248188,
+        "number": 128
+    },
+    {
+        "boundary_condition": 0,
+        "cycle": "V-cycle",
+        "dimension": 2,
+        "infinity_norm": 5.391349886529895e-07,
+        "iterator times": 12,
+        "l1_norm": 0.014946511677678798,
+        "l2_norm": 7.14458467725511e-05,
+        "number": 256
+    },
+    {
+        "boundary_condition": 0,
+        "cycle": "FMG",
+        "dimension": 2,
+        "infinity_norm": 2.156478569936837e-06,
+        "iterator times": 15,
+        "l1_norm": 0.014945063093348754,
+        "l2_norm": 0.0001428902634401991,
+        "number": 128
+    },
+    {
+        "boundary_condition": 0,
+        "cycle": "FMG",
+        "dimension": 2,
+        "infinity_norm": 5.391375972330081e-07,
+        "iterator times": 16,
+        "l1_norm": 0.014946636423074366,
+        "l2_norm": 7.144633313869341e-05,
+        "number": 256
+    },
+    {
+        "boundary_condition": 1,
+        "cycle": "V-cycle",
+        "dimension": 2,
+        "infinity_norm": 3.36760097843225e-05,
+        "iterator times": 50,
+        "l1_norm": 0.18560296892839578,
+        "l2_norm": 0.0017683754329647285,
+        "number": 128
+    },
+    {
+        "boundary_condition": 2,
+        "cycle": "V-cycle",
+        "dimension": 2,
+        "infinity_norm": 1.243712928689078e-05,
+        "iterator times": 35,
+        "l1_norm": 0.024742671316694276,
+        "l2_norm": 0.00046185024149440735,
+        "number": 64
+    },
+    {
+        "boundary_condition": 2,
+        "cycle": "V-cycle",
+        "dimension": 2,
+        "infinity_norm": 3.537278265186572e-06,
+        "iterator times": 50,
+        "l1_norm": 0.026682930879939448,
+        "l2_norm": 0.0002512517997396102,
+        "number": 128
+    },
+    {
+        "boundary_condition": 2,
+        "cycle": "V-cycle",
+        "dimension": 2,
+        "infinity_norm": 0.8598107060578839,
+        "iterator times": 50,
+        "l1_norm": 14398.015552890598,
+        "l2_norm": 79.45137558124412,
+        "number": 256
+    }
+]

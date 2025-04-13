@@ -12,7 +12,7 @@ Vector Quadratic<dim>::operator()(const Vector &v) const{
             result.set_Value(newi, value);
             result.set_Value(newi+1, v(i));
         }
-        double value= (3*v(0) + 6*v(1) -v(2))/8.0;
+        double value= (3.0*v(0) + 6.0*v(1) -v(2))/8.0;
         result.set_Value(1, value);
         value=(3.0*v(half_n)+6.0*v(half_n-1)-v(half_n-2))/8.0;
         result.set_Value(currdim-2, value);

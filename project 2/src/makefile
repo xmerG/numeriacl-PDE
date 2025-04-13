@@ -14,8 +14,10 @@ SRCS := testall.cpp restriction/Full_weighting.cpp restriction/Injection.cpp \
 # 生成对应的对象文件列表
 OBJS := $(SRCS:.cpp=.o)
 
-# 默认目标
+# 默认目标：编译并运行
 all: $(TARGET)
+	@echo "Running $(TARGET)..."
+	@./$(TARGET)
 
 # 链接目标
 $(TARGET): $(OBJS)
@@ -27,7 +29,7 @@ $(TARGET): $(OBJS)
 
 # 显式声明哪些头文件被哪些源文件依赖
 Multigrid.o: Multigrid.cpp Multigrid.h
-test.o: test.cpp Multigrid.h
+Test.o: Test.cpp Multigrid.h
 
 # 清理生成的文件
 clean:
