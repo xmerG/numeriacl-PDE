@@ -1,0 +1,240 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{geometry}
+\geometry{margin=1.5cm, vmargin={0pt,1cm}}
+\setlength{\topmargin}{-1cm}
+\setlength{\paperheight}{29.7cm}
+\setlength{\textheight}{25.3cm}
+
+% useful packages.
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{fancyhdr}
+\usepackage{layout}
+\usepackage{float, caption}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{tikz}
+
+% 自定义配色方案，尽量模仿 VS Code 的高亮效果
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codeblue}{rgb}{0,0,0.9}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{codered}{rgb}{0.8,0,0}
+\definecolor{backcolor}{rgb}{0.95,0.95,0.95}
+
+% lstlisting 的风格设置
+\lstdefinestyle{vscode}{
+	backgroundcolor=\color{backcolor},   % 背景颜色
+	commentstyle=\color{codegreen},     % 注释颜色
+	keywordstyle=\color{codeblue}\bfseries, % 关键字颜色
+	numberstyle=\tiny\color{gray},      % 行号颜色
+	stringstyle=\color{codered},        % 字符串颜色
+	basicstyle=\ttfamily\footnotesize,  % 基本字体
+	breakatwhitespace=false,            % 仅在空格处断行
+	breaklines=true,                    % 自动换行
+	captionpos=b,                       % 标题位置（bottom）
+	keepspaces=true,                    % 保持空格
+	numbers=left,                       % 显示行号
+	numbersep=5pt,                      % 行号与代码间的间隔
+	rulecolor=\color{black},            % 框线颜色
+	showspaces=false,                   % 不显示空格符号
+	showstringspaces=false,             % 不显示字符串中的空格
+	showtabs=false,                     % 不显示制表符
+	frame=single,                       % 外框
+	tabsize=4,                          % 制表符宽度
+	escapeinside={(*@}{@*)},            % 特殊字符转义
+	morekeywords={*,...}                % 添加更多自定义关键字
+}
+\lstset{style=vscode}
+
+% some common command
+\newcommand{\dif}{\mathrm{d}}
+\newcommand{\avg}[1]{\left\langle #1 \right\rangle}
+\newcommand{\difFrac}[2]{\frac{\dif #1}{\dif #2}}
+\newcommand{\pdfFrac}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\OFL}{\mathrm{OFL}}
+\newcommand{\UFL}{\mathrm{UFL}}
+\newcommand{\fl}{\mathrm{fl}}
+\newcommand{\op}{\odot}
+\newcommand{\Eabs}{E_{\mathrm{abs}}}
+\newcommand{\Erel}{E_{\mathrm{rel}}}
+
+\lstdefinestyle{json}{
+	basicstyle=\ttfamily\footnotesize,
+	commentstyle=\color{gray},
+	stringstyle=\color{red},
+	keywordstyle=\color{blue},
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	stepnumber=1,
+	numbersep=5pt,
+	backgroundcolor=\color{white},
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	tabsize=2,
+	breaklines=true,
+	frame=single,
+	captionpos=b
+}
+
+\begin{document}
+	
+	\pagestyle{fancy}
+	\fancyhead{}
+	\lhead{高凌溪, 3210105373}
+	\chead{微分方程数值解project \#1 设计文档}
+	\rhead{\today}
+	\begin{abstract}
+		本次编程作业设计了多重网格求解poisson方程。自己设计了限制算子，插值算子，求解Dircihlet边界、Neumann边界、混合边界条件的Poisson方程。
+	\end{abstract}
+	\section{程序实现}
+	\subsection{类和成员}
+	\begin{enumerate}
+		\item  \textbf{\texttt{Sparse\_Matrix}类}	首先我定义了\texttt{Sparse\_Matrix}类，用来实现求解Poission方程，私有成员如下
+		\begin{lstlisting}[language=C++, caption={运算符实现}, label={lst:operators}]
+		class Sparse_Matrix{
+			private: 
+			vector<label> elements;
+			int n;  //size of matrix
+			public:
+			Sparse_Matrix();
+			Sparse_Matrix(const int &_n);
+			Sparse_Matrix(const int &_n, const vector<label> &e);
+			//Sparse_Matrix(Sparse_Matrix&& other) noexcept;
+			//Sparse_Matrix& operator=(Sparse_Matrix&& other) noexcept;
+			void setValues(const int &i, const int &j, const double &value); //set A(i,j)
+			double operator()(const int &i, const int &j) const;
+			Sparse_Matrix operator+(const Sparse_Matrix &B) const;
+			Sparse_Matrix operator*(const Sparse_Matrix &B) const;
+			Sparse_Matrix operator*(const double &a) const;
+			Vector operator*(const Vector &v) const;
+			vector<double> convert_to_vector() const;
+			void Gauss_Seidel(Vector &initial, const Vector &b);
+			int getdim() const;
+			void print();
+			
+		};		
+		\end{lstlisting}
+		其中使用了稀疏矩阵的方法存储矩阵，只记录非零元素和非零元素的位置。并且实现了矩阵的移动构造、矩阵加法减法，矩阵的数乘，矩阵和矩阵、矩阵和向量的乘法以及Gauss\_Sediel法求解$Ax=b$。最后还实现了类似\texttt{matlab}按照行列标号取出矩阵的元素，如$A(i,j)$取出矩阵的第$(i, j)$个元素。
+		\item  \textbf{\texttt{Vector}类：}	
+		定义了\texttt{Vector}类，用来储存向量，具体的成员变量和函数如下：
+		\begin{lstlisting}[language=C++, caption={运算符实现},
+			 label={lst:operators}]
+			class Vector{
+				private:
+				int n=0;  //length
+				int m=0; //sqrt(n)
+				vector<double> elements;
+				public:
+				Vector();
+				Vector(const int &n);
+				Vector(const vector<double> &e);
+				Vector(const Vector& other);
+				Vector(const int &n, const vector<double> &_e);
+				Vector(Vector&& other) noexcept;
+				void set_Value(const int &i, const double &value);
+				void set_Value(const int &i, const int &j, const double &value);
+				Vector& operator=(Vector&& other) noexcept;
+				double operator()(const int &i) const;
+				Vector operator+(const Vector &v) const;
+				Vector operator-(const Vector &v) const;
+				Vector operator*(const double &a) const;
+				int getdim() const;
+				void print() const;
+				double operator()(const int &i, const int &j) const;
+				void go_zero(const int &k);
+				friend class Sparse_Matrix;
+				vector<double> getelements() const;
+				double infinity_norm() const;
+				double l2_norm() const;
+				double l1_norm() const;
+				void projection(); //投影到与kernel正交的子空间
+				void copy(const Vector& other);
+				void print_to_file(const string &filename);
+			};
+		\end{lstlisting}
+		实现了向量的移动构造函数、向量的赋值（避免拷贝）向量的加法、减法，计算向量的范数。对于二维的Poisson问题对应的向量，可以视为一维向量对应的张量积，也支持$v(i,j)$的操作取出网格$(ih,jh)$上的元素。
+		\item \textbf{限制算子和插值算子}
+		具体的实现见\texttt{report.tex}，保存在\texttt{src}下的\texttt{restriction}和\texttt{prolongation}文件夹下。
+		\item  \textbf{ Multigrid 类}
+		\begin{lstlisting}[language=C++, caption={运算符实现},
+			label={lst:operators}]
+				template<int dim>
+				class Multigrid{
+					private:
+					map<int, couplet> discretors; //int 代表网格数目，如2代表2的网格数，4代表4的网格数 
+					int n;  //网格个数
+					Vector solutions;
+					BoundaryCondition BC;
+					int counter=1; //迭代次数 
+					string C;
+					unique_ptr<Retriction<dim>> restriction;
+					unique_ptr<Prolongation<dim>> prolongation;
+					Vector w_Jacobi(int i, const Vector &initial);
+					Vector V_cycle(const int &n, Vector& initial_guess, int nu1, int nu2);
+					Vector FMG(const int &_n, int nu1, int nu2);
+					vector<double> corsa_solve(const int &i);
+					void create_grids_D(const Function &f, const Function &g,const int &i);
+					void create_grids_N(const Function &f, const Function &g,const int &i);
+					void create_grids_M(const Function &f, const Function &g,const int &i, 
+					const vector<int> &mixed=vector<int> {0,0,0,0});
+					Vector error(const Function &f);
+					
+					public:
+					Multigrid();
+					Multigrid(const Function &f, const Function &g, BoundaryCondition bc, const int &i,
+					const vector<int> &mixed=vector<int>{0,0,0,0});
+					void solve(const string &restriction, const string &prolongation, const string &cycle, Vector& initial_guess, int nu1, int nu2,
+					double tol,const double &value=0.0, int max_itr=50);
+					void print();
+					void print_to_file(const string &filename, const Function &f);
+					void print_solution(const string &filename) const;
+				};
+			
+		\end{lstlisting}
+		本次作业的核心。实现了FMG和V-cylce两种方法，支持用户输入$-\delta u=f$中的右端项$f$，边界条件，网格数目，限制算子，插值算子，初值， 相对误差，最大迭代次数。如果时Neumann边值条件，应当给出原函数在$(0,0)$上的值。如果是$Mixed$边界条件，还应额外给出在边界上的具体边界条件，用\texttt{vector<int>}给出边界条件，$0$代表Dirichlet边界条件，$1$代表Neumann边界条件。其中函数\texttt{w\_Jacobi}实现松弛操作，之后在$n=4$的网格上用Gauss-Sediel迭代求出真实解。函数\texttt{FMG} \texttt{V-cycle}分别实现FMG和v-cycle。
+	\end{enumerate}
+	\subsection{测试函数}
+	测试函数全部定义在\texttt{testFunction.h}中。
+	\subsection{输入和输出}
+	由于测试用例很多，采用\texttt{jsoncpp}控制输入和输出。
+	\begin{itemize}
+		\item  \textbf{输入：}输入文件放在\texttt{input}文件夹下，输入文件格式如下：
+		\begin{lstlisting}[style=json]
+			  {
+				"dimension" :1,
+				"grid_number" :256,
+				"boundary_conditions":"Mixed",
+				"mixed":[0,1],
+				"restriction_operator": "full_weighting",  
+				"interpolation_operator": "linear",        
+				"cycle_type": "FMG",                 
+				"max_iterations": 50,
+				"relative_accuracy": 1e-8,
+				"initial_guess": "zero"                
+			},
+		\end{lstlisting}
+		\item \textbf{输出:}最终程序运行的具体结果写在\texttt{output}文件夹下的\texttt{output.json}文件中，格式如下：
+		\begin{lstlisting}[style=json]
+			    {
+				"boundary_condition": 1,
+				"cycle": "FMG",
+				"dimension": 1,
+				"infinity_norm": 9.397917202669248e-06,
+				"iterator times": 5,
+				"l1_norm": 0.0016597179004913531,
+				"l2_norm": 0.00011345851360180907,
+				"number": 256
+			},
+			
+		\end{lstlisting}
+		由于本次测试数据规模很大，没有输出真实解和数值解，只输出了无穷范数和$l_1 norm,\ l_2 norm$来判断求解器的效果。
+	\end{itemize}
+
+	\end{document}
