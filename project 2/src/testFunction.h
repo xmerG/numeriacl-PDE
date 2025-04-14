@@ -49,10 +49,10 @@ public:
 
         else if(x==1.0){
             if(mixed[1]==0){
-                return exp(1.0+a);
+                return exp(1.0+sin(1.0));
             }
             else{
-                return (1.0+b)*exp(1.0+a);
+                return (1.0+cos(1.0))*exp(1.0+sin(1.0));
             }
         }
         else{
