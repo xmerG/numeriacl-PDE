@@ -502,5 +502,1013 @@
         "l1_norm": 0.02094215182908486,
         "l2_norm": 0.003983082244816654,
         "linfinity_norm": 0.0019844795338220256
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0018029833955581775,
+        "l2_norm": 0.0008034791522725579,
+        "linfinity_norm": 0.0005369806601569493
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0009259174102427131,
+        "l2_norm": 0.000285369489145835,
+        "linfinity_norm": 0.00013759499931875752
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0004660506595506736,
+        "l2_norm": 0.00010100320375420975,
+        "linfinity_norm": 3.445024838955035e-05
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0002334145927689324,
+        "l2_norm": 3.571961958176341e-05,
+        "linfinity_norm": 8.624139446133938e-06
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.1378620311788022,
+        "l2_norm": 0.05911065964839879,
+        "linfinity_norm": 0.03582693936896453
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.12038180736898599,
+        "l2_norm": 0.03311811432618216,
+        "linfinity_norm": 0.012413965808491856
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.08603561261640454,
+        "l2_norm": 0.016000327648816745,
+        "linfinity_norm": 0.003890650983532584
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.05570034619663955,
+        "l2_norm": 0.007162695526340437,
+        "linfinity_norm": 0.0011621604459728374
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.008648983993090664,
+        "l2_norm": 0.004461113321350987,
+        "linfinity_norm": 0.004391115997269601
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.052384999385247794,
+        "l2_norm": 0.016102310260452554,
+        "linfinity_norm": 0.007888310490894668
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.002424495014607987,
+        "l2_norm": 0.0007001925743176489,
+        "linfinity_norm": 0.00042672733015347575
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.002928891514206014,
+        "l2_norm": 0.0005211262735695506,
+        "linfinity_norm": 0.00020575228348995722
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.0008467978248357655,
+        "l2_norm": 0.0004510640402120567,
+        "linfinity_norm": 0.0004572443924395486
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.0002952036977586642,
+        "l2_norm": 0.0001043678506377078,
+        "linfinity_norm": 7.508401886680005e-05
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.00011145442054616428,
+        "l2_norm": 2.6232576960044132e-05,
+        "linfinity_norm": 1.019374547972518e-05
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 3.226979934467175e-05,
+        "l2_norm": 5.513152287627239e-06,
+        "linfinity_norm": 1.706298987880217e-06
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.13788848778244225,
+        "l2_norm": 0.06283645850410362,
+        "linfinity_norm": 0.04618947221941205
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 1.1408564488934814,
+        "l2_norm": 0.34398640322369506,
+        "linfinity_norm": 0.14857164575712067
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.9267684236403655,
+        "l2_norm": 0.1850332405786746,
+        "linfinity_norm": 0.04965998049302822
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.867053614219916,
+        "l2_norm": 0.11938541717425366,
+        "linfinity_norm": 0.021128588510432422
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.11488058182597516,
+        "l2_norm": 0.06702803852945072,
+        "linfinity_norm": 0.06695675817799396
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.19899964790700533,
+        "l2_norm": 0.07635791848533738,
+        "linfinity_norm": 0.059601197515399384
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.11527562652322529,
+        "l2_norm": 0.02929729005246708,
+        "linfinity_norm": 0.01611430047537521
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.03093013947175743,
+        "l2_norm": 0.0060346847268621375,
+        "linfinity_norm": 0.003612764966437254
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.004923818653188713,
+        "l2_norm": 0.002346438942310191,
+        "linfinity_norm": 0.0018609106296185451
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0027240912230048976,
+        "l2_norm": 0.0008899562504685776,
+        "linfinity_norm": 0.0005256051065836986
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0014003134553502497,
+        "l2_norm": 0.0003203894807714598,
+        "linfinity_norm": 0.00013703449714177866
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0007052012610841266,
+        "l2_norm": 0.0001137877050658985,
+        "linfinity_norm": 3.44999519097552e-05
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.19577477174003233,
+        "l2_norm": 0.08104352441158715,
+        "linfinity_norm": 0.04349060666942345
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.2825881238096923,
+        "l2_norm": 0.07602825112083168,
+        "linfinity_norm": 0.024176239077094153
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.27791328776290614,
+        "l2_norm": 0.050925751165863134,
+        "linfinity_norm": 0.010487004836016806
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.2201943908491452,
+        "l2_norm": 0.028025565326560555,
+        "linfinity_norm": 0.003890844401124749
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.13008034760239548,
+        "l2_norm": 0.05699819484544019,
+        "linfinity_norm": 0.036720986570684566
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.05983744712616015,
+        "l2_norm": 0.019611775870404028,
+        "linfinity_norm": 0.011046305148319889
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.0016827259693352333,
+        "l2_norm": 0.0003587327857759817,
+        "linfinity_norm": 0.00013834257604534254
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.0008516998679327754,
+        "l2_norm": 0.00012762115971560399,
+        "linfinity_norm": 3.484667649836064e-05
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.0017808954956347565,
+        "l2_norm": 0.0012712974068462275,
+        "linfinity_norm": 0.0016015282083399751
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.0008133354039632883,
+        "l2_norm": 0.00039727017550713765,
+        "linfinity_norm": 0.00042742350341049007
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.0005249605355150946,
+        "l2_norm": 0.0001715912437659146,
+        "linfinity_norm": 0.00011858123043186064
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.00027996997862444193,
+        "l2_norm": 6.331144419530097e-05,
+        "linfinity_norm": 3.0476441388108122e-05
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.28068434772197165,
+        "l2_norm": 0.12482385121008774,
+        "linfinity_norm": 0.06952004228345371
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.7222674364462145,
+        "l2_norm": 0.21406099114722246,
+        "linfinity_norm": 0.07299636013175625
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.6388170709346812,
+        "l2_norm": 0.12631506437121123,
+        "linfinity_norm": 0.02778478482141833
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.9530715406895243,
+        "l2_norm": 0.13049354272135158,
+        "linfinity_norm": 0.019856892407145166
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.03828982722013236,
+        "l2_norm": 0.018878801364099203,
+        "linfinity_norm": 0.015509444325657373
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.03057210151060906,
+        "l2_norm": 0.011275887538222742,
+        "linfinity_norm": 0.013177697026302948
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.018091700947985463,
+        "l2_norm": 0.004477352227963626,
+        "linfinity_norm": 0.0038201699379527554
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.012750469155222299,
+        "l2_norm": 0.0022476991450052723,
+        "linfinity_norm": 0.0013480449558475605
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.009788585821704608,
+        "l2_norm": 0.0043865245550990094,
+        "linfinity_norm": 0.0029868944575456025
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.005075628030201396,
+        "l2_norm": 0.0015647144588760572,
+        "linfinity_norm": 0.000759768311283382
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.002560981614956162,
+        "l2_norm": 0.0005543651279341793,
+        "linfinity_norm": 0.00019048703749247053
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0012834066447055025,
+        "l2_norm": 0.00019609820401191272,
+        "linfinity_norm": 4.772356288290647e-05
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.8690022081113729,
+        "l2_norm": 0.36606828072507913,
+        "linfinity_norm": 0.20129330573993198
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.8060468817177388,
+        "l2_norm": 0.22004088310096567,
+        "linfinity_norm": 0.07527494856990191
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.5934660633150644,
+        "l2_norm": 0.10991827835036751,
+        "linfinity_norm": 0.024632383994325546
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.38906342120671444,
+        "l2_norm": 0.04990928977938699,
+        "linfinity_norm": 0.007539298790819715
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.020631767803988975,
+        "l2_norm": 0.00889236872048718,
+        "linfinity_norm": 0.005559735603050564
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.2764989451358237,
+        "l2_norm": 0.08328949800635178,
+        "linfinity_norm": 0.03596634696139145
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.005755354731761704,
+        "l2_norm": 0.001163432138310239,
+        "linfinity_norm": 0.00036643171853034673
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.03313706115012548,
+        "l2_norm": 0.005363252137091428,
+        "linfinity_norm": 0.0015800839460837768
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.004107164665246784,
+        "l2_norm": 0.0022895995535818577,
+        "linfinity_norm": 0.0019688789221269376
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.0020274473236302523,
+        "l2_norm": 0.0007694322050215094,
+        "linfinity_norm": 0.0004741365706231182
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.000982376863388746,
+        "l2_norm": 0.00026179328075089,
+        "linfinity_norm": 0.00011721801682978983
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.00029068645951660496,
+        "l2_norm": 5.8006415222699905e-05,
+        "linfinity_norm": 2.0052282405536026e-05
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.5504457858523484,
+        "l2_norm": 0.2676008652382453,
+        "linfinity_norm": 0.1767724218493144
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 5.52787779262343,
+        "l2_norm": 1.623260952011952,
+        "linfinity_norm": 0.8622435362879602
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.2709780119803064,
+        "l2_norm": 0.0548691086112004,
+        "linfinity_norm": 0.01538591999428851
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.06393514038900225,
+        "l2_norm": 0.009765929403195702,
+        "linfinity_norm": 0.0029874713504939865
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.19903209168451258,
+        "l2_norm": 0.12423163280648589,
+        "linfinity_norm": 0.11354900275784119
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.49195925433541016,
+        "l2_norm": 0.2394050879557117,
+        "linfinity_norm": 0.3154365146980921
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.021505003756188946,
+        "l2_norm": 0.005262692995636482,
+        "linfinity_norm": 0.003469618885851386
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.02094215182908486,
+        "l2_norm": 0.003983082244816654,
+        "linfinity_norm": 0.0019844795338220256
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0018029833955581775,
+        "l2_norm": 0.0008034791522725579,
+        "linfinity_norm": 0.0005369806601569493
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0009259174102427131,
+        "l2_norm": 0.000285369489145835,
+        "linfinity_norm": 0.00013759499931875752
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0004660506595506736,
+        "l2_norm": 0.00010100320375420975,
+        "linfinity_norm": 3.445024838955035e-05
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0002334145927689324,
+        "l2_norm": 3.571961958176341e-05,
+        "linfinity_norm": 8.624139446133938e-06
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.1378620311788022,
+        "l2_norm": 0.05911065964839879,
+        "linfinity_norm": 0.03582693936896453
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.12038180736898599,
+        "l2_norm": 0.03311811432618216,
+        "linfinity_norm": 0.012413965808491856
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.08603561261640454,
+        "l2_norm": 0.016000327648816745,
+        "linfinity_norm": 0.003890650983532584
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.05570034619663955,
+        "l2_norm": 0.007162695526340437,
+        "linfinity_norm": 0.0011621604459728374
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.008648983993090664,
+        "l2_norm": 0.004461113321350987,
+        "linfinity_norm": 0.004391115997269601
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.052384999385247794,
+        "l2_norm": 0.016102310260452554,
+        "linfinity_norm": 0.007888310490894668
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.002424495014607987,
+        "l2_norm": 0.0007001925743176489,
+        "linfinity_norm": 0.00042672733015347575
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.002928891514206014,
+        "l2_norm": 0.0005211262735695506,
+        "linfinity_norm": 0.00020575228348995722
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.0008467978248357655,
+        "l2_norm": 0.0004510640402120567,
+        "linfinity_norm": 0.0004572443924395486
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.0002952036977586642,
+        "l2_norm": 0.0001043678506377078,
+        "linfinity_norm": 7.508401886680005e-05
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.00011145442054616428,
+        "l2_norm": 2.6232576960044132e-05,
+        "linfinity_norm": 1.019374547972518e-05
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 3.226979934467175e-05,
+        "l2_norm": 5.513152287627239e-06,
+        "linfinity_norm": 1.706298987880217e-06
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.13788848778244225,
+        "l2_norm": 0.06283645850410362,
+        "linfinity_norm": 0.04618947221941205
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 1.1408564488934814,
+        "l2_norm": 0.34398640322369506,
+        "linfinity_norm": 0.14857164575712067
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.9267684236403655,
+        "l2_norm": 0.1850332405786746,
+        "linfinity_norm": 0.04965998049302822
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.867053614219916,
+        "l2_norm": 0.11938541717425366,
+        "linfinity_norm": 0.021128588510432422
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.11488058182597516,
+        "l2_norm": 0.06702803852945072,
+        "linfinity_norm": 0.06695675817799396
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.19899964790700533,
+        "l2_norm": 0.07635791848533738,
+        "linfinity_norm": 0.059601197515399384
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.11527562652322529,
+        "l2_norm": 0.02929729005246708,
+        "linfinity_norm": 0.01611430047537521
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.03093013947175743,
+        "l2_norm": 0.0060346847268621375,
+        "linfinity_norm": 0.003612764966437254
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.004923818653188713,
+        "l2_norm": 0.002346438942310191,
+        "linfinity_norm": 0.0018609106296185451
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0027240912230048976,
+        "l2_norm": 0.0008899562504685776,
+        "linfinity_norm": 0.0005256051065836986
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0014003134553502497,
+        "l2_norm": 0.0003203894807714598,
+        "linfinity_norm": 0.00013703449714177866
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0007052012610841266,
+        "l2_norm": 0.0001137877050658985,
+        "linfinity_norm": 3.44999519097552e-05
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.19577477174003233,
+        "l2_norm": 0.08104352441158715,
+        "linfinity_norm": 0.04349060666942345
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.2825881238096923,
+        "l2_norm": 0.07602825112083168,
+        "linfinity_norm": 0.024176239077094153
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.27791328776290614,
+        "l2_norm": 0.050925751165863134,
+        "linfinity_norm": 0.010487004836016806
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.2201943908491452,
+        "l2_norm": 0.028025565326560555,
+        "linfinity_norm": 0.003890844401124749
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.13008034760239548,
+        "l2_norm": 0.05699819484544019,
+        "linfinity_norm": 0.036720986570684566
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.05983744712616015,
+        "l2_norm": 0.019611775870404028,
+        "linfinity_norm": 0.011046305148319889
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.0016827259693352333,
+        "l2_norm": 0.0003587327857759817,
+        "linfinity_norm": 0.00013834257604534254
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.0008516998679327754,
+        "l2_norm": 0.00012762115971560399,
+        "linfinity_norm": 3.484667649836064e-05
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.0017808954956347565,
+        "l2_norm": 0.0012712974068462275,
+        "linfinity_norm": 0.0016015282083399751
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.0008133354039632883,
+        "l2_norm": 0.00039727017550713765,
+        "linfinity_norm": 0.00042742350341049007
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.0005249605355150946,
+        "l2_norm": 0.0001715912437659146,
+        "linfinity_norm": 0.00011858123043186064
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.00027996997862444193,
+        "l2_norm": 6.331144419530097e-05,
+        "linfinity_norm": 3.0476441388108122e-05
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.28068434772197165,
+        "l2_norm": 0.12482385121008774,
+        "linfinity_norm": 0.06952004228345371
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.7222674364462145,
+        "l2_norm": 0.21406099114722246,
+        "linfinity_norm": 0.07299636013175625
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.6388170709346812,
+        "l2_norm": 0.12631506437121123,
+        "linfinity_norm": 0.02778478482141833
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.9530715406895243,
+        "l2_norm": 0.13049354272135158,
+        "linfinity_norm": 0.019856892407145166
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.03828982722013236,
+        "l2_norm": 0.018878801364099203,
+        "linfinity_norm": 0.015509444325657373
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.03057210151060906,
+        "l2_norm": 0.011275887538222742,
+        "linfinity_norm": 0.013177697026302948
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.018091700947985463,
+        "l2_norm": 0.004477352227963626,
+        "linfinity_norm": 0.0038201699379527554
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.012750469155222299,
+        "l2_norm": 0.0022476991450052723,
+        "linfinity_norm": 0.0013480449558475605
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.009788585821704608,
+        "l2_norm": 0.0043865245550990094,
+        "linfinity_norm": 0.0029868944575456025
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.005075628030201396,
+        "l2_norm": 0.0015647144588760572,
+        "linfinity_norm": 0.000759768311283382
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.002560981614956162,
+        "l2_norm": 0.0005543651279341793,
+        "linfinity_norm": 0.00019048703749247053
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 0,
+        "l1_norm": 0.0012834066447055025,
+        "l2_norm": 0.00019609820401191272,
+        "linfinity_norm": 4.772356288290647e-05
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.8690022081113729,
+        "l2_norm": 0.36606828072507913,
+        "linfinity_norm": 0.20129330573993198
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.8060468817177388,
+        "l2_norm": 0.22004088310096567,
+        "linfinity_norm": 0.07527494856990191
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.5934660633150644,
+        "l2_norm": 0.10991827835036751,
+        "linfinity_norm": 0.024632383994325546
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 0,
+        "l1_norm": 0.38906342120671444,
+        "l2_norm": 0.04990928977938699,
+        "linfinity_norm": 0.007539298790819715
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.020631767803988975,
+        "l2_norm": 0.00889236872048718,
+        "linfinity_norm": 0.005559735603050564
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.2764989451358237,
+        "l2_norm": 0.08328949800635178,
+        "linfinity_norm": 0.03596634696139145
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.005755354731761704,
+        "l2_norm": 0.001163432138310239,
+        "linfinity_norm": 0.00036643171853034673
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 0,
+        "l1_norm": 0.03313706115012548,
+        "l2_norm": 0.005363252137091428,
+        "linfinity_norm": 0.0015800839460837768
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.004107164665246784,
+        "l2_norm": 0.0022895995535818577,
+        "linfinity_norm": 0.0019688789221269376
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.0020274473236302523,
+        "l2_norm": 0.0007694322050215094,
+        "linfinity_norm": 0.0004741365706231182
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.000982376863388746,
+        "l2_norm": 0.00026179328075089,
+        "linfinity_norm": 0.00011721801682978983
+    },
+    {
+        "boundary_condition": 0,
+        "domain": 1,
+        "l1_norm": 0.00029068645951660496,
+        "l2_norm": 5.8006415222699905e-05,
+        "linfinity_norm": 2.0052282405536026e-05
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.5504457858523484,
+        "l2_norm": 0.2676008652382453,
+        "linfinity_norm": 0.1767724218493144
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 5.52787779262343,
+        "l2_norm": 1.623260952011952,
+        "linfinity_norm": 0.8622435362879602
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.2709780119803064,
+        "l2_norm": 0.0548691086112004,
+        "linfinity_norm": 0.01538591999428851
+    },
+    {
+        "boundary_condition": 1,
+        "domain": 1,
+        "l1_norm": 0.06393514038900225,
+        "l2_norm": 0.009765929403195702,
+        "linfinity_norm": 0.0029874713504939865
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.19903209168451258,
+        "l2_norm": 0.12423163280648589,
+        "linfinity_norm": 0.11354900275784119
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.49195925433541016,
+        "l2_norm": 0.2394050879557117,
+        "linfinity_norm": 0.3154365146980921
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.021505003756188946,
+        "l2_norm": 0.005262692995636482,
+        "linfinity_norm": 0.003469618885851386
+    },
+    {
+        "boundary_condition": 2,
+        "domain": 1,
+        "l1_norm": 0.02094215182908486,
+        "l2_norm": 0.003983082244816654,
+        "linfinity_norm": 0.0019844795338220256
     }
 ]
