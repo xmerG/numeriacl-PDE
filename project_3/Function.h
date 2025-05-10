@@ -4,7 +4,7 @@
 
 class Function{
 public:
-    virtual double operator()(const Matrix &u, const double &t)=0;
+    virtual Matrix operator()(const Matrix &u, const double &t) const=0;
 };
 
 

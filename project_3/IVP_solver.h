@@ -14,7 +14,7 @@ protected:
     //Matrix initial=move(Matrix(d, 1));
     int maxStep; 
     int accuracy=1; // accuracy 
-    Matrix solution=move(Matrix(1, d));
+    vector<Matrix> solution;
     Method method;
 public:
     IVP_solver();
