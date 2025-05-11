@@ -23,6 +23,7 @@ public:
     void setValues(const double &, const double &, int);
     virtual void solve(const Function &f)=0;
     virtual void solve(const Function &f, const Matrix &_initial, const double &, const double &, int)=0;
+    Matrix getSolution(const int &);
 };
 
 #endif

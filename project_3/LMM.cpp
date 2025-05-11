@@ -12,8 +12,11 @@ void LMM::solve(const Function &f, const double &_initial, const double &t1, con
     LMM::solve(f);
 }
 
-void LMM::setInitials(const Function &f){
 
+void LMM::setInitials(const Function &f){
+    if(step>1){
+        
+    }
 }
 
 
@@ -31,7 +34,7 @@ Adams_Bashforth::Adams_Bashforth(int p){
 void Adams_Bashforth::OneStep(const Function &f, int n){
     Matrix U_new(1, d);
     for(int j=0; j<step; ++j){
-        U_new=move(U_new+f(solution[n+j], k*(n+j))*(beta[j])*k);
+        U_new=move(U_new+f(solution[n+j], k*(n+j))*(beta[j]*k+t_begin));
     }
     U_new=move(U_new+solution[n+step-1]);
     solution.push_back(U_new);
@@ -108,7 +111,7 @@ void Adams_Moulton::OneStep(const Function &f, int n){
         U_new=move(temp);
         U_new=move(U_new+f(U_new, (n+step)*k)*beta[n+step]);
         for(int j=0; j<step; ++j){
-            U_new=move(U_new+f(solution[n+j], (n+j)*k)*(beta[j])*k);
+            U_new=move(U_new+f(solution[n+j], (n+j)*k)*(beta[j]*k+t_begin));
         }
     }
     solution.push_back(U_new);    
@@ -160,7 +163,7 @@ void Backward_Differential::OneStep(const Function &f, int n){
         temp=U_old;
         U_old=U_new;
         U_new=move(temp);
-        U_new=move(U_new+f(U_new, (n+step)*k)*(k*beta[step]));
+        U_new=move(U_new+f(U_new, (n+step)*k)*(k*beta[step]+t_begin));
         for(int j=0; j<step; ++j){
             U_new=move(U_new+solution[n+j]*(-alpha[j]));
         }

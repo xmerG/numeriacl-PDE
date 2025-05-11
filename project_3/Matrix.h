@@ -21,7 +21,10 @@ public:
     Matrix(Matrix &&other);
     Matrix operator=(const Matrix& other);
     Matrix operator=(Matrix &&other);
+    int get_row() const;
+    int get_col() const;
     double operator()(const int &i, const int&j);
+    Matrix operator()(const int &, const int &, const int &, const int &);
     Matrix operator*(const double & );
     Matrix operator*(const Matrix &other) const;
     Matrix operator+(const Matrix &other) const;
@@ -29,9 +32,9 @@ public:
     void add_row_elements(const Matrix &other);
     void add_col_elements(const Matrix &other);
     void set_elements(const int &, const int &, const double &);
-    void set_elements(const Matrix &,const int &, const int &, const int &, const int &, const int&);
-    vector<Matrix> LU();
-    Matrix operator/(const Matrix &);
+    void set_elements(const Matrix &, const int &, const int &, const int &, const int&);
+    vector<Matrix> LU() const;
+    Matrix operator/(Matrix &);
     double l2_norm() const;
     void print() const;
     friend IVP_solver;

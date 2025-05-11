@@ -4,7 +4,11 @@
 enum class Method{
     AMF,
     ABF,
-    BDF        
+    BDF,
+    classical_RK,
+    ESDIRK,
+    Gauss_Legendre_RK,
+    Fehlberg        
 };
 
 #endif

@@ -17,3 +17,9 @@ void IVP_solver::setValues(const double & t1, const double & t2, int N){
     k=(t_end-t_begin)/N;
 }
 
+
+Matrix IVP_solver::getSolution(const int &index){
+    Matrix U_new;
+    U_new=solution[index];
+    return move(U_new);
+}

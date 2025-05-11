@@ -14,6 +14,7 @@ public:
     void setInitials(const Function &f);
     void solve(const Function &f);
     void solve(const Function &f, const double &_initial, const double &, const double &, int);
+    void solve(const Function &f, const double &_initial, const double &, const double &, int, const int &);
 };
 
 

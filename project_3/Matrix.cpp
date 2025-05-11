@@ -23,6 +23,10 @@ Matrix::Matrix(const vector<vector<double>> &_elements):elements(_elements){
 
 Matrix::Matrix(Matrix &&other):m(other.m), n(other.n),elements(move(other.elements)){}
 
+int Matrix::get_col() const{return n;}
+
+int Matrix::get_row() const{return m;}
+
 Matrix Matrix::operator=(Matrix &&other){
     this->m=other.m;
     this->n=other.n;
@@ -47,6 +51,18 @@ double Matrix::operator()(const int &i, const int &j){
         return 0.0;
         cerr<<"index out of range!"<<endl;
     }
+}
+
+Matrix Matrix::operator()(const int &i1, const int &i2, const int &j1, const int &j2){
+    vector<vector<double>> new_element(i2-i1+1, vector<double>(j2-j1+1, 0.0));
+    if(0<=i1 && i1<=i2 && i2<=this->m && 0<=j1 && j1<=j2 && j2<=this->n){
+        for(int i=0; i<=i2-i1; ++i){
+            for(int j=0; j<=j2-j1; ++j){
+                new_element[i][j]=this->elements[i+i1][j+j1];
+            }
+        }
+    }
+    return move(Matrix(i2-i1+1, j2-j1+1, new_element));
 }
 
 Matrix Matrix::operator*(const double &value){
@@ -113,7 +129,7 @@ void Matrix::add_col_elements(const Matrix& other){
     }
 }
 
-void Matrix::set_elements(const Matrix &other,const int &index,const int &i1, const int &i2, const int &j1, const int &j2){
+void Matrix::set_elements(const Matrix &other,const int &i1, const int &i2, const int &j1, const int &j2){
     if(other.m==i2-i1+1 && other.n==j2-j1+1){
         for(int i=i1; i<=i2; ++i){
             for(int j=j1; j<=j2; ++j){
@@ -173,6 +189,73 @@ double Matrix::l2_norm() const{
         cerr<<"not l2 norm for matrix"<<endl;
         return norm;
     }
+}
+
+vector<Matrix> Matrix::LU() const{
+    vector<vector<double>> L_elements(m, vector<double>(m, 0.0));
+    vector<vector<double>> U_elements(n, vector<double>(n, 0.0));
+    vector<vector<double>> p_elements(n, vector<double>(n, 0.0));
+    for(int i=0; i<n; ++i){
+        p_elements[i][i]=1.0;
+    }
+    vector<vector<double>> temp=elements;
+    if(m==n){
+        for(int i=0; i<n; ++i){
+            int index=i;
+            double value=abs(temp[i][i]);
+            for(int j=i; j<n; ++j){
+                if(value<abs(temp[j][i])){
+                    value=abs(temp[i][j]);
+                    index=j;
+                }
+            }
+            vector<double> old=temp[index];
+            temp[index]=temp[i];
+            temp[i]=old;
+            old=p_elements[index];
+            p_elements[index]=p_elements[i];
+            p_elements[i]=move(old);
+            for(int j=i; j<n; ++j){
+                L_elements[j][i]=temp[j][i]/temp[i][i];
+                U_elements[i][j]=temp[i][j];
+                if(j!=i){
+                    for(int k=i+1; k<n; ++k){
+                        temp[j][k]-=L_elements[j][i]*U_elements[i][k];
+                    }
+                }
+            }
+        }
+    }
+    Matrix L(m, m, L_elements);
+    Matrix U(n, n ,U_elements);
+    Matrix P(n, n, p_elements);
+    vector<Matrix> LUP{move(L), move(U), move(P)};
+    return LUP;
+}
+
+Matrix Matrix::operator/(Matrix &B){
+    vector<Matrix> LUP=this->LU();
+    B=move(LUP[2]*B);
+    if(m==n && this->m==B.m){
+        for(int k=0; k<B.m; ++k){
+            for(int j=0; j<m-1; ++j){
+                B.set_elements(j, k, B(j, k)/LUP[0](j, j));
+                for(int i=j+1; i<m; ++i){
+                    B.set_elements(i, k, B(i, k)-B(i, k)*LUP[0](i, j));
+                }
+            }
+            B.set_elements(m-1, k, B(m-1, k)/LUP[0](m-1, m-1));
+            for(int j=m-1; j>0; --j){
+                B.set_elements(j, k, B(j, k)/LUP[1](j, j));
+                for(int i=1; i<j-1; ++i){
+                    B.set_elements(i, k, B(i, k)-B(i, k)*LUP[1](i, j));
+                }
+            }
+            B.set_elements(0,k, B(0,k)/LUP[1](0,0));
+        }
+    }
+    return move(B);
+
 }
 
 void Matrix::print() const{
