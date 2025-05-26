@@ -73,13 +73,13 @@ public:
         callbacks_[methodName] = createFn;
     }
     
-    std::unique_ptr<MOL> createMOL(const std::string& methodName, 
+    unique_ptr<MOL> createMOL(const std::string& methodName, 
                                   const double& v, const double& h, 
                                   const double& k, const double& t1, 
                                   const double& t2, const double& x1, 
                                   const double& x2) {
         if (!callbacks_.count(methodName)) {
-            std::cerr << "MOLFactory: No such method called '" << methodName << "'." << std::endl;
+            cerr << "MOLFactory: No such method called '" << methodName << "'." << std::endl;
             return nullptr;
         }
         return callbacks_[methodName](v, h, k, t1, t2, x1, x2);
